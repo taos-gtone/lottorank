@@ -1,0 +1,30 @@
+# Maven
+target/
+
+# Eclipse
+.project
+.classpath
+.settings/
+.factorypath
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Compiled
+*.class
+
+# Package
+*.jar
+*.war
+*.ear
