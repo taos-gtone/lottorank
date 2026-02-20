@@ -1,69 +1,2512 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LottoRank</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .container {
-            background: white;
-            border-radius: 16px;
-            padding: 48px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 600px;
-        }
-        h1 { color: #333; font-size: 2.2em; margin-bottom: 16px; }
-        .badge {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            margin: 4px;
-        }
-        .info {
-            margin-top: 24px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            text-align: left;
-        }
-        .info p { margin: 8px 0; color: #555; font-size: 0.95em; }
-        .info strong { color: #333; }
-        .time { margin-top: 20px; color: #888; font-size: 0.9em; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로또랭크 - 번호 예측 랭킹 플랫폼</title>
+  <meta name="description" content="매주 로또 번호를 예측하고 적중률로 랭킹을 쌓으세요.">
+  <style>
+    /* =============================================
+       리셋 & 기본
+    ============================================= */
+    :root {
+      --navy:      #1B3175;
+      --blue:      #2851A3;
+      --blue-mid:  #3A6BC9;
+      --hero-from: #3655B8;
+      --hero-to:   #6A45C2;
+      --gold:      #E8A000;
+      --gold-lt:   #FFD54F;
+      --red:       #E53935;
+      --white:     #FFFFFF;
+      --bg:        #F2F4F8;
+      --line:      #DDE3EE;
+      --txt:       #1A1A2E;
+      --txt2:      #4A5068;
+      --txt3:      #8891AA;
+      --ball-y:    linear-gradient(135deg,#FFC107,#FF9800);
+      --ball-b:    linear-gradient(135deg,#2196F3,#1565C0);
+      --ball-r:    linear-gradient(135deg,#F44336,#B71C1C);
+      --ball-g:    linear-gradient(135deg,#9E9E9E,#616161);
+      --ball-gr:   linear-gradient(135deg,#4CAF50,#1B5E20);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 14px; }
+    body { font-family: 'Apple SD Gothic Neo','Noto Sans KR',sans-serif; background: var(--bg); color: var(--txt); line-height: 1.5; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+    ul { list-style: none; }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+    .wrap-wide { max-width: 1440px; margin: 0 auto; padding: 0 16px; }
+
+    /* =============================================
+       상단 유틸리티 바
+    ============================================= */
+    .util-bar {
+      background: var(--navy);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 6px 0;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .util-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .util-notice {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .util-notice-icon {
+      width: 18px;
+      height: 18px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .util-links {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .util-links a {
+      padding: 0 12px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+      transition: color 0.2s;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .util-links a:first-child { padding-left: 0; }
+    .util-links a:last-child { border-right: none; padding-right: 0; }
+    .util-links a:hover { color: #fff; }
+
+    .util-gold {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      background: linear-gradient(135deg, var(--gold), #F57F17);
+      border-radius: 3px;
+      color: #fff !important;
+      font-weight: 700;
+      margin-left: 12px;
+    }
+
+    /* =============================================
+       메인 헤더
+    ============================================= */
+    .main-header {
+      background: var(--blue);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      height: 58px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-right: 32px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .logo-img {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .logo-text-wrap {}
+
+    .logo-sub { font-size: 0.65rem; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
+    .logo-main { font-size: 1.25rem; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      height: 100%;
+    }
+
+    .nav-item {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-item > a {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 100%;
+      padding: 0 18px;
+      color: rgba(255,255,255,0.88);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-item > a:hover,
+    .nav-item.active > a {
+      color: #fff;
+      background: rgba(255,255,255,0.10);
+    }
+
+    .nav-gold > a {
+      color: var(--gold-lt) !important;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .btn-login {
+      padding: 7px 16px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-login:hover { background: rgba(255,255,255,0.22); }
+
+    .btn-join {
+      padding: 7px 16px;
+      border-radius: 4px;
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-join:hover { background: #D49200; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+      background: transparent;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    /* =============================================
+       모바일 메뉴
+    ============================================= */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-panel {
+      width: 280px;
+      background: var(--navy);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .mobile-close {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .mobile-close .logo-main { font-size: 1.1rem; }
+
+    .close-btn {
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .mobile-nav-links {
+      padding: 8px 0;
+    }
+
+    .mobile-nav-links a {
+      display: block;
+      padding: 12px 20px;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.2s;
+    }
+
+    .mobile-nav-links a:hover {
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+    }
+
+    .mobile-actions {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobile-actions button {
+      width: 100%;
+      padding: 11px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    /* =============================================
+       히어로 영역 (배너 + 사이드바)
+    ============================================= */
+    .hero-area {
+      background: var(--blue);
+      padding: 0;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      min-height: 340px;
+    }
+
+    /* 좌: 배너 */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+      padding: 36px 40px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* 반짝이 별 장식 */
+    .hero-banner::before {
+      content: '✦';
+      position: absolute;
+      top: 24px;
+      right: 120px;
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.3);
+      animation: twinkle 2s infinite alternate;
+    }
+
+    .hero-banner::after {
+      content: '✦';
+      position: absolute;
+      bottom: 40px;
+      right: 60px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.2);
+      animation: twinkle 2.5s 0.5s infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.2; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .hero-deco {
+      position: absolute;
+      top: -40px;
+      right: 160px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    .hero-deco2 {
+      position: absolute;
+      bottom: -60px;
+      left: -40px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      pointer-events: none;
+    }
+
+    .hero-lotto-bg {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      bottom: 22px;
+      width: min(50%, 400px);
+      border-radius: 14px;
+      background-image:
+        linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.0) 36%, rgba(255,255,255,0.0) 100%),
+        url('${pageContext.request.contextPath}/images/lotto-woman-bg-ultra-hq.png');
+      background-size: 100% 100%, cover;
+      background-position: center, center center;
+      background-repeat: no-repeat, no-repeat;
+      opacity: 1.0;
+      pointer-events: none;
+    }
+
+    .hero-banner::before,
+    .hero-banner::after,
+    .hero-deco,
+    .hero-deco2,
+    .hero-lotto-bg {
+      z-index: 1;
+    }
+
+    .hero-round-badge,
+    .hero-title,
+    .hero-desc,
+    .hero-btns,
+    .hero-stats {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-round-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 50px;
+      color: rgba(255,255,255,0.9);
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      width: fit-content;
+    }
+
+    .hero-round-badge .live-dot {
+      width: 7px;
+      height: 7px;
+      background: #FF5252;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-title .em {
+      color: var(--gold-lt);
+    }
+
+    .hero-desc {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hero-btn-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 22px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--gold), #F57F17);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 800;
+      box-shadow: 0 4px 15px rgba(232,160,0,0.45);
+      transition: all 0.2s;
+    }
+
+    .hero-btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,160,0,0.55); }
+
+    .hero-btn-sub {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 22px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .hero-btn-sub:hover { background: rgba(255,255,255,0.25); }
+
+    /* 배너 하단 통계 */
+    .hero-stats {
+      display: flex;
+      gap: 28px;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .hstat-num {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--gold-lt);
+      line-height: 1;
+    }
+
+    .hstat-label {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 3px;
+    }
+
+    /* 우: 로그인 + 정보 사이드바 */
+    .hero-sidebar {
+      background: rgba(0,0,0,0.2);
+      border-left: 1px solid rgba(255,255,255,0.10);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 로그인 폼 */
+    .login-panel {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .login-panel-title {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .login-input::placeholder { color: rgba(255,255,255,0.35); }
+    .login-input:focus { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.12); }
+
+    .login-submit {
+      width: 100%;
+      padding: 9px;
+      border-radius: 5px;
+      background: var(--blue-mid);
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .login-submit:hover { background: #2E5AAE; }
+
+    .login-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 10px;
+    }
+
+    .login-links a {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.45);
+      padding: 0 8px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+      transition: color 0.2s;
+    }
+
+    .login-links a:last-child { border-right: none; }
+    .login-links a:hover { color: rgba(255,255,255,0.8); }
+
+    .social-login {
+      display: flex;
+      gap: 6px;
+    }
+
+    .social-btn {
+      flex: 1;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .btn-naver {
+      background: #03C75A;
+      color: #fff;
+    }
+
+    .btn-kakao {
+      background: #FEE500;
+      color: #3C1E1E;
+    }
+
+    /* 골드 회원 배너 */
+    .gold-panel {
+      padding: 14px 20px;
+      background: linear-gradient(135deg, rgba(232,160,0,0.25), rgba(245,127,23,0.25));
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .gold-panel-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .gold-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gold-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .gold-text-wrap {}
+    .gold-title { font-size: 0.8rem; font-weight: 800; color: var(--gold-lt); }
+    .gold-sub { font-size: 0.7rem; color: rgba(255,255,255,0.55); }
+
+    .gold-count {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--gold-lt);
+      line-height: 1;
+    }
+
+    .gold-count span { font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.55); }
+
+    .btn-gold-join {
+      padding: 6px 12px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--gold), #F57F17);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    /* 빠른 통계 */
+    .quick-stats {
+      padding: 14px 20px;
+      display: flex;
+      gap: 0;
+    }
+
+    .qstat {
+      flex: 1;
+      text-align: center;
+      padding: 8px 4px;
+      border-right: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .qstat:last-child { border-right: none; }
+
+    .qstat-num {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--gold-lt);
+    }
+
+    .qstat-label {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 2px;
+    }
+
+    /* =============================================
+       당첨번호 & 성적표 섹션
+    ============================================= */
+    .results-section {
+      background: var(--white);
+      border-bottom: 2px solid var(--line);
+      padding: 0;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-top: 2px solid var(--blue);
+    }
+
+    .result-block {
+      padding: 20px 24px;
+      border-right: 1px solid var(--line);
+    }
+
+    .result-block:last-child { border-right: none; }
+
+    .rb-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .rb-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--txt2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .rb-round {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--red);
+    }
+
+    .rb-more {
+      font-size: 0.75rem;
+      color: var(--blue);
+    }
+
+    .rb-more:hover { text-decoration: underline; }
+
+    .winning-balls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .ball {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    .ball.y  { background: var(--ball-y); color: #000; }
+    .ball.b  { background: var(--ball-b); color: #fff; }
+    .ball.r  { background: var(--ball-r); color: #fff; }
+    .ball.g  { background: var(--ball-g); color: #fff; }
+    .ball.gr { background: var(--ball-gr); color: #fff; }
+    .ball.bonus { background: #fff; border: 2px dashed #9C27B0; color: #9C27B0; box-shadow: none; }
+
+    .plus-sign { color: var(--txt3); font-size: 1rem; font-weight: 700; }
+
+    .prize-row {
+      font-size: 0.78rem;
+      color: var(--txt2);
+    }
+
+    .prize-amount {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--red);
+    }
+
+    /* 당첨금 표 */
+    .prize-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .prize-table th {
+      font-size: 0.72rem;
+      color: var(--txt3);
+      font-weight: 600;
+      padding: 6px 4px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .prize-table td {
+      font-size: 0.8rem;
+      color: var(--txt);
+      padding: 7px 4px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .prize-table td:first-child { font-weight: 700; }
+    .prize-table .red { color: var(--red); font-weight: 700; }
+
+    /* 예측 제출 박스 */
+    .predict-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .predict-info {
+      font-size: 0.78rem;
+      color: var(--txt3);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    .predict-info strong { color: var(--blue); }
+
+    .countdown-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--bg);
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      margin-bottom: 14px;
+    }
+
+    .countdown-icon { color: var(--red); font-size: 1rem; }
+
+    .countdown-label { font-size: 0.75rem; color: var(--txt2); }
+
+    .countdown-timer {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--red);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-predict {
+      width: 100%;
+      padding: 11px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 800;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(40,81,163,0.3);
+    }
+
+    .btn-predict:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(40,81,163,0.4); }
+
+    /* =============================================
+       메인 콘텐츠 (랭킹 + 번호 선택)
+    ============================================= */
+    .main-content {
+      padding: 24px 0;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* 랭킹 패널 */
+    .ranking-panel {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: var(--blue);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .panel-title-icon {
+      font-size: 1rem;
+    }
+
+    .panel-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .ptab {
+      padding: 5px 14px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.75);
+      transition: all 0.2s;
+    }
+
+    .ptab.active {
+      background: #fff;
+      color: var(--blue);
+      border-color: #fff;
+    }
+
+    .ptab:hover:not(.active) {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    /* 랭킹 테이블 영역 - 2분할 */
+    .ranking-tables {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .rank-table-wrap {
+      border-right: 1px solid var(--line);
+    }
+
+    .rank-table-wrap:last-child { border-right: none; }
+
+    .rank-table-label {
+      padding: 10px 14px 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--blue);
+      border-bottom: 1px solid var(--line);
+      background: #F7F9FD;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .rank-table-label span { color: var(--txt3); font-weight: 400; }
+
+    .rank-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .rank-table th {
+      background: #FAFBFD;
+      font-size: 0.72rem;
+      color: var(--txt3);
+      font-weight: 600;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .rank-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.82rem;
+      color: var(--txt);
+      text-align: center;
+    }
+
+    .rank-table tr:last-child td { border-bottom: none; }
+
+    .rank-table tr:hover td { background: #F7F9FD; }
+
+    .rank-num {
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .rank-1 .rank-num { color: var(--gold); }
+    .rank-2 .rank-num { color: var(--txt3); }
+    .rank-3 .rank-num { color: #A0714F; }
+
+    .change-up   { color: var(--red); font-size: 0.72rem; font-weight: 700; }
+    .change-down { color: var(--blue); font-size: 0.72rem; font-weight: 700; }
+    .change-same { color: var(--txt3); font-size: 0.72rem; }
+
+    .nick-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: flex-start;
+    }
+
+    .nick-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .av-g1 { background: linear-gradient(135deg,#F9A825,#F57F17); }
+    .av-g2 { background: linear-gradient(135deg,#BDBDBD,#757575); }
+    .av-g3 { background: linear-gradient(135deg,#A0714F,#6D4C41); }
+    .av-g4 { background: linear-gradient(135deg,#42A5F5,#1565C0); }
+    .av-g5 { background: linear-gradient(135deg,#AB47BC,#7B1FA2); }
+    .av-g6 { background: linear-gradient(135deg,#66BB6A,#2E7D32); }
+
+    .nick-name { font-size: 0.82rem; font-weight: 600; text-align: left; }
+
+    .accuracy-tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: rgba(22,163,74,0.10);
+      border: 1px solid rgba(22,163,74,0.2);
+      color: #16A34A;
+      font-size: 0.7rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* 랭킹 더보기 */
+    .ranking-footer {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: #FAFBFD;
+    }
+
+    .btn-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 20px;
+      border-radius: 5px;
+      background: transparent;
+      border: 1.5px solid var(--blue);
+      color: var(--blue);
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-more:hover { background: var(--blue); color: #fff; }
+
+    /* TOP 3 상세 카드 */
+    .top3-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .top3-card {
+      padding: 16px 14px;
+      border-right: 1px solid var(--line);
+      text-align: center;
+      position: relative;
+    }
+
+    .top3-card:last-child { border-right: none; }
+
+    .top3-card.rank1 { background: linear-gradient(to bottom, #FFFBF0, #FFFFFF); }
+
+    .top3-rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .rb-gold   { background: linear-gradient(135deg,#F9A825,#F57F17); color: #fff; }
+    .rb-silver { background: linear-gradient(135deg,#BDBDBD,#757575); color: #fff; }
+    .rb-bronze { background: linear-gradient(135deg,#A0714F,#6D4C41); color: #fff; }
+
+    .top3-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin: 0 auto 8px;
+    }
+
+    .top3-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--txt);
+    }
+
+    .top3-meta {
+      font-size: 0.72rem;
+      color: var(--txt3);
+      margin-bottom: 8px;
+    }
+
+    .top3-acc {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: rgba(22,163,74,0.10);
+      border: 1px solid rgba(22,163,74,0.2);
+      color: #16A34A;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .top3-lock {
+      padding: 8px 10px;
+      background: var(--bg);
+      border-radius: 5px;
+      border: 1px solid var(--line);
+      font-size: 0.72rem;
+      color: var(--txt3);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .top3-lock:hover {
+      background: #EEF2FF;
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .btn-unlock-sm {
+      width: 100%;
+      padding: 7px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #7C3AED, #5B21B6);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-unlock-sm:hover { opacity: 0.9; }
+
+    /* =============================================
+       우측: 번호 예측 카드
+    ============================================= */
+    .predict-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .predict-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .pc-header {
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pc-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pc-round {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.85);
+    }
+
+    .pc-body { padding: 18px; }
+
+    .num-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 90px;
+      background: #F7F9FD;
+      border: 2px dashed #C5D0E8;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      transition: all 0.2s;
+    }
+
+    .num-display:hover {
+      border-color: var(--blue-mid);
+      background: #EEF4FF;
+    }
+
+    .num-ball-lg {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #C5D0E8, #A0B0C8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--txt3);
+    }
+
+    .num-grid-label {
+      font-size: 0.75rem;
+      color: var(--txt3);
+      margin-bottom: 10px;
+    }
+
+    .num-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 5px;
+      margin-bottom: 14px;
+    }
+
+    .num-btn {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      font-size: 0.68rem;
+      font-weight: 700;
+      transition: all 0.15s;
+      border: 1.5px solid transparent;
+    }
+
+    .num-btn.range-1 { background: rgba(255,193,7,0.14); color: #C68000; }
+    .num-btn.range-2 { background: rgba(33,150,243,0.13); color: #1565C0; }
+    .num-btn.range-3 { background: rgba(244,67,54,0.12); color: #C62828; }
+    .num-btn.range-4 { background: rgba(158,158,158,0.14); color: #5A5A5A; }
+    .num-btn.range-5 { background: rgba(76,175,80,0.12); color: #2E7D32; }
+
+    .num-btn:hover {
+      transform: scale(1.15);
+      border-color: currentColor;
+    }
+
+    .num-btn.selected {
+      background: linear-gradient(135deg, var(--blue), var(--navy)) !important;
+      color: #fff !important;
+      border-color: var(--blue-mid) !important;
+      box-shadow: 0 0 10px rgba(40,81,163,0.4);
+    }
+
+    .submit-info-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 12px;
+      background: #FFF8E1;
+      border-radius: 5px;
+      border: 1px solid #FFE082;
+      font-size: 0.75rem;
+      color: #795548;
+      margin-bottom: 12px;
+    }
+
+    .submit-info-row svg { flex-shrink: 0; color: var(--gold); }
+
+    .submit-full {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(40,81,163,0.3);
+      transition: all 0.2s;
+    }
+
+    .submit-full:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(40,81,163,0.4); }
+    .submit-full:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    /* 골드 멤버십 카드 */
+    .gold-card {
+      background: linear-gradient(135deg, #1B2E5A, #2C1F4A);
+      border-radius: 6px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gold-card::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(232,160,0,0.10);
+    }
+
+    .gold-card-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .gc-badge {
+      padding: 3px 10px;
+      border-radius: 3px;
+      background: linear-gradient(135deg, var(--gold), #F57F17);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+
+    .gc-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--gold-lt);
+    }
+
+    .gc-desc {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .gc-stats {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .gc-stat {
+      flex: 1;
+      padding: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 5px;
+      border: 1px solid rgba(232,160,0,0.15);
+      text-align: center;
+    }
+
+    .gc-stat-num {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--gold-lt);
+    }
+
+    .gc-stat-label {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.45);
+      margin-top: 2px;
+    }
+
+    .btn-gc {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, var(--gold), #F57F17);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 800;
+      transition: all 0.2s;
+    }
+
+    .btn-gc:hover { opacity: 0.9; }
+
+    /* 이용방법 카드 */
+    .howto-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .howto-card .panel-header { background: #3A5068; }
+
+    .howto-steps {
+      padding: 0;
+    }
+
+    .howto-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .howto-step:last-child { border-bottom: none; }
+
+    .howto-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: #fff;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .howto-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    .howto-text {}
+    .howto-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 3px; }
+    .howto-desc { font-size: 0.75rem; color: var(--txt2); line-height: 1.5; }
+
+    /* =============================================
+       이용방법 & CTA (풀 섹션)
+    ============================================= */
+    .cta-section {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
+      padding: 48px 0;
+      margin-top: 8px;
+    }
+
+    .cta-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .cta-left {}
+
+    .cta-pre {
+      font-size: 0.78rem;
+      color: var(--gold-lt);
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .cta-title {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .cta-desc {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.7;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .btn-cta-gold {
+      padding: 14px 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--gold), #F57F17);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 800;
+      box-shadow: 0 4px 16px rgba(232,160,0,0.4);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-cta-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(232,160,0,0.5); }
+
+    .btn-cta-outline {
+      padding: 14px 28px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-cta-outline:hover { background: rgba(255,255,255,0.22); }
+
+    .cta-note {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 12px;
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    .footer {
+      background: #111827;
+      padding: 32px 0 20px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 28px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .footer-logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .footer-logo-text {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .footer-desc {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+
+    .footer-socials { display: flex; gap: 8px; }
+
+    .fsoc {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.09);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .fsoc:hover { background: rgba(40,81,163,0.4); border-color: rgba(40,81,163,0.5); }
+
+    .footer-col-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-links { display: flex; flex-direction: column; gap: 9px; }
+
+    .footer-links a {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.75); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.25);
+    }
+
+    .footer-disclaimer {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.22);
+      max-width: 480px;
+      text-align: right;
+    }
+
+    /* =============================================
+       반응형
+    ============================================= */
+    @media (max-width: 1100px) {
+      .hero-grid { grid-template-columns: 1fr 280px; }
+      .content-grid { grid-template-columns: 1fr 300px; }
+    }
+
+    @media (max-width: 900px) {
+      .util-bar { display: none; }
+      .main-nav { display: none; }
+      .header-actions { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-sidebar { display: none; }
+      .hero-lotto-bg {
+        width: 48%;
+        right: 14px;
+        opacity: 0.3;
+      }
+
+      .results-grid { grid-template-columns: 1fr; }
+      .result-block { border-right: none; border-bottom: 1px solid var(--line); }
+      .result-block:last-child { border-bottom: none; }
+
+      .content-grid { grid-template-columns: 1fr; }
+      .predict-panel { order: -1; }
+
+      .ranking-tables { grid-template-columns: 1fr; }
+      .rank-table-wrap { border-right: none; border-bottom: 1px solid var(--line); }
+
+      .top3-cards { grid-template-columns: 1fr; }
+      .top3-card { border-right: none; border-bottom: 1px solid var(--line); }
+
+      .footer-grid { grid-template-columns: 1fr; }
+      .cta-inner { flex-direction: column; gap: 20px; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-banner { padding: 28px 20px; }
+      .hero-lotto-bg { display: none; }
+      .hero-title { font-size: 1.5rem; }
+      .hero-stats { gap: 16px; }
+      .num-grid { grid-template-columns: repeat(8, 1fr); }
+      .footer-disclaimer { text-align: left; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 400px) {
+      .num-grid { grid-template-columns: repeat(7, 1fr); }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>${message}</h1>
-        <div>
-            <span class="badge">Spring 5 MVC</span>
-            <span class="badge">MyBatis</span>
-            <span class="badge">JSP</span>
-            <span class="badge">Tomcat 9</span>
+
+  <!-- ===========================
+       상단 유틸리티 바
+  =========================== -->
+  <div class="util-bar">
+    <div class="wrap wrap-util-inner">
+      <div class="util-inner">
+        <div class="util-notice">
+          <div class="util-notice-icon">📢</div>
+          <span>[1162회 신규 TOP 랭커 등장!] 황금사자님 36주 연속 참여 달성 · 72.4% 적중률 1위!</span>
         </div>
-        <div class="info">
-            <p><strong>Framework:</strong> Spring MVC 5.3</p>
-            <p><strong>ORM:</strong> MyBatis 3.5 + Spring 연동</p>
-            <p><strong>Database:</strong> H2 (내장 개발용)</p>
-            <p><strong>View:</strong> JSP + JSTL</p>
-            <p><strong>Build:</strong> Maven</p>
-            <p><strong>IDE:</strong> Eclipse (Maven Import)</p>
+        <div class="util-links">
+          <a href="#">로그인</a>
+          <a href="#">회원가입</a>
+          <a href="#">마이페이지</a>
+          <a href="#" class="util-gold">🏆 골드회원 간편결제</a>
+          <a href="#" style="margin-left:8px;">≡ 전체메뉴</a>
         </div>
-        <p class="time">서버 시간 (MyBatis 조회): ${serverTime}</p>
+      </div>
     </div>
+  </div>
+
+  <!-- ===========================
+       메인 헤더
+  =========================== -->
+  <header class="main-header">
+    <div class="wrap">
+      <div class="header-inner">
+        <a href="/" class="logo">
+          <div class="logo-img">🎰</div>
+          <div class="logo-text-wrap">
+            <div class="logo-sub">LOTTO RANK</div>
+            <div class="logo-main">로또랭크</div>
+          </div>
+        </a>
+
+        <nav class="main-nav">
+          <div class="nav-item active">
+            <a href="#">로또 실제 당첨</a>
+          </div>
+          <div class="nav-item">
+            <a href="#ranking">예측 분석실</a>
+          </div>
+          <div class="nav-item">
+            <a href="#ranking">랭킹 커뮤니티</a>
+          </div>
+          <div class="nav-item">
+            <a href="#how">고객센터</a>
+          </div>
+          <div class="nav-item nav-gold">
+            <a href="#">🏆 골드 멤버십</a>
+          </div>
+        </nav>
+
+        <div class="header-actions">
+          <button class="btn-login">로그인</button>
+          <button class="btn-join">무료 회원가입</button>
+        </div>
+
+        <button class="hamburger" id="menuBtn">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 모바일 메뉴 -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-panel">
+      <div class="mobile-close">
+        <div class="logo-main" style="color:#fff;">로또랭크</div>
+        <button class="close-btn" id="menuClose">✕</button>
+      </div>
+      <nav class="mobile-nav-links">
+        <a href="#">로또 실제 당첨</a>
+        <a href="#ranking">예측 분석실</a>
+        <a href="#ranking">랭킹 커뮤니티</a>
+        <a href="#how">고객센터</a>
+        <a href="#" style="color: #FFD54F;">🏆 골드 멤버십</a>
+      </nav>
+      <div class="mobile-actions">
+        <button class="btn-login" style="background:rgba(255,255,255,0.1);color:#fff;border-radius:6px;">로그인</button>
+        <button class="btn-join" style="border-radius:6px;">무료 회원가입</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================
+       히어로 영역
+  =========================== -->
+  <div class="hero-area">
+    <div class="wrap">
+      <div class="hero-grid">
+
+        <!-- 좌: 메인 배너 -->
+        <div class="hero-banner">
+          <div class="hero-deco"></div>
+          <div class="hero-deco2"></div>
+          <div class="hero-lotto-bg" aria-hidden="true"></div>
+
+          <div class="hero-round-badge">
+            <div class="live-dot"></div>
+            LIVE · 제 1162회 예측 진행 중 · 마감까지 <strong id="countdown" style="margin-left:4px;">3일 14:22:05</strong>
+          </div>
+
+          <h1 class="hero-title">
+            매주 1번의 예측으로<br>
+            <span class="em">적중률 랭킹</span>을 쌓으세요
+          </h1>
+
+          <p class="hero-desc">
+            1~45 중 번호 1개를 예측하고 실제 당첨번호와 비교합니다.<br>
+            누적 적중률 TOP 예측자의 번호를 참고해 당첨 확률을 높여보세요.
+          </p>
+
+          <div class="hero-btns">
+            <button class="hero-btn-main">🎰 지금 번호 예측하기</button>
+            <a href="#ranking" class="hero-btn-sub">📊 랭킹 보기</a>
+          </div>
+
+          <div class="hero-stats">
+            <div>
+              <div class="hstat-num">1,162</div>
+              <div class="hstat-label">진행 회차</div>
+            </div>
+            <div>
+              <div class="hstat-num">23,847</div>
+              <div class="hstat-label">누적 예측자</div>
+            </div>
+            <div>
+              <div class="hstat-num">72.4%</div>
+              <div class="hstat-label">TOP1 적중률</div>
+            </div>
+            <div>
+              <div class="hstat-num">3,120</div>
+              <div class="hstat-label">이번 주 예측</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우: 사이드바 -->
+        <div class="hero-sidebar">
+
+          <!-- 로그인 폼 -->
+          <div class="login-panel">
+            <div class="login-panel-title">회원 로그인</div>
+            <div class="login-form">
+              <input class="login-input" type="text" placeholder="아이디">
+              <input class="login-input" type="password" placeholder="비밀번호">
+            </div>
+            <button class="login-submit">로그인</button>
+            <div class="login-links" style="margin-top:8px;">
+              <a href="#">회원가입</a>
+              <a href="#">아이디 찾기</a>
+              <a href="#">비밀번호 찾기</a>
+            </div>
+            <div class="social-login" style="margin-top:8px;">
+              <button class="social-btn btn-naver">N 네이버</button>
+              <button class="social-btn btn-kakao">💬 카카오</button>
+            </div>
+          </div>
+
+          <!-- 골드 회원 -->
+          <div class="gold-panel">
+            <div class="gold-panel-inner">
+              <div class="gold-badge">
+                <div class="gold-icon">🏆</div>
+                <div class="gold-text-wrap">
+                  <div class="gold-title">골드 멤버십</div>
+                  <div class="gold-sub">TOP 번호 무제한 열람</div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div class="gold-count">135<span>명</span></div>
+                <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);">실제 1등 배출</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;">
+              <button class="btn-gold-join" style="width:100%;padding:8px;">🏆 골드회원 가입하기</button>
+            </div>
+          </div>
+
+          <!-- 빠른 통계 -->
+          <div class="quick-stats">
+            <div class="qstat">
+              <div class="qstat-num">490회</div>
+              <div class="qstat-label">1등 조합 배출</div>
+            </div>
+            <div class="qstat">
+              <div class="qstat-num">135회</div>
+              <div class="qstat-label">실제 1등 배출</div>
+            </div>
+            <div class="qstat">
+              <div class="qstat-num">1위</div>
+              <div class="qstat-label">적중률 배출</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================
+       당첨번호 & 성적 & 예측
+  =========================== -->
+  <div class="results-section">
+    <div class="wrap">
+      <div class="results-grid">
+
+        <!-- 당첨번호 -->
+        <div class="result-block">
+          <div class="rb-label">
+            <div>
+              <div class="rb-title">최근 당첨번호</div>
+              <div class="rb-round">제 1161회</div>
+            </div>
+            <a href="#" class="rb-more">더보기 ›</a>
+          </div>
+          <div class="winning-balls">
+            <div class="ball y">3</div>
+            <div class="ball b">16</div>
+            <div class="ball r">22</div>
+            <div class="ball r">28</div>
+            <div class="ball g">35</div>
+            <div class="ball gr">42</div>
+            <span class="plus-sign">+</span>
+            <div class="ball bonus">7</div>
+          </div>
+          <div class="prize-row">
+            1등 당첨금 · <span class="prize-amount">24억 3,720만원</span>
+          </div>
+        </div>
+
+        <!-- 성적표 -->
+        <div class="result-block">
+          <div class="rb-label">
+            <div>
+              <div class="rb-title">제 1161회 성적</div>
+              <div class="rb-round" style="font-size:0.85rem; color:var(--txt2);">2026.02.14 추첨</div>
+            </div>
+          </div>
+          <table class="prize-table">
+            <thead>
+              <tr>
+                <th>등위</th>
+                <th>당첨자수</th>
+                <th>1인 당첨금</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="red">1등</td>
+                <td>14명</td>
+                <td class="red">2,370,956,036원</td>
+              </tr>
+              <tr>
+                <td>2등</td>
+                <td>2명</td>
+                <td>64,328,265원</td>
+              </tr>
+              <tr>
+                <td>3등</td>
+                <td>105명</td>
+                <td>1,660,334원</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 빠른 예측 -->
+        <div class="result-block predict-block">
+          <div class="predict-info">
+            <strong>제 1162회 예측 마감</strong>까지 시간이 남아있습니다.<br>
+            지금 번호를 예측하고 랭킹에 참여해 보세요.
+          </div>
+          <div class="countdown-box">
+            <div class="countdown-icon">⏱</div>
+            <div>
+              <div class="countdown-label">마감까지</div>
+              <div class="countdown-timer" id="countdown2">3일 14:22:05</div>
+            </div>
+          </div>
+          <button class="btn-predict" onclick="document.querySelector('.predict-card').scrollIntoView({behavior:'smooth'})">
+            🎰 지금 번호 예측하기
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================
+       메인 콘텐츠
+  =========================== -->
+  <main class="main-content">
+    <div class="wrap">
+      <div class="content-grid">
+
+        <!-- 랭킹 패널 -->
+        <div>
+          <div class="ranking-panel" id="ranking">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span class="panel-title-icon">🏆</span>
+                이번 주 TOP 랭커
+              </div>
+              <div class="panel-tabs">
+                <button class="ptab active">이번 주</button>
+                <button class="ptab">누적 전체</button>
+                <button class="ptab">이달의 랭킹</button>
+              </div>
+            </div>
+
+            <!-- 테이블 2분할 -->
+            <div class="ranking-tables">
+              <!-- 전체 랭킹 -->
+              <div class="rank-table-wrap">
+                <div class="rank-table-label">
+                  전체랭킹 <span>누적 적중률 기준</span>
+                </div>
+                <table class="rank-table">
+                  <thead>
+                    <tr>
+                      <th>순위</th>
+                      <th>변동</th>
+                      <th>닉네임</th>
+                      <th>적중률</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="rank-1">
+                      <td><span class="rank-num">1</span></td>
+                      <td><span class="change-same">-</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g1">🦁</div>
+                          <span class="nick-name">황금사자님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">72.4%</span></td>
+                    </tr>
+                    <tr class="rank-2">
+                      <td><span class="rank-num" style="color:var(--txt3);">2</span></td>
+                      <td><span class="change-down">▼1</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g2">🎯</div>
+                          <span class="nick-name">로또신화님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">68.9%</span></td>
+                    </tr>
+                    <tr class="rank-3">
+                      <td><span class="rank-num" style="color:#A0714F;">3</span></td>
+                      <td><span class="change-same">-</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g3">🔮</div>
+                          <span class="nick-name">번호마스터님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">65.2%</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-num" style="color:var(--txt3);font-size:0.82rem;">4</span></td>
+                      <td><span class="change-same">-</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g4">🌊</div>
+                          <span class="nick-name">파란물결님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">62.8%</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-num" style="color:var(--txt3);font-size:0.82rem;">5</span></td>
+                      <td><span class="change-down">▼1</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g5">🌙</div>
+                          <span class="nick-name">달빛예측자님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">61.5%</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-num" style="color:var(--txt3);font-size:0.82rem;">6</span></td>
+                      <td><span class="change-up">▲2</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g6">🍀</div>
+                          <span class="nick-name">행운클로버님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">59.7%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- 최근 5주 랭킹 -->
+              <div class="rank-table-wrap">
+                <div class="rank-table-label">
+                  최근5주랭킹 <span>5주 적중률 기준</span>
+                </div>
+                <table class="rank-table">
+                  <thead>
+                    <tr>
+                      <th>순위</th>
+                      <th>변동</th>
+                      <th>닉네임</th>
+                      <th>적중률</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="rank-1">
+                      <td><span class="rank-num">1</span></td>
+                      <td><span class="change-same">-</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g1">🦁</div>
+                          <span class="nick-name">황금사자님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">80.0%</span></td>
+                    </tr>
+                    <tr class="rank-2">
+                      <td><span class="rank-num" style="color:var(--txt3);">2</span></td>
+                      <td><span class="change-down">▼1</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g2">🎯</div>
+                          <span class="nick-name">로또신화님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">60.0%</span></td>
+                    </tr>
+                    <tr class="rank-3">
+                      <td><span class="rank-num" style="color:#A0714F;">3</span></td>
+                      <td><span class="change-up">▲1</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g5">🌙</div>
+                          <span class="nick-name">달빛예측자님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">60.0%</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-num" style="color:var(--txt3);font-size:0.82rem;">4</span></td>
+                      <td><span class="change-same">-</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g4">🌊</div>
+                          <span class="nick-name">파란물결님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">40.0%</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-num" style="color:var(--txt3);font-size:0.82rem;">5</span></td>
+                      <td><span class="change-down">▼1</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g3">🔮</div>
+                          <span class="nick-name">번호마스터님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">40.0%</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-num" style="color:var(--txt3);font-size:0.82rem;">6</span></td>
+                      <td><span class="change-up">▲3</span></td>
+                      <td>
+                        <div class="nick-wrap">
+                          <div class="nick-avatar av-g6">🍀</div>
+                          <span class="nick-name">행운클로버님</span>
+                        </div>
+                      </td>
+                      <td><span class="accuracy-tag">20.0%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TOP 3 상세 -->
+            <div class="top3-cards">
+              <div class="top3-card rank1">
+                <div class="top3-rank-badge rb-gold">1위</div>
+                <div class="top3-avatar av-g1">🦁</div>
+                <div class="top3-name">황금사자님</div>
+                <div class="top3-meta">36주 연속 · 812회 참여</div>
+                <div class="top3-acc">★ 72.4%</div>
+                <div class="top3-lock">🔒 이번 주 예측번호 잠김</div>
+                <button class="btn-unlock-sm">🔓 열람 (500P)</button>
+              </div>
+              <div class="top3-card">
+                <div class="top3-rank-badge rb-silver">2위</div>
+                <div class="top3-avatar av-g2">🎯</div>
+                <div class="top3-name">로또신화님</div>
+                <div class="top3-meta">22주 연속 · 654회 참여</div>
+                <div class="top3-acc">★ 68.9%</div>
+                <div class="top3-lock">🔒 이번 주 예측번호 잠김</div>
+                <button class="btn-unlock-sm">🔓 열람 (500P)</button>
+              </div>
+              <div class="top3-card">
+                <div class="top3-rank-badge rb-bronze">3위</div>
+                <div class="top3-avatar av-g3">🔮</div>
+                <div class="top3-name">번호마스터님</div>
+                <div class="top3-meta">18주 연속 · 503회 참여</div>
+                <div class="top3-acc">★ 65.2%</div>
+                <div class="top3-lock">🔒 이번 주 예측번호 잠김</div>
+                <button class="btn-unlock-sm">🔓 열람 (500P)</button>
+              </div>
+            </div>
+
+            <div class="ranking-footer">
+              <button class="btn-more">전체 랭킹 보기 →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우: 예측 + 골드 + 이용방법 -->
+        <div class="predict-panel">
+
+          <!-- 번호 예측 카드 -->
+          <div class="predict-card">
+            <div class="pc-header">
+              <div class="pc-title">🎰 이번 주 번호 예측</div>
+              <span class="pc-round">제 1162회</span>
+            </div>
+            <div class="pc-body">
+              <div class="num-display" id="numDisplay">
+                <div class="num-ball-lg" id="selectedBall">?</div>
+              </div>
+              <div class="num-grid-label">1개 번호를 선택하세요</div>
+              <div class="num-grid" id="numGrid">
+                <!-- JS로 생성 -->
+              </div>
+              <div class="submit-info-row">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                매주 1개 · 토요일 오전 8시 마감
+              </div>
+              <button class="submit-full" id="submitBtn" disabled>예측 번호 제출하기</button>
+            </div>
+          </div>
+
+          <!-- 골드 멤버십 카드 -->
+          <div class="gold-card">
+            <div class="gold-card-top">
+              <span class="gc-badge">GOLD</span>
+              <span class="gc-title">골드 멤버십</span>
+            </div>
+            <div class="gc-desc">
+              TOP 랭커의 이번 주 예측 번호를 무제한으로 확인하고<br>
+              실제 1등 당첨 배출 실적을 참고하세요.
+            </div>
+            <div class="gc-stats">
+              <div class="gc-stat">
+                <div class="gc-stat-num">135</div>
+                <div class="gc-stat-label">실제 1등 배출</div>
+              </div>
+              <div class="gc-stat">
+                <div class="gc-stat-num">490</div>
+                <div class="gc-stat-label">1등 조합 배출</div>
+              </div>
+            </div>
+            <button class="btn-gc">🏆 골드 멤버십 가입하기</button>
+          </div>
+
+          <!-- 이용방법 카드 -->
+          <div class="howto-card" id="how">
+            <div class="panel-header" style="background:#3A5068;">
+              <div class="panel-title">
+                <span>📖</span> 이용방법
+              </div>
+            </div>
+            <div class="howto-steps">
+              <div class="howto-step">
+                <div class="howto-num">1</div>
+                <div class="howto-icon">🎰</div>
+                <div class="howto-text">
+                  <div class="howto-title">매주 번호 예측</div>
+                  <div class="howto-desc">토요일 오전 8시 전까지 1~45 중 1개를 선택해 제출하세요.</div>
+                </div>
+              </div>
+              <div class="howto-step">
+                <div class="howto-num">2</div>
+                <div class="howto-icon">📊</div>
+                <div class="howto-text">
+                  <div class="howto-title">적중률 & 랭킹 집계</div>
+                  <div class="howto-desc">실제 당첨번호와 비교해 자동으로 적중률을 산출합니다.</div>
+                </div>
+              </div>
+              <div class="howto-step">
+                <div class="howto-num">3</div>
+                <div class="howto-icon">🔓</div>
+                <div class="howto-text">
+                  <div class="howto-title">TOP 번호 유료 열람</div>
+                  <div class="howto-desc">포인트로 랭킹 상위 예측자의 번호를 확인할 수 있습니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===========================
+       CTA 섹션
+  =========================== -->
+  <section class="cta-section">
+    <div class="wrap">
+      <div class="cta-inner">
+        <div class="cta-left">
+          <div class="cta-pre">✦ 지금 바로 시작하세요</div>
+          <h2 class="cta-title">
+            매주 단 한 번의 예측으로<br>랭킹 상위에 도전하세요
+          </h2>
+          <p class="cta-desc">
+            무료로 가입하고 번호를 예측하세요. 상위 예측자의 번호는<br>
+            포인트로 열람 가능합니다.
+          </p>
+          <p class="cta-note">✅ 무료 회원가입 · 기본 기능 무료 · 열람 시에만 포인트 사용</p>
+        </div>
+        <div class="cta-actions">
+          <button class="btn-cta-gold">🎰 무료로 시작하기</button>
+          <button class="btn-cta-outline">📊 랭킹 둘러보기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       FOOTER
+  =========================== -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">
+            <div class="footer-logo-icon">🎰</div>
+            <span class="footer-logo-text">로또랭크</span>
+          </div>
+          <p class="footer-desc">
+            로또 번호 예측 랭킹 플랫폼 로또랭크.<br>
+            매주 적중률 기반으로 신뢰할 수 있는 예측자를 발견하세요.
+          </p>
+          <div class="footer-socials">
+            <div class="fsoc" title="카카오톡">💬</div>
+            <div class="fsoc" title="인스타그램">📸</div>
+            <div class="fsoc" title="유튜브">▶️</div>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">서비스</div>
+          <ul class="footer-links">
+            <li><a href="#">이번 주 랭킹</a></li>
+            <li><a href="#">번호 예측하기</a></li>
+            <li><a href="#">포인트 충전</a></li>
+            <li><a href="#">당첨번호 조회</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">고객지원</div>
+          <ul class="footer-links">
+            <li><a href="#">이용약관</a></li>
+            <li><a href="#">개인정보처리방침</a></li>
+            <li><a href="#">공지사항</a></li>
+            <li><a href="#">고객센터</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 로또랭크. All rights reserved.</div>
+        <div class="footer-disclaimer">
+          본 서비스는 로또 당첨을 보장하지 않으며, 오락 및 통계 분석 목적으로만 이용하시기 바랍니다.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // =============================================
+    // 번호 그리드 생성
+    // =============================================
+    const numGrid = document.getElementById('numGrid');
+    const numDisplay = document.getElementById('numDisplay');
+    const selectedBall = document.getElementById('selectedBall');
+    const submitBtn = document.getElementById('submitBtn');
+    let selectedNum = null;
+
+    const getBallClass = (n) => {
+      if (n <= 10) return 'range-1';
+      if (n <= 20) return 'range-2';
+      if (n <= 30) return 'range-3';
+      if (n <= 40) return 'range-4';
+      return 'range-5';
+    };
+
+    const getBallColorInline = (n) => {
+      if (n <= 10) return 'background:linear-gradient(135deg,#FFC107,#FF9800);color:#000';
+      if (n <= 20) return 'background:linear-gradient(135deg,#2196F3,#1565C0);color:#fff';
+      if (n <= 30) return 'background:linear-gradient(135deg,#F44336,#B71C1C);color:#fff';
+      if (n <= 40) return 'background:linear-gradient(135deg,#9E9E9E,#616161);color:#fff';
+      return 'background:linear-gradient(135deg,#4CAF50,#1B5E20);color:#fff';
+    };
+
+    for (let i = 1; i <= 45; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'num-btn ' + getBallClass(i);
+      btn.textContent = i;
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.num-btn.selected').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedNum = i;
+
+        numDisplay.classList.remove('empty');
+        selectedBall.textContent = i;
+        selectedBall.style.cssText = getBallColorInline(i) + ';width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;box-shadow:0 4px 16px rgba(0,0,0,0.2)';
+        submitBtn.disabled = false;
+      });
+      numGrid.appendChild(btn);
+    }
+
+    submitBtn.addEventListener('click', () => {
+      if (!selectedNum) return;
+      alert('제 1162회 예측 번호 [' + selectedNum + ']이 제출되었습니다!\n당첨 결과는 토요일 오후에 확인하세요.');
+    });
+
+    // =============================================
+    // 모바일 메뉴
+    // =============================================
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuClose = document.getElementById('menuClose');
+
+    menuBtn.addEventListener('click', () => mobileMenu.classList.add('open'));
+    menuClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    mobileMenu.addEventListener('click', (e) => {
+      if (e.target === mobileMenu) mobileMenu.classList.remove('open');
+    });
+
+    // =============================================
+    // 카운트다운 타이머 (두 곳에 동시 표시)
+    // =============================================
+    function getNextSaturday8am() {
+      const now = new Date();
+      const day = now.getDay();
+      const daysUntilSat = (6 - day + 7) % 7 || 7;
+      const sat = new Date(now);
+      sat.setDate(now.getDate() + daysUntilSat);
+      sat.setHours(8, 0, 0, 0);
+      return sat;
+    }
+
+    function updateCountdown() {
+      const target = getNextSaturday8am();
+      const now = new Date();
+      const diff = target - now;
+
+      let text;
+      if (diff <= 0) {
+        text = '마감';
+      } else {
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        text = d + '일 ' + String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+      }
+
+      const cd1 = document.getElementById('countdown');
+      const cd2 = document.getElementById('countdown2');
+      if (cd1) cd1.textContent = text;
+      if (cd2) cd2.textContent = text;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // =============================================
+    // 랭킹 탭
+    // =============================================
+    document.querySelectorAll('.ptab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
 </body>
 </html>
