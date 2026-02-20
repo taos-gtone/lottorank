@@ -1,0 +1,35 @@
+﻿    /* =============================================
+       리셋 & 기본
+    ============================================= */
+    :root {
+      --navy:      #1B3175;
+      --blue:      #2851A3;
+      --blue-mid:  #3A6BC9;
+      --hero-from: #3655B8;
+      --hero-to:   #6A45C2;
+      --gold:      #E8A000;
+      --gold-lt:   #FFD54F;
+      --red:       #E53935;
+      --white:     #FFFFFF;
+      --bg:        #F2F4F8;
+      --line:      #DDE3EE;
+      --txt:       #1A1A2E;
+      --txt2:      #4A5068;
+      --txt3:      #8891AA;
+      --ball-y:    linear-gradient(135deg,#FFC107,#FF9800);
+      --ball-b:    linear-gradient(135deg,#2196F3,#1565C0);
+      --ball-r:    linear-gradient(135deg,#F44336,#B71C1C);
+      --ball-g:    linear-gradient(135deg,#9E9E9E,#616161);
+      --ball-gr:   linear-gradient(135deg,#4CAF50,#1B5E20);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 14px; }
+    body { font-family: 'Apple SD Gothic Neo','Noto Sans KR',sans-serif; background: var(--bg); color: var(--txt); line-height: 1.5; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+    ul { list-style: none; }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+    .wrap-wide { max-width: 1440px; margin: 0 auto; padding: 0 16px; }
+

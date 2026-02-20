@@ -1,0 +1,207 @@
+﻿    /* =============================================
+       메인 헤더
+    ============================================= */
+    .main-header {
+      background: var(--blue);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      height: 58px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-right: 32px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .logo-img {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .logo-text-wrap {}
+
+    .logo-sub { font-size: 0.65rem; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
+    .logo-main { font-size: 1.25rem; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      height: 100%;
+    }
+
+    .nav-item {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-item > a {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 100%;
+      padding: 0 18px;
+      color: rgba(255,255,255,0.88);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-item > a:hover,
+    .nav-item.active > a {
+      color: #fff;
+      background: rgba(255,255,255,0.10);
+    }
+
+    .nav-gold > a {
+      color: var(--gold-lt) !important;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .btn-login {
+      padding: 7px 16px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-login:hover { background: rgba(255,255,255,0.22); }
+
+    .btn-join {
+      padding: 7px 16px;
+      border-radius: 4px;
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-join:hover { background: #D49200; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+      background: transparent;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    /* =============================================
+       모바일 메뉴
+    ============================================= */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-panel {
+      width: 280px;
+      background: var(--navy);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .mobile-close {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .mobile-close .logo-main { font-size: 1.1rem; }
+
+    .close-btn {
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .mobile-nav-links {
+      padding: 8px 0;
+    }
+
+    .mobile-nav-links a {
+      display: block;
+      padding: 12px 20px;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.2s;
+    }
+
+    .mobile-nav-links a:hover {
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+    }
+
+    .mobile-actions {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobile-actions button {
+      width: 100%;
+      padding: 11px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+

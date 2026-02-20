@@ -1,0 +1,169 @@
+﻿    /* =============================================
+       당첨번호 & 성적표 섹션
+    ============================================= */
+    .results-section {
+      background: var(--white);
+      border-bottom: 2px solid var(--line);
+      padding: 0;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-top: 2px solid var(--blue);
+    }
+
+    .result-block {
+      padding: 20px 24px;
+      border-right: 1px solid var(--line);
+    }
+
+    .result-block:last-child { border-right: none; }
+
+    .rb-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .rb-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--txt2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .rb-round {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--red);
+    }
+
+    .rb-more {
+      font-size: 0.75rem;
+      color: var(--blue);
+    }
+
+    .rb-more:hover { text-decoration: underline; }
+
+    .winning-balls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .ball {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    .ball.y  { background: var(--ball-y); color: #000; }
+    .ball.b  { background: var(--ball-b); color: #fff; }
+    .ball.r  { background: var(--ball-r); color: #fff; }
+    .ball.g  { background: var(--ball-g); color: #fff; }
+    .ball.gr { background: var(--ball-gr); color: #fff; }
+    .ball.bonus { background: #fff; border: 2px dashed #9C27B0; color: #9C27B0; box-shadow: none; }
+
+    .plus-sign { color: var(--txt3); font-size: 1rem; font-weight: 700; }
+
+    .prize-row {
+      font-size: 0.78rem;
+      color: var(--txt2);
+    }
+
+    .prize-amount {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--red);
+    }
+
+    /* 당첨금 표 */
+    .prize-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .prize-table th {
+      font-size: 0.72rem;
+      color: var(--txt3);
+      font-weight: 600;
+      padding: 6px 4px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .prize-table td {
+      font-size: 0.8rem;
+      color: var(--txt);
+      padding: 7px 4px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .prize-table td:first-child { font-weight: 700; }
+    .prize-table .red { color: var(--red); font-weight: 700; }
+
+    /* 예측 제출 박스 */
+    .predict-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .predict-info {
+      font-size: 0.78rem;
+      color: var(--txt3);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    .predict-info strong { color: var(--blue); }
+
+    .countdown-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--bg);
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      margin-bottom: 14px;
+    }
+
+    .countdown-icon { color: var(--red); font-size: 1rem; }
+
+    .countdown-label { font-size: 0.75rem; color: var(--txt2); }
+
+    .countdown-timer {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--red);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-predict {
+      width: 100%;
+      padding: 11px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 800;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(40,81,163,0.3);
+    }
+
+    .btn-predict:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(40,81,163,0.4); }
+

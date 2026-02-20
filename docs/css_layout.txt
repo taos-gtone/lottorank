@@ -1,0 +1,13 @@
+css/
+├── base.css               (35줄 - CSS 변수, 리셋, .wrap)
+├── responsive.css         (52줄 - 모든 @media 쿼리)
+├── layout/
+│   ├── util-bar.css       (65줄 - 상단 유틸 바)
+│   ├── header.css         (207줄 - 헤더 + 모바일 메뉴)
+│   └── footer.css         (105줄 - 푸터)
+└── home/
+    ├── hero.css           (403줄 - 히어로 배너 + 로그인 사이드바)
+    ├── results.css        (169줄 - 당첨번호 + 성적표)
+    ├── ranking.css        (305줄 - 랭킹 패널 + TOP3 카드)
+    ├── predict.css        (278줄 - 번호예측 + 골드카드 + 이용방법)
+    └── cta.css            (82줄 - CTA 섹션)

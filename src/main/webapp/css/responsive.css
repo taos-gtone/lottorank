@@ -1,0 +1,52 @@
+﻿    /* =============================================
+       반응형
+    ============================================= */
+    @media (max-width: 1100px) {
+      .hero-grid { grid-template-columns: 1fr 280px; }
+      .content-grid { grid-template-columns: 1fr 300px; }
+    }
+
+    @media (max-width: 900px) {
+      .util-bar { display: none; }
+      .main-nav { display: none; }
+      .header-actions { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-sidebar { display: none; }
+      .hero-lotto-bg {
+        width: 48%;
+        right: 14px;
+        opacity: 0.3;
+      }
+
+      .results-grid { grid-template-columns: 1fr; }
+      .result-block { border-right: none; border-bottom: 1px solid var(--line); }
+      .result-block:last-child { border-bottom: none; }
+
+      .content-grid { grid-template-columns: 1fr; }
+      .predict-panel { order: -1; }
+
+      .ranking-tables { grid-template-columns: 1fr; }
+      .rank-table-wrap { border-right: none; border-bottom: 1px solid var(--line); }
+
+      .top3-cards { grid-template-columns: 1fr; }
+      .top3-card { border-right: none; border-bottom: 1px solid var(--line); }
+
+      .footer-grid { grid-template-columns: 1fr; }
+      .cta-inner { flex-direction: column; gap: 20px; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-banner { padding: 28px 20px; }
+      .hero-lotto-bg { display: none; }
+      .hero-title { font-size: 1.5rem; }
+      .hero-stats { gap: 16px; }
+      .num-grid { grid-template-columns: repeat(8, 1fr); }
+      .footer-disclaimer { text-align: left; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 400px) {
+      .num-grid { grid-template-columns: repeat(7, 1fr); }
+    }

@@ -1,0 +1,305 @@
+﻿    /* =============================================
+       메인 콘텐츠 (랭킹 + 번호 선택)
+    ============================================= */
+    .main-content {
+      padding: 24px 0;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* 랭킹 패널 */
+    .ranking-panel {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: var(--blue);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .panel-title-icon {
+      font-size: 1rem;
+    }
+
+    .panel-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .ptab {
+      padding: 5px 14px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.75);
+      transition: all 0.2s;
+    }
+
+    .ptab.active {
+      background: #fff;
+      color: var(--blue);
+      border-color: #fff;
+    }
+
+    .ptab:hover:not(.active) {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    /* 랭킹 테이블 영역 - 2분할 */
+    .ranking-tables {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .rank-table-wrap {
+      border-right: 1px solid var(--line);
+    }
+
+    .rank-table-wrap:last-child { border-right: none; }
+
+    .rank-table-label {
+      padding: 10px 14px 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--blue);
+      border-bottom: 1px solid var(--line);
+      background: #F7F9FD;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .rank-table-label span { color: var(--txt3); font-weight: 400; }
+
+    .rank-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .rank-table th {
+      background: #FAFBFD;
+      font-size: 0.72rem;
+      color: var(--txt3);
+      font-weight: 600;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .rank-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.82rem;
+      color: var(--txt);
+      text-align: center;
+    }
+
+    .rank-table tr:last-child td { border-bottom: none; }
+
+    .rank-table tr:hover td { background: #F7F9FD; }
+
+    .rank-num {
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .rank-1 .rank-num { color: var(--gold); }
+    .rank-2 .rank-num { color: var(--txt3); }
+    .rank-3 .rank-num { color: #A0714F; }
+
+    .change-up   { color: var(--red); font-size: 0.72rem; font-weight: 700; }
+    .change-down { color: var(--blue); font-size: 0.72rem; font-weight: 700; }
+    .change-same { color: var(--txt3); font-size: 0.72rem; }
+
+    .nick-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: flex-start;
+    }
+
+    .nick-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .av-g1 { background: linear-gradient(135deg,#F9A825,#F57F17); }
+    .av-g2 { background: linear-gradient(135deg,#BDBDBD,#757575); }
+    .av-g3 { background: linear-gradient(135deg,#A0714F,#6D4C41); }
+    .av-g4 { background: linear-gradient(135deg,#42A5F5,#1565C0); }
+    .av-g5 { background: linear-gradient(135deg,#AB47BC,#7B1FA2); }
+    .av-g6 { background: linear-gradient(135deg,#66BB6A,#2E7D32); }
+
+    .nick-name { font-size: 0.82rem; font-weight: 600; text-align: left; }
+
+    .accuracy-tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: rgba(22,163,74,0.10);
+      border: 1px solid rgba(22,163,74,0.2);
+      color: #16A34A;
+      font-size: 0.7rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* 랭킹 더보기 */
+    .ranking-footer {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: #FAFBFD;
+    }
+
+    .btn-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 20px;
+      border-radius: 5px;
+      background: transparent;
+      border: 1.5px solid var(--blue);
+      color: var(--blue);
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-more:hover { background: var(--blue); color: #fff; }
+
+    /* TOP 3 상세 카드 */
+    .top3-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .top3-card {
+      padding: 16px 14px;
+      border-right: 1px solid var(--line);
+      text-align: center;
+      position: relative;
+    }
+
+    .top3-card:last-child { border-right: none; }
+
+    .top3-card.rank1 { background: linear-gradient(to bottom, #FFFBF0, #FFFFFF); }
+
+    .top3-rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .rb-gold   { background: linear-gradient(135deg,#F9A825,#F57F17); color: #fff; }
+    .rb-silver { background: linear-gradient(135deg,#BDBDBD,#757575); color: #fff; }
+    .rb-bronze { background: linear-gradient(135deg,#A0714F,#6D4C41); color: #fff; }
+
+    .top3-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin: 0 auto 8px;
+    }
+
+    .top3-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--txt);
+    }
+
+    .top3-meta {
+      font-size: 0.72rem;
+      color: var(--txt3);
+      margin-bottom: 8px;
+    }
+
+    .top3-acc {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: rgba(22,163,74,0.10);
+      border: 1px solid rgba(22,163,74,0.2);
+      color: #16A34A;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .top3-lock {
+      padding: 8px 10px;
+      background: var(--bg);
+      border-radius: 5px;
+      border: 1px solid var(--line);
+      font-size: 0.72rem;
+      color: var(--txt3);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .top3-lock:hover {
+      background: #EEF2FF;
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .btn-unlock-sm {
+      width: 100%;
+      padding: 7px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #7C3AED, #5B21B6);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-unlock-sm:hover { opacity: 0.9; }
+
