@@ -12,7 +12,7 @@
               <div class="rb-title">최근 당첨번호</div>
               <div class="rb-round">제 1161회</div>
             </div>
-            <a href="#" class="rb-more">더보기 ›</a>
+            <a href="${pageContext.request.contextPath}/lotto/results" class="rb-more">더보기 ›</a>
           </div>
           <div class="winning-balls">
             <div class="ball y">3</div>

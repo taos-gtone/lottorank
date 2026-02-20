@@ -1,0 +1,488 @@
+/* =============================================
+   역대 당첨번호 페이지
+============================================= */
+
+/* 페이지 배너 */
+.page-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
+  padding: 32px 0;
+}
+
+.page-breadcrumb {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.page-breadcrumb a {
+  color: rgba(255,255,255,0.5);
+  transition: color 0.2s;
+}
+
+.page-breadcrumb a:hover { color: rgba(255,255,255,0.85); }
+
+.breadcrumb-sep { margin: 0 5px; }
+
+.page-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.page-round-info {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 400;
+}
+
+.page-desc {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+}
+
+/* =============================================
+   필터 바
+============================================= */
+.filter-bar {
+  background: #fff;
+  border-bottom: 2px solid var(--line);
+  padding: 14px 0;
+  position: sticky;
+  top: 58px;
+  z-index: 90;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.filter-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--txt2);
+  white-space: nowrap;
+}
+
+.filter-select {
+  padding: 7px 30px 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 0.82rem;
+  color: var(--txt);
+  background: var(--bg);
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238891AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.2s;
+}
+
+.filter-select:focus { border-color: var(--blue-mid); }
+
+.filter-input {
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 0.82rem;
+  color: var(--txt);
+  background: var(--bg);
+  width: 110px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.filter-input:focus { border-color: var(--blue-mid); background: #fff; }
+.filter-input::placeholder { color: var(--txt3); }
+
+.btn-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 16px;
+  border-radius: 5px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.btn-search:hover { background: var(--navy); }
+
+.filter-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--line);
+  flex-shrink: 0;
+}
+
+.filter-total {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--txt3);
+  white-space: nowrap;
+}
+
+.filter-total strong { color: var(--blue); font-weight: 700; }
+
+/* =============================================
+   메인 콘텐츠
+============================================= */
+.lotto-content { padding: 24px 0 48px; }
+
+.rounds-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.rounds-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--blue);
+}
+
+.rounds-card-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rounds-count-badge {
+  padding: 3px 10px;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.9);
+}
+
+/* =============================================
+   당첨번호 테이블
+============================================= */
+.rounds-table-wrap { overflow-x: auto; }
+
+.rounds-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+.rounds-table th {
+  background: #F7F9FD;
+  font-size: 0.72rem;
+  color: var(--txt3);
+  font-weight: 700;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.rounds-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.rounds-table tr:last-child td { border-bottom: none; }
+.rounds-table tr:hover td { background: #F7F9FD; }
+
+.round-num {
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: var(--blue);
+  line-height: 1.2;
+}
+
+.round-num-label {
+  font-size: 0.65rem;
+  color: var(--txt3);
+  font-weight: 400;
+}
+
+.round-date {
+  font-size: 0.8rem;
+  color: var(--txt2);
+  white-space: nowrap;
+}
+
+/* 볼 행 */
+.ball-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+/* 테이블 전용 볼 크기 (메인보다 약간 작게) */
+.rounds-table .ball {
+  width: 32px;
+  height: 32px;
+  font-size: 0.73rem;
+}
+
+.ball-row .plus-sign {
+  color: var(--txt3);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0 1px;
+}
+
+.prize-1st {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--red);
+  white-space: nowrap;
+}
+
+.winner-count {
+  font-size: 0.82rem;
+  color: var(--txt2);
+}
+
+/* =============================================
+   페이지네이션
+============================================= */
+.pagination-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  gap: 4px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+  background: #FAFBFD;
+}
+
+.pg-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 5px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  color: var(--txt2);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pg-btn:hover:not(.active):not([disabled]) {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.pg-btn.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+  font-weight: 800;
+}
+
+.pg-btn[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pg-ellipsis {
+  padding: 0 4px;
+  color: var(--txt3);
+  font-size: 0.82rem;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* =============================================
+   반응형
+============================================= */
+@media (max-width: 900px) {
+  .filter-bar { top: 0; }
+  .page-banner { padding: 22px 0; }
+  .page-title { font-size: 1.3rem; }
+  .page-title-wrap { gap: 8px; }
+
+  .filter-inner {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .filter-label,
+  .filter-divider { display: none; }
+
+  .filter-select,
+  .filter-input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filter-input { grid-column: 2 / 3; }
+
+  .btn-search {
+    grid-column: 1 / -1;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 16px;
+  }
+
+  .filter-total {
+    grid-column: 1 / -1;
+    margin-left: 0;
+    font-size: 0.76rem;
+  }
+
+  .rounds-card-header { padding: 12px 14px; }
+  .rounds-card-title { flex-wrap: wrap; row-gap: 6px; }
+}
+
+@media (max-width: 768px) {
+  .rounds-table {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .rounds-table thead { display: none; }
+
+  .rounds-table,
+  .rounds-table tbody,
+  .rounds-table tr,
+  .rounds-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .rounds-table tr {
+    padding: 14px 14px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .rounds-table tr:last-child { border-bottom: none; }
+
+  .rounds-table td {
+    border: none;
+    padding: 6px 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: right;
+  }
+
+  .rounds-table tr:hover td { background: transparent; }
+
+  .rounds-table td::before {
+    content: "";
+    font-size: 0.72rem;
+    color: var(--txt3);
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: left;
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+
+  .rounds-table td:nth-child(1)::before { content: "회차"; }
+  .rounds-table td:nth-child(2)::before { content: "추첨일"; }
+  .rounds-table td:nth-child(3)::before { content: "당첨번호"; }
+  .rounds-table td:nth-child(4)::before { content: "1등 당첨금"; }
+  .rounds-table td:nth-child(5)::before { content: "1등 당첨자"; }
+
+  .ball-row {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    max-width: 180px;
+  }
+
+  .rounds-table .ball {
+    width: 27px;
+    height: 27px;
+    font-size: 0.66rem;
+  }
+
+  .round-date,
+  .prize-1st,
+  .winner-count { font-size: 0.8rem; }
+
+  .round-num { font-size: 0.88rem; }
+}
+
+@media (max-width: 600px) {
+  .page-banner { padding: 18px 0; }
+  .page-breadcrumb { font-size: 0.7rem; }
+  .page-title-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .page-title { font-size: 1.15rem; }
+  .page-desc { font-size: 0.78rem; }
+
+  .lotto-content { padding: 12px 0 28px; }
+  .rounds-card { border-radius: 6px; }
+  .rounds-card-title {
+    font-size: 0.86rem;
+    gap: 6px;
+  }
+  .rounds-count-badge {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+  }
+
+  .ball-row { max-width: 150px; }
+  .rounds-table .ball {
+    width: 24px;
+    height: 24px;
+    font-size: 0.62rem;
+  }
+
+  .pagination-wrap {
+    padding: 14px 10px;
+    gap: 3px;
+  }
+  .pg-btn {
+    min-width: 32px;
+    height: 32px;
+    font-size: 0.78rem;
+    padding: 0 8px;
+  }
+  .pg-ellipsis { height: 32px; }
+}
