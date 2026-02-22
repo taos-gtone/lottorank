@@ -1,6 +1,11 @@
-﻿  <!-- ===========================
+<%@ page pageEncoding="UTF-8" %>
+  <!-- ===========================
        당첨번호 & 성적 & 예측
   =========================== -->
+  <%
+    com.lottorank.vo.LottoRoundResult latestResult =
+        (com.lottorank.vo.LottoRoundResult) request.getAttribute("latestResult");
+  %>
   <div class="results-section">
     <div class="wrap">
       <div class="results-grid">
@@ -10,22 +15,35 @@
           <div class="rb-label">
             <div>
               <div class="rb-title">최근 당첨번호</div>
-              <div class="rb-round">제 1161회</div>
+              <div class="rb-round">
+                <% if (latestResult != null) { %>
+                  제 <%= latestResult.getRoundNo() %>회
+                <% } else { %>
+                  최신 회차 없음
+                <% } %>
+              </div>
             </div>
             <a href="${pageContext.request.contextPath}/lotto/results" class="rb-more">더보기 ›</a>
           </div>
           <div class="winning-balls">
-            <div class="ball y">3</div>
-            <div class="ball b">16</div>
-            <div class="ball r">22</div>
-            <div class="ball r">28</div>
-            <div class="ball g">35</div>
-            <div class="ball gr">42</div>
-            <span class="plus-sign">+</span>
-            <div class="ball bonus">7</div>
+            <% if (latestResult != null) { %>
+              <div class="ball <%= latestResult.getBallColor1() %>"><%= latestResult.getNum1() %></div>
+              <div class="ball <%= latestResult.getBallColor2() %>"><%= latestResult.getNum2() %></div>
+              <div class="ball <%= latestResult.getBallColor3() %>"><%= latestResult.getNum3() %></div>
+              <div class="ball <%= latestResult.getBallColor4() %>"><%= latestResult.getNum4() %></div>
+              <div class="ball <%= latestResult.getBallColor5() %>"><%= latestResult.getNum5() %></div>
+              <div class="ball <%= latestResult.getBallColor6() %>"><%= latestResult.getNum6() %></div>
+              <span class="plus-sign">+</span>
+              <div class="ball bonus"><%= latestResult.getBonusNum() %></div>
+            <% } else { %>
+              <span style="color:#7f8fa6; font-size:0.85rem;">조회된 회차 데이터가 없습니다.</span>
+            <% } %>
           </div>
           <div class="prize-row">
-            1등 당첨금 · <span class="prize-amount">24억 3,720만원</span>
+            1등 당첨금 ·
+            <span class="prize-amount">
+              <%= (latestResult != null) ? latestResult.getFormattedPrize() : "-" %>
+            </span>
           </div>
         </div>
 
@@ -68,7 +86,7 @@
         <!-- 빠른 예측 -->
         <div class="result-block predict-block">
           <div class="predict-info">
-            <strong>제 1162회 예측 마감</strong>까지 시간이 남아있습니다.<br>
+            <strong>제 <%= (latestResult != null) ? latestResult.getRoundNo() + 1 : 1 %>회 예측 마감</strong>까지 시간이 남아있습니다.<br>
             지금 번호를 예측하고 랭킹에 참여해 보세요.
           </div>
           <div class="countdown-box">

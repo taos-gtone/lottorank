@@ -14,12 +14,15 @@
             expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-    <!-- DataSource (H2 내장 DB) -->
-    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-        <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="jdbcUrl" value="jdbc:h2:mem:lottorank;DB_CLOSE_DELAY=-1"/>
-        <property name="username" value="sa"/>
-        <property name="password" value=""/>
+    <!--
+      Tomcat JNDI DataSource 사용.
+      기본 JNDI 이름: jdbc/LottoRankDB (resourceRef=true 이므로 java:comp/env/jdbc/LottoRankDB로 조회)
+      필요 시 JVM 옵션으로 변경 가능: -Dlottorank.datasource.jndi-name=jdbc/원하는이름
+    -->
+    <context:property-placeholder ignore-unresolvable="true"/>
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="${lottorank.datasource.jndi-name:jdbc/LottoRankDB}"/>
+        <property name="resourceRef" value="true"/>
     </bean>
 
     <!-- MyBatis SqlSessionFactory -->

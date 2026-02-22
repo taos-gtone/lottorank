@@ -91,9 +91,12 @@
     .hero-banner::before,
     .hero-banner::after,
     .hero-deco,
-    .hero-deco2,
-    .hero-lotto-bg {
+    .hero-deco2 {
       z-index: 1;
+    }
+
+    .hero-lotto-bg {
+      z-index: 3;
     }
 
     .hero-round-badge,

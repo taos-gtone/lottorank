@@ -1,4 +1,5 @@
-﻿        <!-- 랭킹 패널 -->
+<%@ page pageEncoding="UTF-8" %>
+        <!-- 랭킹 패널 -->
         <div>
           <div class="ranking-panel" id="ranking">
             <div class="panel-header">

@@ -1,0 +1,377 @@
+/* =============================================
+   로그인 페이지
+============================================= */
+
+/* ── 페이지 배너 ── */
+.page-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
+  padding: 32px 0;
+}
+
+.page-breadcrumb {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.page-breadcrumb a { color: rgba(255,255,255,0.75); transition: color 0.2s; }
+.page-breadcrumb a:hover { color: #fff; }
+.breadcrumb-sep { margin: 0 5px; }
+
+.page-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.page-desc {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.88);
+  font-weight: 500;
+}
+
+/* ── 페이지 래퍼 ── */
+.login-wrap {
+  min-height: calc(100vh - 200px);
+  padding: 32px 16px 72px;
+  background: var(--bg);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 480px;
+}
+
+/* ── 카드 ── */
+.login-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.login-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--blue);
+}
+
+.login-card-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.login-card-badge {
+  padding: 3px 10px;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.92);
+  font-weight: 600;
+}
+
+.login-card-body {
+  padding: 36px 40px;
+}
+
+/* ── SNS 간편 로그인 ── */
+.sns-section { margin-bottom: 24px; }
+
+.sns-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--txt2);
+  text-align: center;
+  letter-spacing: 0.8px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.sns-btns { display: flex; gap: 10px; }
+
+.sns-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.sns-naver { background: #03C75A; color: #fff; }
+.sns-naver:hover { background: #02b34e; }
+.sns-kakao { background: #FEE500; color: #191919; }
+.sns-kakao:hover { background: #f0d800; }
+
+.sns-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  background: rgba(0,0,0,0.13);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+.sns-kakao .sns-icon { background: transparent; font-size: 1.1rem; }
+
+/* ── OR 구분선 ── */
+.divider-or {
+  position: relative;
+  text-align: center;
+  margin: 26px 0;
+}
+
+.divider-or::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: var(--line);
+}
+
+.divider-or span {
+  position: relative;
+  background: #fff;
+  padding: 0 16px;
+  font-size: 0.8rem;
+  color: var(--txt2);
+  font-weight: 700;
+}
+
+/* ── 폼 ── */
+.form-group { margin-bottom: 18px; }
+
+.form-label {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--txt);
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: var(--txt);
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(40,81,163,0.10);
+}
+
+.form-input::placeholder { color: var(--txt3); }
+
+/* 비밀번호 입력 + 눈 버튼 */
+.pw-input-wrap {
+  position: relative;
+}
+
+.pw-input-wrap .form-input {
+  padding-right: 44px;
+}
+
+.btn-pw-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--txt3);
+  font-size: 1rem;
+  padding: 4px;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.btn-pw-toggle:hover { color: var(--blue); }
+
+/* ── 로그인 옵션 행 (자동로그인 + 비밀번호 찾기) ── */
+.login-option-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  margin-bottom: 24px;
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--txt2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember-label input[type=checkbox] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--blue);
+  cursor: pointer;
+}
+
+.login-util-links {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.login-util-links a {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--txt2);
+  transition: color 0.2s;
+  padding: 0 8px;
+  border-right: 1px solid var(--line);
+}
+
+.login-util-links a:last-child { border-right: none; padding-right: 0; }
+.login-util-links a:first-child { padding-left: 0; }
+.login-util-links a:hover { color: var(--blue); }
+
+/* ── 로그인 버튼 ── */
+.btn-login-submit {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  border-radius: 10px;
+  letter-spacing: 0.4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-login-submit:hover {
+  background: var(--navy);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(27,49,117,0.22);
+}
+
+/* ── 회원가입 유도 ── */
+.login-join-row {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--txt2);
+  font-weight: 500;
+}
+
+.login-join-row a {
+  color: var(--blue);
+  font-weight: 800;
+  margin-left: 6px;
+  transition: color 0.2s;
+}
+
+.login-join-row a:hover { color: var(--navy); }
+
+/* ── 혜택 배너 (카드 하단) ── */
+.login-benefit {
+  margin-top: 14px;
+  background: linear-gradient(135deg, rgba(40,81,163,0.06) 0%, rgba(106,69,194,0.06) 100%);
+  border: 1px solid rgba(40,81,163,0.14);
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login-benefit-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.login-benefit-text {
+  font-size: 0.82rem;
+  color: var(--txt2);
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.login-benefit-text strong {
+  display: block;
+  color: var(--navy);
+  font-weight: 800;
+  font-size: 0.88rem;
+  margin-bottom: 2px;
+}
+
+/* ══════════════════════════════════════════
+   반응형
+══════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .login-wrap { padding: 24px 12px 60px; }
+  .page-banner { padding: 22px 0; }
+  .page-title  { font-size: 1.3rem; }
+}
+
+@media (max-width: 480px) {
+  .login-wrap { padding: 16px 10px 52px; align-items: flex-start; }
+  .page-banner { padding: 18px 0; }
+  .page-title  { font-size: 1.15rem; }
+  .page-desc   { font-size: 0.78rem; }
+
+  .login-card-body { padding: 24px 20px; }
+
+  .sns-btns { flex-direction: column; }
+  .sns-btn  { font-size: 0.88rem; padding: 12px; }
+
+  .btn-login-submit { padding: 14px; font-size: 0.95rem; }
+
+  .login-option-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+  .login-benefit { flex-direction: column; text-align: center; gap: 8px; }
+}

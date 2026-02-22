@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>LOTTO RANK 로고 미리보기</title>
+<style>
+  body { background:#1a1a2e; font-family:Arial,sans-serif; padding:40px 20px; }
+  h1 { color:#FFD54F; text-align:center; font-size:13px; letter-spacing:3px; margin-bottom:30px; }
+  h2 { color:#f5a800; text-align:center; margin:28px 0 10px; font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+  .logo-wrap { display:flex; flex-direction:column; align-items:center; gap:36px; }
+  .logo-item { text-align:center; }
+  .label { color:#555; font-size:10px; margin-top:8px; letter-spacing:1px; }
+  /* ── 헤더 시뮬레이션 ── */
+  .header-sim {
+    background:#2851A3; border-radius:8px; padding:0 20px;
+    display:flex; align-items:center; height:58px;
+    max-width:720px; margin:0 auto 20px;
+  }
+  .h-logo { display:flex; align-items:center; padding-right:24px; border-right:1px solid rgba(255,255,255,0.15); margin-right:8px; }
+  .h-logo img { height:40px; width:auto; }
+  .h-nav { display:flex; }
+  .h-nav span { color:rgba(255,255,255,.85); font-size:12px; font-weight:600; padding:0 12px; white-space:nowrap; }
+  .h-gold { color:#FFD54F !important; }
+  .h-btns { margin-left:auto; display:flex; gap:6px; }
+  .h-btns button { padding:5px 11px; border-radius:4px; font-size:11px; font-weight:700; border:none; cursor:pointer; }
+  .h-login { background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.25)!important; }
+  .h-join  { background:#E8A000; color:#fff; }
+  hr { border:none; border-top:1px solid #2a2a4a; margin:20px 0; }
+</style>
+</head>
+<body>
+
+<!-- ══ 헤더 적용 시뮬레이션 ══ -->
+<h1>★ LOTTO RANK LOGO PREVIEW ★</h1>
+<h2>헤더 적용 모습 (실제 사이즈)</h2>
+<div class="header-sim">
+  <div class="h-logo">
+    <img src="src/main/webapp/images/logo/logo-header.svg" alt="LOTTO RANK">
+  </div>
+  <div class="h-nav">
+    <span>회차별 당첨번호</span>
+    <span>예측 분석실</span>
+    <span>랭킹 커뮤니티</span>
+    <span>고객센터</span>
+    <span class="h-gold">🏆 골드 멤버십</span>
+  </div>
+  <div class="h-btns">
+    <button class="h-login">로그인</button>
+    <button class="h-join">무료 회원가입</button>
+  </div>
+</div>
+
+<h2>로고 단독 (다양한 크기)</h2>
+<div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:20px;">
+  <div><img src="src/main/webapp/images/logo/logo-header.svg" height="60"><div class="label">60px — 대형</div></div>
+  <div><img src="src/main/webapp/images/logo/logo-header.svg" height="40"><div class="label">40px — 헤더 기본</div></div>
+  <div><img src="src/main/webapp/images/logo/logo-header.svg" height="26"><div class="label">26px — 소형 (푸터 등)</div></div>
+</div>
+<hr>
+
+<h2>이전 5종 로고 비교</h2>
+<div class="logo-wrap">
+
+<!-- ══════════════════════════════════════════
+     로고 1 — 골드 엠블럼 (번개 + 별)
+══════════════════════════════════════════ -->
+<div class="logo-item">
+<h2>LOGO 01 — 골드 엠블럼</h2>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 170" width="480" height="170">
+  <defs>
+    <linearGradient id="g1bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#071428"/>
+      <stop offset="100%" stop-color="#0e2557"/>
+    </linearGradient>
+    <linearGradient id="g1gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff0a0"/>
+      <stop offset="45%" stop-color="#f5a800"/>
+      <stop offset="100%" stop-color="#9a6200"/>
+    </linearGradient>
+    <linearGradient id="g1white" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#b8d4f8"/>
+    </linearGradient>
+    <filter id="f1glow">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="f1shadow">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+  <!-- 배경 -->
+  <rect width="480" height="170" rx="12" fill="url(#g1bg)"/>
+  <rect width="480" height="170" rx="12" fill="none" stroke="url(#g1gold)" stroke-width="2"/>
+  <!-- 상단 골드 장식선 -->
+  <line x1="20" y1="20" x2="460" y2="20" stroke="url(#g1gold)" stroke-width="0.8" opacity="0.4"/>
+  <line x1="20" y1="150" x2="460" y2="150" stroke="url(#g1gold)" stroke-width="0.8" opacity="0.4"/>
+  <!-- 좌 별 -->
+  <g filter="url(#f1glow)" opacity="0.9">
+    <polygon points="38,28 41,19 44,28 53,28 46,34 49,43 41,38 33,43 36,34 29,28" fill="url(#g1gold)"/>
+  </g>
+  <!-- 우 별 -->
+  <g filter="url(#f1glow)" opacity="0.9">
+    <polygon points="442,28 445,19 448,28 457,28 450,34 453,43 445,38 437,43 440,34 433,28" fill="url(#g1gold)"/>
+  </g>
+  <!-- 번개 아이콘 (중앙) -->
+  <g filter="url(#f1glow)" transform="translate(218,10)">
+    <polygon points="22,0 6,52 20,52 8,100 46,36 30,36 46,0" fill="url(#g1gold)"/>
+  </g>
+  <!-- LOTTO -->
+  <text x="75" y="108"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="62" font-weight="900" letter-spacing="3"
+    fill="url(#g1gold)" filter="url(#f1shadow)">LOTTO</text>
+  <!-- RANK -->
+  <text x="286" y="108"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="62" font-weight="900" letter-spacing="3"
+    fill="url(#g1white)" filter="url(#f1shadow)">RANK</text>
+  <!-- 구분선 -->
+  <rect x="30" y="120" width="420" height="2" rx="1" fill="url(#g1gold)" opacity="0.35"/>
+  <!-- 서브텍스트 -->
+  <text x="240" y="144"
+    font-family="Arial,sans-serif" font-size="11" letter-spacing="5"
+    text-anchor="middle" fill="#8ab0e0" opacity="0.85">WINNING NUMBER ANALYSIS</text>
+</svg>
+<div class="label">logo-1-emblem.svg</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     로고 2 — 다이아몬드 배지 (육각형 + 사이드 텍스트)
+══════════════════════════════════════════ -->
+<div class="logo-item">
+<h2>LOGO 02 — 다이아몬드 배지</h2>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 180" width="480" height="180">
+  <defs>
+    <linearGradient id="g2bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1c3d"/>
+      <stop offset="100%" stop-color="#0d2760"/>
+    </linearGradient>
+    <linearGradient id="g2gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffe680"/>
+      <stop offset="50%" stop-color="#f5a800"/>
+      <stop offset="100%" stop-color="#8c5e00"/>
+    </linearGradient>
+    <linearGradient id="g2blue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5ab4ff"/>
+      <stop offset="100%" stop-color="#1355c4"/>
+    </linearGradient>
+    <linearGradient id="g2wh" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#c0d8ff"/>
+    </linearGradient>
+    <filter id="f2glow">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="480" height="180" rx="0" fill="url(#g2bg)"/>
+  <!-- 상·하단 골드 바 -->
+  <rect x="0" y="0" width="480" height="7" fill="url(#g2gold)"/>
+  <rect x="0" y="173" width="480" height="7" fill="url(#g2gold)"/>
+  <!-- 육각형 배지 -->
+  <g transform="translate(72,90)" filter="url(#f2glow)">
+    <polygon points="0,-52 45,-26 45,26 0,52 -45,26 -45,-26" fill="url(#g2gold)"/>
+    <polygon points="0,-42 36,-21 36,21 0,42 -36,21 -36,-21" fill="url(#g2bg)"/>
+    <text x="0" y="6" text-anchor="middle"
+      font-family="Arial Black,sans-serif" font-size="11" fill="url(#g2gold)" letter-spacing="1">LOTTO</text>
+    <text x="0" y="22" text-anchor="middle"
+      font-family="Arial Black,sans-serif" font-size="18" fill="url(#g2gold)" font-weight="900">★</text>
+    <text x="0" y="-8" text-anchor="middle"
+      font-family="Arial Black,sans-serif" font-size="11" fill="url(#g2gold)" letter-spacing="1">RANK</text>
+  </g>
+  <!-- 세로 구분선 -->
+  <line x1="130" y1="28" x2="130" y2="152" stroke="url(#g2gold)" stroke-width="1.5" opacity="0.55"/>
+  <!-- LOTTO 텍스트 -->
+  <text x="155" y="96"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="60" font-weight="900" letter-spacing="4"
+    fill="url(#g2blue)" >LOTTO</text>
+  <!-- RANK 텍스트 -->
+  <text x="155" y="148"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="50" font-weight="900" letter-spacing="14"
+    fill="url(#g2wh)">RANK</text>
+  <!-- 우측 화살표 장식 -->
+  <text x="458" y="80" text-anchor="middle"
+    font-size="18" fill="url(#g2gold)" opacity="0.7">›</text>
+  <text x="458" y="100" text-anchor="middle"
+    font-size="18" fill="url(#g2gold)" opacity="0.5">›</text>
+  <text x="458" y="120" text-anchor="middle"
+    font-size="18" fill="url(#g2gold)" opacity="0.3">›</text>
+</svg>
+<div class="label">logo-2-badge.svg</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     로고 3 — 크라운 파워 (왕관 + 글로우)
+══════════════════════════════════════════ -->
+<div class="logo-item">
+<h2>LOGO 03 — 크라운 파워</h2>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 190" width="460" height="190">
+  <defs>
+    <linearGradient id="g3bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050e22"/>
+      <stop offset="100%" stop-color="#0c1f4a"/>
+    </linearGradient>
+    <linearGradient id="g3gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff5b0"/>
+      <stop offset="40%" stop-color="#ffc200"/>
+      <stop offset="100%" stop-color="#8a5500"/>
+    </linearGradient>
+    <linearGradient id="g3lotto" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff9500"/>
+      <stop offset="100%" stop-color="#ffdc00"/>
+    </linearGradient>
+    <linearGradient id="g3rank" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4facff"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+    <filter id="f3glow">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="f3shadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#f5a800" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <rect width="460" height="190" rx="16" fill="url(#g3bg)"/>
+  <!-- 빛나는 원형 후광 -->
+  <circle cx="230" cy="95" r="80" fill="none" stroke="#f5a800" stroke-width="0.5" opacity="0.15"/>
+  <circle cx="230" cy="95" r="100" fill="none" stroke="#f5a800" stroke-width="0.5" opacity="0.1"/>
+  <!-- 왕관 -->
+  <g filter="url(#f3glow)">
+    <polygon points="230,18 195,50 175,30 185,65 275,65 285,30 265,50"
+      fill="url(#g3gold)"/>
+    <!-- 왕관 보석 -->
+    <circle cx="230" cy="26" r="6" fill="#fff" opacity="0.9"/>
+    <circle cx="175" cy="31" r="4" fill="#fff" opacity="0.8"/>
+    <circle cx="285" cy="31" r="4" fill="#fff" opacity="0.8"/>
+  </g>
+  <!-- LOTTO -->
+  <text x="230" y="128"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="64" font-weight="900" letter-spacing="5"
+    text-anchor="middle"
+    fill="url(#g3lotto)" filter="url(#f3shadow)">LOTTO</text>
+  <!-- RANK -->
+  <text x="230" y="172"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="38" font-weight="900" letter-spacing="22"
+    text-anchor="middle"
+    fill="url(#g3rank)">RANK</text>
+  <!-- 하단 꾸밈선 -->
+  <line x1="60" y1="180" x2="170" y2="180" stroke="url(#g3gold)" stroke-width="1" opacity="0.4"/>
+  <line x1="290" y1="180" x2="400" y2="180" stroke="url(#g3gold)" stroke-width="1" opacity="0.4"/>
+  <circle cx="230" cy="180" r="3" fill="url(#g3gold)" opacity="0.7"/>
+</svg>
+<div class="label">logo-3-crown.svg</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     로고 4 — 다이나믹 슬래시 (Level Up 스타일)
+══════════════════════════════════════════ -->
+<div class="logo-item">
+<h2>LOGO 04 — 다이나믹 슬래시</h2>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 170" width="500" height="170">
+  <defs>
+    <linearGradient id="g4bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#051035"/>
+      <stop offset="50%" stop-color="#0d2260"/>
+      <stop offset="100%" stop-color="#051035"/>
+    </linearGradient>
+    <linearGradient id="g4yellow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffe84d"/>
+      <stop offset="100%" stop-color="#e08000"/>
+    </linearGradient>
+    <linearGradient id="g4lotto" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#c8deff"/>
+    </linearGradient>
+    <linearGradient id="g4rank" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffe84d"/>
+      <stop offset="100%" stop-color="#ff8c00"/>
+    </linearGradient>
+    <filter id="f4glow">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="500" height="170" rx="8" fill="url(#g4bg)"/>
+  <!-- 슬래시 배경 사각형 (기울어진) -->
+  <polygon points="20,0 460,0 480,170 0,170" fill="#ffffff" fill-opacity="0.03"/>
+  <!-- 좌측 속도선들 -->
+  <line x1="18" y1="55" x2="55" y2="55" stroke="url(#g4yellow)" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  <line x1="10" y1="72" x2="55" y2="72" stroke="url(#g4yellow)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="18" y1="89" x2="55" y2="89" stroke="url(#g4yellow)" stroke-width="1.5" stroke-linecap="round" opacity="0.35"/>
+  <!-- 우측 속도선들 -->
+  <line x1="445" y1="55" x2="482" y2="55" stroke="url(#g4yellow)" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  <line x1="445" y1="72" x2="490" y2="72" stroke="url(#g4yellow)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="445" y1="89" x2="482" y2="89" stroke="url(#g4yellow)" stroke-width="1.5" stroke-linecap="round" opacity="0.35"/>
+  <!-- 기울어진 골드 구분 막대 -->
+  <polygon points="238,20 246,20 258,150 250,150" fill="url(#g4yellow)" opacity="0.85" filter="url(#f4glow)"/>
+  <!-- LOTTO 텍스트 -->
+  <text x="65" y="110"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="68" font-weight="900" letter-spacing="2"
+    fill="url(#g4lotto)">LOTTO</text>
+  <!-- RANK 텍스트 -->
+  <text x="272" y="110"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="68" font-weight="900" letter-spacing="2"
+    fill="url(#g4rank)" filter="url(#f4glow)">RANK</text>
+  <!-- 하단 태그라인 -->
+  <text x="250" y="152"
+    font-family="Arial,sans-serif" font-size="10" letter-spacing="4"
+    text-anchor="middle" fill="#6a90cc" opacity="0.8">NO.1 LOTTO WINNING NUMBER PLATFORM</text>
+  <!-- 상단 골드 테두리선 -->
+  <rect x="0" y="0" width="500" height="170" rx="8"
+    fill="none" stroke="url(#g4yellow)" stroke-width="2" opacity="0.5"/>
+</svg>
+<div class="label">logo-4-slash.svg</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     로고 5 — 모던 미니멀 (원형 엠블럼 + 클린)
+══════════════════════════════════════════ -->
+<div class="logo-item">
+<h2>LOGO 05 — 모던 미니멀</h2>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 160" width="440" height="160">
+  <defs>
+    <linearGradient id="g5bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0c1a3a"/>
+      <stop offset="100%" stop-color="#081025"/>
+    </linearGradient>
+    <linearGradient id="g5gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe97a"/>
+      <stop offset="100%" stop-color="#d48000"/>
+    </linearGradient>
+    <linearGradient id="g5circle" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1560e0"/>
+      <stop offset="100%" stop-color="#0a3080"/>
+    </linearGradient>
+    <linearGradient id="g5lotto" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#a8c8f8"/>
+    </linearGradient>
+    <filter id="f5glow">
+      <feGaussianBlur stdDeviation="2.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="440" height="160" rx="10" fill="url(#g5bg)"/>
+  <!-- 원형 엠블럼 -->
+  <circle cx="68" cy="80" r="52" fill="url(#g5circle)"/>
+  <circle cx="68" cy="80" r="52" fill="none" stroke="url(#g5gold)" stroke-width="2.5"/>
+  <circle cx="68" cy="80" r="40" fill="none" stroke="url(#g5gold)" stroke-width="0.8" opacity="0.4"/>
+  <!-- 원 안의 'L' + 'R' 이니셜 -->
+  <text x="68" y="68" text-anchor="middle"
+    font-family="'Arial Black',sans-serif" font-size="22" font-weight="900"
+    fill="url(#g5gold)" filter="url(#f5glow)">LR</text>
+  <!-- 별 3개 -->
+  <text x="68" y="96" text-anchor="middle"
+    font-family="Arial,sans-serif" font-size="14"
+    fill="url(#g5gold)" letter-spacing="2">★★★</text>
+  <!-- 세로 구분선 -->
+  <line x1="132" y1="30" x2="132" y2="130" stroke="url(#g5gold)" stroke-width="1" opacity="0.4"/>
+  <!-- LOTTO -->
+  <text x="152" y="86"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="52" font-weight="900" letter-spacing="6"
+    fill="url(#g5lotto)">LOTTO</text>
+  <!-- 골드 구분선 -->
+  <rect x="152" y="96" width="270" height="2.5" rx="1.5" fill="url(#g5gold)" opacity="0.8"/>
+  <!-- RANK -->
+  <text x="152" y="130"
+    font-family="'Arial Black',Impact,sans-serif"
+    font-size="36" font-weight="900" letter-spacing="18"
+    fill="url(#g5gold)" filter="url(#f5glow)">RANK</text>
+  <!-- 우측 장식 도트들 -->
+  <circle cx="418" cy="55" r="3" fill="url(#g5gold)" opacity="0.6"/>
+  <circle cx="428" cy="55" r="2" fill="url(#g5gold)" opacity="0.35"/>
+  <circle cx="418" cy="105" r="3" fill="url(#g5gold)" opacity="0.6"/>
+  <circle cx="428" cy="105" r="2" fill="url(#g5gold)" opacity="0.35"/>
+</svg>
+<div class="label">logo-5-minimal.svg</div>
+</div>
+
+</div><!-- end logo-wrap -->
+
+<p style="text-align:center;color:#555;margin-top:50px;font-size:12px;">
+  각 SVG를 개별 파일로 저장하거나, 브라우저 개발자도구에서 SVG 코드를 복사해 사용하세요.<br>
+  PNG 변환: 브라우저에서 우클릭 → 이미지로 저장 또는 Inkscape/Figma에 SVG 붙여넣기
+</p>
+</body>
+</html>

@@ -1,4 +1,5 @@
-﻿  <script>
+<%@ page pageEncoding="UTF-8" %>
+  <script>
     // =============================================
     // 번호 그리드 생성
     // =============================================
@@ -43,7 +44,7 @@
 
     submitBtn.addEventListener('click', () => {
       if (!selectedNum) return;
-      alert('제 1162회 예측 번호 [' + selectedNum + ']이 제출되었습니다!\n당첨 결과는 토요일 오후에 확인하세요.');
+      alert('제 ${empty latestResult ? 1 : latestResult.roundNo + 1}회 예측 번호 [' + selectedNum + ']이 제출되었습니다!\n마감은 토요일 오후 8시 30분입니다.');
     });
 
     // =============================================
@@ -62,18 +63,18 @@
     // =============================================
     // 카운트다운 타이머 (두 곳에 동시 표시)
     // =============================================
-    function getNextSaturday8am() {
+    function getNextSaturday830pm() {
       const now = new Date();
       const day = now.getDay();
       const daysUntilSat = (6 - day + 7) % 7 || 7;
       const sat = new Date(now);
       sat.setDate(now.getDate() + daysUntilSat);
-      sat.setHours(8, 0, 0, 0);
+      sat.setHours(20, 30, 0, 0);
       return sat;
     }
 
     function updateCountdown() {
-      const target = getNextSaturday8am();
+      const target = getNextSaturday830pm();
       const now = new Date();
       const diff = target - now;
 

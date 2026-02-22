@@ -231,6 +231,12 @@
   font-weight: 400;
 }
 
+.round-no-inline {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0;
+}
+
 .round-date {
   font-size: 0.8rem;
   color: var(--txt2);

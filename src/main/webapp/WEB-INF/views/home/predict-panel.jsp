@@ -1,11 +1,12 @@
-﻿        <!-- 우: 예측 + 골드 + 이용방법 -->
+<%@ page pageEncoding="UTF-8" %>
+        <!-- 우: 예측 + 골드 + 이용방법 -->
         <div class="predict-panel">
 
           <!-- 번호 예측 카드 -->
           <div class="predict-card">
             <div class="pc-header">
               <div class="pc-title">🎰 이번 주 번호 예측</div>
-              <span class="pc-round">제 1162회</span>
+              <span class="pc-round">제 ${empty latestResult ? 1 : latestResult.roundNo + 1}회</span>
             </div>
             <div class="pc-body">
               <div class="num-display" id="numDisplay">
@@ -19,7 +20,7 @@
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
                 </svg>
-                매주 1개 · 토요일 오전 8시 마감
+                매주 1개 · 토요일 오후 8시 30분 마감
               </div>
               <button class="submit-full" id="submitBtn" disabled>예측 번호 제출하기</button>
             </div>
@@ -61,7 +62,7 @@
                 <div class="howto-icon">🎰</div>
                 <div class="howto-text">
                   <div class="howto-title">매주 번호 예측</div>
-                  <div class="howto-desc">토요일 오전 8시 전까지 1~45 중 1개를 선택해 제출하세요.</div>
+                  <div class="howto-desc">토요일 오후 8시 30분 전까지 1~45 중 1개를 선택해 제출하세요.</div>
                 </div>
               </div>
               <div class="howto-step">

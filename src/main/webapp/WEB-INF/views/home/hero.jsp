@@ -1,4 +1,5 @@
-﻿  <!-- ===========================
+<%@ page pageEncoding="UTF-8" %>
+  <!-- ===========================
        히어로 영역
   =========================== -->
   <div class="hero-area">
@@ -14,7 +15,7 @@
 
           <div class="hero-round-badge">
             <div class="live-dot"></div>
-            LIVE · 제 1162회 예측 진행 중 · 마감까지 <strong id="countdown" style="margin-left:4px;">3일 14:22:05</strong>
+            LIVE · 제 ${empty latestResult ? 1 : latestResult.roundNo + 1}회 예측 진행 중 · 마감까지 <strong id="countdown" style="margin-left:4px;">-</strong>
           </div>
 
           <h1 class="hero-title">
@@ -34,7 +35,7 @@
 
           <div class="hero-stats">
             <div>
-              <div class="hstat-num">1,162</div>
+              <div class="hstat-num">${empty latestResult ? 1 : latestResult.roundNo + 1}</div>
               <div class="hstat-label">진행 회차</div>
             </div>
             <div>
@@ -64,7 +65,7 @@
             </div>
             <button class="login-submit">로그인</button>
             <div class="login-links" style="margin-top:8px;">
-              <a href="#">회원가입</a>
+              <a href="/member/join">회원가입</a>
               <a href="#">아이디 찾기</a>
               <a href="#">비밀번호 찾기</a>
             </div>
@@ -90,7 +91,7 @@
               </div>
             </div>
             <div style="margin-top:10px;">
-              <button class="btn-gold-join" style="width:100%;padding:8px;">🏆 골드회원 가입하기</button>
+              <button class="btn-gold-join" style="width:100%;padding:8px;" onclick="location.href='/member/join'">🏆 골드회원 가입하기</button>
             </div>
           </div>
 

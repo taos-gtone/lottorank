@@ -1,0 +1,211 @@
+/* =============================================
+   에러 페이지 공통
+============================================= */
+
+.error-wrap {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 16px;
+  background: var(--bg);
+}
+
+.error-container {
+  text-align: center;
+  max-width: 520px;
+  width: 100%;
+}
+
+/* ── 코드 표시 ── */
+.error-code-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.error-code {
+  font-size: 9rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -4px;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--hero-to) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+
+.error-code-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3.5rem;
+  -webkit-text-fill-color: initial;
+  background: none;
+}
+
+/* ── 아이콘 볼 ── */
+.error-ball-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.error-ball {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  animation: ballBounce 1.6s ease-in-out infinite;
+}
+
+.error-ball:nth-child(2) { animation-delay: 0.15s; }
+.error-ball:nth-child(3) { animation-delay: 0.30s; }
+.error-ball:nth-child(4) { animation-delay: 0.45s; }
+
+@keyframes ballBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+.ball-y { background: linear-gradient(135deg,#FFC107,#FF9800); }
+.ball-b { background: linear-gradient(135deg,#2196F3,#1565C0); }
+.ball-r { background: linear-gradient(135deg,#F44336,#B71C1C); }
+.ball-gr { background: linear-gradient(135deg,#4CAF50,#1B5E20); }
+
+/* ── 텍스트 ── */
+.error-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--navy);
+  margin-bottom: 14px;
+  letter-spacing: -0.5px;
+}
+
+.error-desc {
+  font-size: 0.95rem;
+  color: var(--txt2);
+  font-weight: 500;
+  line-height: 1.8;
+  margin-bottom: 36px;
+}
+
+/* ── 버튼 ── */
+.error-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-err-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 32px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-err-primary:hover {
+  background: var(--navy);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(27,49,117,0.25);
+}
+
+.btn-err-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 28px;
+  background: #fff;
+  color: var(--txt);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.btn-err-secondary:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+/* ── 빠른 링크 ── */
+.error-quick-links {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.error-quick-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--txt3);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.error-quick-list {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.error-quick-item {
+  display: inline-block;
+  padding: 7px 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--txt2);
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.error-quick-item:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: rgba(40,81,163,0.04);
+}
+
+/* ── 500 전용 ── */
+.error-code.code-500 {
+  font-size: 8rem;
+}
+
+/* ══════════════════════════════════════════
+   반응형
+══════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .error-code { font-size: 6rem; letter-spacing: -2px; }
+  .error-code.code-500 { font-size: 5.5rem; }
+  .error-ball { width: 38px; height: 38px; font-size: 0.95rem; }
+  .error-title { font-size: 1.3rem; }
+  .error-desc  { font-size: 0.88rem; }
+  .btn-err-primary, .btn-err-secondary { padding: 12px 22px; font-size: 0.9rem; }
+}

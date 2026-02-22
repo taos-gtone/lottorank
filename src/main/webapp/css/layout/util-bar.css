@@ -63,3 +63,31 @@
       margin-left: 12px;
     }
 
+/* ── 태블릿 (768px 이하) ── */
+@media (max-width: 768px) {
+  .util-notice span {
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+
+  .util-gold { display: none; }
+}
+
+/* ── 모바일 (480px 이하) ── */
+@media (max-width: 480px) {
+  .util-notice { display: none; }
+
+  .util-inner { justify-content: flex-end; }
+
+  .util-links a {
+    padding: 0 8px;
+    font-size: 0.73rem;
+  }
+
+  /* 마이페이지·전체메뉴 숨김 */
+  .util-links a:nth-child(3),
+  .util-links a:last-child { display: none; }
+}

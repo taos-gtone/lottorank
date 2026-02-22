@@ -1,4 +1,5 @@
-﻿  <!-- ===========================
+﻿<%@ page pageEncoding="UTF-8" %>
+  <!-- ===========================
        메인 헤더
   =========================== -->
   <header class="main-header">
@@ -13,8 +14,8 @@
         </a>
 
         <nav class="main-nav">
-          <div class="nav-item active">
-            <a href="#">로또 실제 당첨</a>
+          <div class="nav-item" data-path="/lotto/results">
+            <a href="/lotto/results">회차별 당첨번호</a>
           </div>
           <div class="nav-item">
             <a href="#ranking">예측 분석실</a>
@@ -31,8 +32,8 @@
         </nav>
 
         <div class="header-actions">
-          <button class="btn-login">로그인</button>
-          <button class="btn-join">무료 회원가입</button>
+          <button class="btn-login" onclick="location.href='/member/login'">로그인</button>
+          <button class="btn-join" onclick="location.href='/member/join'">무료 회원가입</button>
         </div>
 
         <button class="hamburger" id="menuBtn">
@@ -41,6 +42,17 @@
       </div>
     </div>
   </header>
+
+  <script>
+    (function() {
+      var path = window.location.pathname;
+      document.querySelectorAll('.main-nav .nav-item[data-path]').forEach(function(el) {
+        if (path.indexOf(el.dataset.path) === 0) {
+          el.classList.add('active');
+        }
+      });
+    })();
+  </script>
 
   <!-- 모바일 메뉴 -->
   <div class="mobile-menu" id="mobileMenu">
@@ -57,8 +69,8 @@
         <a href="#" style="color: #FFD54F;">🏆 골드 멤버십</a>
       </nav>
       <div class="mobile-actions">
-        <button class="btn-login" style="background:rgba(255,255,255,0.1);color:#fff;border-radius:6px;">로그인</button>
-        <button class="btn-join" style="border-radius:6px;">무료 회원가입</button>
+        <button class="btn-login" style="background:rgba(255,255,255,0.1);color:#fff;border-radius:6px;" onclick="location.href='/member/login'">로그인</button>
+        <button class="btn-join" style="border-radius:6px;" onclick="location.href='/member/join'">무료 회원가입</button>
       </div>
     </div>
   </div>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lottorank.mapper.LottoMapper">
+
+    <!-- 공통 WHERE 조건 -->
+    <sql id="whereCondition">
+        <where>
+            <if test="year  != null">AND CAST(LEFT(REPLACE(REPLACE(ROUND_DATE, '-', ''), '.', ''), 4) AS UNSIGNED) = #{year}</if>
+            <if test="round != null">AND ROUND_NO = #{round}</if>
+        </where>
+    </sql>
+
+    <!-- 최신 회차 1건 조회 -->
+    <select id="selectLatestResult" resultType="LottoRoundResult">
+        SELECT
+            ROUND_NO          AS roundNo,
+            COALESCE(
+                STR_TO_DATE(ROUND_DATE, '%Y%m%d'),
+                STR_TO_DATE(ROUND_DATE, '%Y-%m-%d'),
+                STR_TO_DATE(ROUND_DATE, '%Y.%m.%d')
+            ) AS drawDate,
+            NUM1              AS num1,
+            NUM2              AS num2,
+            NUM3              AS num3,
+            NUM4              AS num4,
+            NUM5              AS num5,
+            NUM6              AS num6,
+            BONUS_NUM         AS bonusNum,
+            FST_PRZ_SUM_AMT   AS prize1stAmount,
+            FST_PRZ_WINNER_CNT AS prize1stCount
+        FROM LTT_ROUND_RESULT
+        ORDER BY ROUND_NO DESC
+        LIMIT 1
+    </select>
+
+    <!-- 페이징 목록 조회 (최신 회차 순) -->
+    <select id="selectResultList" resultType="LottoRoundResult">
+        SELECT
+            ROUND_NO          AS roundNo,
+            COALESCE(
+                STR_TO_DATE(ROUND_DATE, '%Y%m%d'),
+                STR_TO_DATE(ROUND_DATE, '%Y-%m-%d'),
+                STR_TO_DATE(ROUND_DATE, '%Y.%m.%d')
+            ) AS drawDate,
+            NUM1              AS num1,
+            NUM2              AS num2,
+            NUM3              AS num3,
+            NUM4              AS num4,
+            NUM5              AS num5,
+            NUM6              AS num6,
+            BONUS_NUM         AS bonusNum,
+            FST_PRZ_SUM_AMT   AS prize1stAmount,
+            FST_PRZ_WINNER_CNT AS prize1stCount
+        FROM LTT_ROUND_RESULT
+        <include refid="whereCondition"/>
+        ORDER BY ROUND_NO DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 전체 건수 조회 -->
+    <select id="selectResultCount" resultType="int">
+        SELECT COUNT(*)
+        FROM LTT_ROUND_RESULT
+        <include refid="whereCondition"/>
+    </select>
+
+</mapper>
