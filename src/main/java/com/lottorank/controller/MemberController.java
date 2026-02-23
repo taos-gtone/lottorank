@@ -90,12 +90,14 @@ public class MemberController {
     private String resolveIpv4(HttpServletRequest request) {
         String ip = request.getRemoteAddr();
         if (ip == null) return "";
+        /*
         try {
             InetAddress addr = InetAddress.getByName(ip);
             if (addr.isLoopbackAddress()) {
                 return "127.0.0.1";
             }
         } catch (Exception ignored) {}
+        */
         // IPv6-mapped IPv4: ::ffff:x.x.x.x
         if (ip.regionMatches(true, 0, "::ffff:", 0, 7)) {
             return ip.substring(7);
