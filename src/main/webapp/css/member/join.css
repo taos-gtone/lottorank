@@ -470,11 +470,9 @@
 
 /* 이메일 입력 */
 .email-row {
-  display: grid;
-  grid-template-columns: 1fr 20px 1fr;
+  display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 8px;
 }
 
 .email-at {
@@ -494,8 +492,11 @@
   background: #fff;
   font-family: inherit;
   cursor: pointer;
-  margin-top: 6px;
 }
+
+/* 이메일 행 안의 select */
+.email-row .form-input { flex: 1; min-width: 0; }
+.email-select { flex: 0 0 130px; margin-top: 0; }
 
 .form-select:focus { outline: none; border-color: var(--blue); }
 
@@ -634,11 +635,8 @@
   .check-all-desc { margin-left: 28px; }
   .check-item-row { font-size: 0.83rem; }
 
-  /* 폼: 이메일 행 → 도메인 셀렉트만 */
-  .email-row {
-    grid-template-columns: 1fr 14px 1fr;
-    gap: 4px;
-  }
+  /* 폼: 이메일 행 — 도메인 select 너비 축소 */
+  .email-select { flex: 0 0 110px; }
 
   /* 폼: 생년월일+성별 → 1열 */
   .form-row-half { grid-template-columns: 1fr; gap: 0; }
@@ -831,12 +829,8 @@
   .step-circle { width: 28px; height: 28px; font-size: 0.75rem; }
   .step-item > span { font-size: 0.65rem; }
 
-  /* 이메일: 한 줄씩 */
-  .email-row {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-  .email-at { display: none; }
+  /* 이메일: 초소형에서 select 더 좁게 */
+  .email-select { flex: 0 0 90px; font-size: 0.78rem; padding: 11px 6px; }
 
   .sns-btn { font-size: 0.82rem; padding: 11px; }
 }

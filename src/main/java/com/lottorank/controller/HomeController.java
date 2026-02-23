@@ -17,16 +17,6 @@ public class HomeController {
     @Autowired
     private LottoService lottoService;
 
-    @GetMapping("/member/join")
-    public String join() {
-        return "member/join";
-    }
-
-    @GetMapping("/member/login")
-    public String login() {
-        return "member/login";
-    }
-
     @GetMapping("/")
     public String index(Model model) {
         LottoRoundResult latestResult = lottoService.getLatestResult();

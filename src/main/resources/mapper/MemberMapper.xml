@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lottorank.mapper.MemberMapper">
+
+    <insert id="insertMember" parameterType="MemberVO">
+        INSERT INTO MEM_JOIN_INFO (
+            user_id, user_pw, user_name, nickname,
+            email_id, email_addr, birth_date, gender,
+            reg_ip, status
+        ) VALUES (
+            #{userId}, #{userPw}, #{userName}, #{nickname},
+            #{emailId}, #{emailAddr}, #{birthDate}, #{gender},
+            #{regIp}, 1
+        )
+    </insert>
+
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*) FROM MEM_JOIN_INFO WHERE user_id = #{userId}
+    </select>
+
+</mapper>
