@@ -33,3 +33,62 @@
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
     .wrap-wide { max-width: 1440px; margin: 0 auto; padding: 0 16px; }
 
+    /* =============================================
+       페이지 진행 바 (Progress Bar)
+    ============================================= */
+    #pg-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-lt) 50%, var(--gold) 100%);
+      z-index: 99999;
+      opacity: 0;
+      transition: width 0.4s ease, opacity 0.3s ease;
+      box-shadow: 0 0 12px rgba(232,160,0,0.9), 0 0 4px rgba(255,213,79,0.7);
+      pointer-events: none;
+    }
+    #pg-bar::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -4px;
+      width: 120px;
+      height: 11px;
+      background: radial-gradient(ellipse at right, rgba(255,213,79,0.95) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    #pg-spinner {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(232,160,0,0.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      z-index: 99999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      animation: pg-spin 0.7s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes pg-spin { to { transform: rotate(360deg); } }
+
+    /* ── 반응형 ── */
+    @media (max-width: 900px) {
+      /* 모바일: 햄버거 버튼(우상단)과 겹치므로 스피너 숨김 */
+      #pg-spinner { display: none; }
+      /* 바 두께 유지 + 글로우 조정 */
+      #pg-bar {
+        box-shadow: 0 0 8px rgba(232,160,0,0.8), 0 0 3px rgba(255,213,79,0.6);
+      }
+      #pg-bar::after { width: 80px; height: 8px; }
+    }
+    @media (max-width: 600px) {
+      /* 소형 화면: 바 두께를 2px로 축소 */
+      #pg-bar { height: 2px; }
+      #pg-bar::after { width: 60px; height: 6px; top: -3px; }
+    }
+
