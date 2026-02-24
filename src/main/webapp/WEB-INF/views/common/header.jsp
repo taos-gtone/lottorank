@@ -123,10 +123,27 @@
           </div>
         </nav>
 
+        <%
+          String _hLoginUser     = (String) session.getAttribute("loginUser");
+          String _hLoginNickname = (String) session.getAttribute("loginNickname");
+          boolean _hLoggedIn     = (_hLoginUser != null);
+        %>
+        <% if (_hLoggedIn) { %>
+        <div class="header-actions">
+          <!-- 세션 표시 -->
+          <div class="header-session-wrap">
+            <span class="session-icon">⏱</span>
+            <span class="session-time" id="headerSessionTimer">10:00</span>
+            <button type="button" class="btn-extend-session" onclick="extendSession()">연장</button>
+          </div>
+          <button type="button" class="btn-logout" onclick="Progress.start();location.href='/member/logout'">로그아웃</button>
+        </div>
+        <% } else { %>
         <div class="header-actions">
           <button class="btn-login" onclick="Progress.start();location.href='/member/login'">로그인</button>
           <button class="btn-join" onclick="Progress.start();location.href='/member/join'">무료 회원가입</button>
         </div>
+        <% } %>
 
         <button class="hamburger" id="menuBtn">
           <span></span><span></span><span></span>
@@ -160,9 +177,69 @@
         <a href="#how">고객센터</a>
         <a href="#" style="color: #FFD54F;">🏆 골드 멤버십</a>
       </nav>
+      <% if (_hLoggedIn) { %>
+      <div class="mobile-actions">
+        <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:700;text-align:center;padding:4px 0;"><%=_hLoginNickname%>님 환영합니다</div>
+        <button class="btn-join" style="border-radius:6px;" onclick="Progress.start();location.href='/member/logout'">로그아웃</button>
+      </div>
+      <% } else { %>
       <div class="mobile-actions">
         <button class="btn-login" style="background:rgba(255,255,255,0.1);color:#fff;border-radius:6px;" onclick="Progress.start();location.href='/member/login'">로그인</button>
         <button class="btn-join" style="border-radius:6px;" onclick="Progress.start();location.href='/member/join'">무료 회원가입</button>
       </div>
+      <% } %>
     </div>
   </div>
+
+  <% if (_hLoggedIn) { %>
+  <script>
+    /* ── 세션 타이머: 서버 저장 만료 시각 사용 (페이지 이동 후에도 정확한 잔여시간 표시) ── */
+    <%
+      Long _hSessionExpiry = (Long) session.getAttribute("sessionExpiry");
+      long _hExpiry = (_hSessionExpiry != null) ? _hSessionExpiry : (System.currentTimeMillis() + 600000L);
+    %>
+    window.__SESSION_EXPIRY = <%= _hExpiry %>;
+
+    (function() {
+      var SESSION_DURATION = 600 * 1000;
+
+      function updateSession() {
+        var remaining = window.__SESSION_EXPIRY - Date.now();
+        if (remaining < 0) remaining = 0;
+
+        var mins = Math.floor(remaining / 60000);
+        var secs = Math.floor((remaining % 60000) / 1000);
+        var text = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+
+        document.querySelectorAll('.session-time').forEach(function(el) {
+          el.textContent = text;
+          el.classList.remove('warning', 'danger');
+          if (remaining < 60000)       el.classList.add('danger');
+          else if (remaining < 120000) el.classList.add('warning');
+        });
+
+        if (remaining <= 0) {
+          document.querySelectorAll('.session-time').forEach(function(el) {
+            el.textContent = '00:00';
+          });
+          location.href = '/member/logout';
+          return;
+        }
+        setTimeout(updateSession, 1000);
+      }
+
+      window.extendSession = function() {
+        fetch('/member/extend', { method: 'POST' })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.success) {
+              window.__SESSION_EXPIRY = data.sessionExpiry;
+            }
+          })
+          .catch(function() {});
+      };
+
+      updateSession();
+    })();
+  </script>
+  <% } %>

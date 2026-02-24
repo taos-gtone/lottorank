@@ -7,4 +7,6 @@ public interface MemberService {
     void join(MemberVO member);
 
     boolean isUserIdAvailable(String userId);
+
+    MemberVO login(String userId, String userPw);
 }

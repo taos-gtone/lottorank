@@ -10,4 +10,6 @@ public interface MemberMapper {
     int insertMember(MemberVO member);
 
     int countByUserId(@Param("userId") String userId);
+
+    MemberVO findByUserId(@Param("userId") String userId);
 }

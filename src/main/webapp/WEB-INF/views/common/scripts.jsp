@@ -107,4 +107,44 @@
         btn.classList.add('active');
       });
     });
+
+    // =============================================
+    // 히어로 로그인 폼 AJAX 제출
+    // =============================================
+    const heroLoginForm = document.getElementById('heroLoginForm');
+    if (heroLoginForm) {
+      heroLoginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const userId = document.getElementById('heroUserId').value.trim();
+        const userPw = document.getElementById('heroUserPw').value;
+        if (!userId || !userPw) {
+          alert('아이디와 비밀번호를 입력해 주세요.');
+          return;
+        }
+        const btn = heroLoginForm.querySelector('.login-submit');
+        btn.disabled = true;
+        btn.textContent = '로그인 중...';
+
+        const params = new URLSearchParams();
+        params.append('userId', userId);
+        params.append('userPw', userPw);
+
+        fetch('/member/login', { method: 'POST', body: params })
+          .then(r => r.json())
+          .then(data => {
+            if (data.success) {
+              location.reload();
+            } else {
+              alert(data.message);
+              btn.disabled = false;
+              btn.textContent = '로그인';
+            }
+          })
+          .catch(() => {
+            alert('로그인 처리 중 오류가 발생했습니다.');
+            btn.disabled = false;
+            btn.textContent = '로그인';
+          });
+      });
+    }
   </script>

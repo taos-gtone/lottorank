@@ -20,4 +20,10 @@
         SELECT COUNT(*) FROM MEM_JOIN_INFO WHERE user_id = #{userId}
     </select>
 
+    <select id="findByUserId" resultType="MemberVO">
+        SELECT member_no, user_id, user_pw, user_name, nickname, status
+        FROM MEM_JOIN_INFO
+        WHERE user_id = #{userId}
+    </select>
+
 </mapper>

@@ -56,24 +56,84 @@
         <!-- 우: 사이드바 -->
         <div class="hero-sidebar">
 
-          <!-- 로그인 폼 -->
+          <%
+            String _loginUser     = (String) session.getAttribute("loginUser");
+            String _loginNickname = (String) session.getAttribute("loginNickname");
+            boolean _isLoggedIn   = (_loginUser != null);
+            String _avatarLetter  = (_loginNickname != null && !_loginNickname.isEmpty())
+                                    ? String.valueOf(_loginNickname.charAt(0)).toUpperCase() : "U";
+          %>
+
+          <% if (_isLoggedIn) { %>
+          <!-- 로그인 후: 유저 패널 -->
+          <div class="login-panel member-panel">
+            <!-- 프로필 -->
+            <div class="up-header">
+              <div class="up-avatar"><%=_avatarLetter%></div>
+              <div class="up-info">
+                <div class="up-name"><%=_loginNickname%>님</div>
+                <div class="up-tags">
+                  <span class="up-tag up-tag-rank">일반회원</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 미니 통계 -->
+            <div class="up-mini-stats">
+              <div class="up-mini-stat">
+                <div class="up-mini-num">0회</div>
+                <div class="up-mini-label">예측 참여</div>
+              </div>
+              <div class="up-mini-stat">
+                <div class="up-mini-num">—</div>
+                <div class="up-mini-label">이번주 순위</div>
+              </div>
+              <div class="up-mini-stat">
+                <div class="up-mini-num">0%</div>
+                <div class="up-mini-label">적중률</div>
+              </div>
+            </div>
+
+            <!-- 빠른 메뉴 -->
+            <div class="up-menu">
+              <a href="#" class="up-menu-item">
+                <span class="up-menu-icon">🎯</span>
+                <span>번호 예측하기</span>
+                <span class="up-menu-arrow">›</span>
+              </a>
+              <a href="#" class="up-menu-item">
+                <span class="up-menu-icon">📊</span>
+                <span>내 예측 현황</span>
+                <span class="up-menu-badge">NEW</span>
+              </a>
+            </div>
+
+            <div class="up-logout-row">
+              <button class="up-logout-btn" onclick="Progress.start();location.href='/member/logout'">로그아웃</button>
+            </div>
+          </div>
+          <% } else { %>
+          <!-- 로그인 전: 로그인 폼 -->
           <div class="login-panel">
             <div class="login-panel-title">회원 로그인</div>
-            <div class="login-form">
-              <input class="login-input" type="text" placeholder="아이디">
-              <input class="login-input" type="password" placeholder="비밀번호">
-            </div>
-            <button class="login-submit">로그인</button>
+            <form id="heroLoginForm">
+              <div class="login-form">
+                <input class="login-input" type="text" id="heroUserId" placeholder="아이디" autocomplete="username">
+                <input class="login-input" type="password" id="heroUserPw" placeholder="비밀번호" autocomplete="current-password">
+              </div>
+              <button type="submit" class="login-submit">로그인</button>
+            </form>
             <div class="login-links" style="margin-top:8px;">
               <a href="/member/join">회원가입</a>
               <a href="#">아이디 찾기</a>
               <a href="#">비밀번호 찾기</a>
             </div>
             <div class="social-login" style="margin-top:8px;">
-              <button class="social-btn btn-naver">N 네이버</button>
-              <button class="social-btn btn-kakao">💬 카카오</button>
+              <button type="button" class="social-btn btn-naver">N 네이버</button>
+              <button type="button" class="social-btn btn-kakao">💬 카카오</button>
             </div>
           </div>
+          <% } %>
 
           <!-- 골드 회원 -->
           <div class="gold-panel">

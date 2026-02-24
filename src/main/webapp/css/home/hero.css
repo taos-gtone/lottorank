@@ -323,6 +323,97 @@
 
     /* ── 로그인 후 유저 패널 ── */
 
+    /* 세션 타이머 블록 */
+    .up-session-wrap {
+      margin-bottom: 12px;
+      padding: 10px 0 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .up-session-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 7px;
+    }
+
+    .up-session-label {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.45);
+      font-weight: 600;
+    }
+
+    .up-session-bar {
+      height: 3px;
+      background: rgba(255,255,255,0.10);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 9px;
+    }
+
+    .up-session-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--gold-lt), var(--gold));
+      border-radius: 2px;
+      transition: width 1s linear, background 0.3s;
+    }
+
+    .up-session-extend-btn {
+      width: 100%;
+      padding: 7px;
+      border-radius: 5px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.72);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .up-session-extend-btn:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.28);
+      color: #fff;
+    }
+
+    /* 멤버 패널 공통 패딩 — 로그인 폼과 동일한 상하 padding 유지 */
+    .member-panel {
+      padding: 20px 18px;
+    }
+
+    /* 미니 통계 그리드 */
+    .up-mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.09);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .up-mini-stat {
+      background: rgba(255,255,255,0.04);
+      padding: 6px 4px;
+      text-align: center;
+    }
+
+    .up-mini-num {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: var(--gold-lt);
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .up-mini-label {
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.42);
+      font-weight: 600;
+    }
+
     /* 프로필 헤더 */
     .up-header {
       display: flex;
@@ -452,19 +543,28 @@
 
     /* 로그아웃 */
     .up-logout-row {
-      text-align: center;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 1px;
+      border-top: 0px solid rgba(255,255,255,0.07);
     }
 
     .up-logout-btn {
-      font-size: 0.75rem;
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.5);
+      font-size: 0.78rem;
       font-weight: 600;
-      color: rgba(255,120,120,0.75);
-      transition: color 0.2s;
+      cursor: pointer;
+      transition: all 0.18s;
     }
 
-    .up-logout-btn:hover { color: rgba(255,120,120,1); }
+    .up-logout-btn:hover {
+      background: rgba(255,80,80,0.12);
+      border-color: rgba(255,80,80,0.25);
+      color: rgba(255,140,140,0.95);
+    }
 
     /* 골드 회원 배너 */
     .gold-panel {

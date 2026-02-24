@@ -154,8 +154,31 @@
     const pw = document.getElementById('loginPw').value;
     if (!id) { alert('아이디를 입력해 주세요.'); return; }
     if (!pw) { alert('비밀번호를 입력해 주세요.'); return; }
-    /* 실제 로그인 처리는 서버 연동 필요 */
-    alert('로그인 기능은 서버 연동 후 사용 가능합니다.');
+
+    const submitBtn = document.querySelector('.btn-login-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '로그인 중...';
+
+    const params = new URLSearchParams();
+    params.append('userId', id);
+    params.append('userPw', pw);
+
+    fetch('${pageContext.request.contextPath}/member/login', { method: 'POST', body: params })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          location.href = '${pageContext.request.contextPath}/';
+        } else {
+          alert(data.message);
+          submitBtn.disabled = false;
+          submitBtn.textContent = '로그인';
+        }
+      })
+      .catch(function() {
+        alert('로그인 처리 중 오류가 발생했습니다.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '로그인';
+      });
   });
 
   /* ── Enter 키 제출 ── */

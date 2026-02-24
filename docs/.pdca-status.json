@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-23T14:48:26.441Z",
+  "lastUpdated": "2026-02-24T13:32:03.705Z",
   "activeFeatures": [
     "mapper",
     "service",
@@ -22,9 +22,9 @@
       },
       "timestamps": {
         "started": "2026-02-19T15:10:07.894Z",
-        "lastUpdated": "2026-02-23T14:17:11.331Z"
+        "lastUpdated": "2026-02-24T13:31:15.359Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\mapper\\MemberMapper.java"
+      "lastFile": "/c/projects/lottorank/src/main/java/com/lottorank/mapper/MemberMapper.java"
     },
     "service": {
       "phase": "do",
@@ -35,9 +35,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:18.396Z",
-        "lastUpdated": "2026-02-23T14:17:36.253Z"
+        "lastUpdated": "2026-02-24T13:31:40.357Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\service\\MemberServiceImpl.java"
+      "lastFile": "/c/projects/lottorank/src/main/java/com/lottorank/service/MemberServiceImpl.java"
     },
     "controller": {
       "phase": "do",
@@ -48,9 +48,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:26.070Z",
-        "lastUpdated": "2026-02-23T14:48:26.441Z"
+        "lastUpdated": "2026-02-24T13:32:03.705Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\controller\\MemberController.java"
+      "lastFile": "/c/projects/lottorank/src/main/java/com/lottorank/controller/MemberController.java"
     },
     "lottorank": {
       "phase": "do",
@@ -101,7 +101,7 @@
   "session": {
     "startedAt": "2026-02-19T14:55:10.648Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-23T14:48:26.441Z"
+    "lastActivity": "2026-02-24T13:32:03.705Z"
   },
   "history": [
     {
@@ -256,6 +256,36 @@
     },
     {
       "timestamp": "2026-02-23T14:48:26.441Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-24T13:31:15.359Z",
+      "feature": "mapper",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-24T13:31:33.294Z",
+      "feature": "service",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-24T13:31:40.357Z",
+      "feature": "service",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-24T13:31:49.279Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-24T13:32:03.705Z",
       "feature": "controller",
       "phase": "do",
       "action": "updated"

@@ -3,12 +3,12 @@ package com.lottorank.controller;
 import com.lottorank.service.MemberService;
 import com.lottorank.vo.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,8 +25,71 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    public String loginForm() {
+    public String loginForm(HttpServletRequest request) {
+        // 이미 로그인된 경우 메인으로 리다이렉트
+        HttpSession existing = request.getSession(false);
+        if (existing != null && existing.getAttribute("loginUser") != null) {
+            return "redirect:/";
+        }
         return "member/login";
+    }
+
+    @PostMapping("/login")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> login(
+            @RequestParam String userId,
+            @RequestParam String userPw,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        MemberVO member = memberService.login(userId, userPw);
+        if (member == null) {
+            result.put("success", false);
+            result.put("message", "아이디 또는 비밀번호가 올바르지 않습니다.");
+            return ResponseEntity.ok(result);
+        }
+
+        HttpSession session = request.getSession(true);
+        session.setMaxInactiveInterval(600); // 10분
+        long expiry = System.currentTimeMillis() + 600_000L;
+        session.setAttribute("loginUser", member.getUserId());
+        session.setAttribute("loginNickname", member.getNickname());
+        session.setAttribute("loginMemberNo", member.getMemberNo());
+        session.setAttribute("sessionExpiry", expiry);
+
+        result.put("success", true);
+        result.put("message", "로그인 성공!");
+        result.put("sessionExpiry", expiry);
+        result.put("nickname", member.getNickname());
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/";
+    }
+
+    @PostMapping("/extend")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> extend(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            result.put("success", false);
+            result.put("message", "로그인 세션이 없습니다.");
+            return ResponseEntity.ok(result);
+        }
+        session.setMaxInactiveInterval(600);
+        long expiry = System.currentTimeMillis() + 600_000L;
+        session.setAttribute("sessionExpiry", expiry);
+        result.put("success", true);
+        result.put("sessionExpiry", expiry);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/join")

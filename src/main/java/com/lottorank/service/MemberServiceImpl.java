@@ -23,4 +23,13 @@ public class MemberServiceImpl implements MemberService {
     public boolean isUserIdAvailable(String userId) {
         return memberMapper.countByUserId(userId) == 0;
     }
+
+    @Override
+    public MemberVO login(String userId, String userPw) {
+        MemberVO member = memberMapper.findByUserId(userId);
+        if (member == null) return null;
+        if (!BCrypt.checkpw(userPw, member.getUserPw())) return null;
+        if (member.getStatus() != 1) return null; // 비활성 계정 거부
+        return member;
+    }
 }
