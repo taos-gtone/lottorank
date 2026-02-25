@@ -1,5 +1,6 @@
 package com.lottorank.controller;
 
+import com.lottorank.service.LoginFailException;
 import com.lottorank.service.MemberService;
 import com.lottorank.vo.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,14 +43,23 @@ public class MemberController {
             HttpServletRequest request) {
 
         Map<String, Object> result = new HashMap<>();
+        String loginIp    = resolveIpv4(request);
+        String userAgent  = request.getHeader("User-Agent");
+        String loginTypCd = "I"; // 아이디 로그인
 
-        MemberVO member = memberService.login(userId, userPw);
-        if (member == null) {
+        MemberVO member;
+        try {
+            member = memberService.login(userId, userPw);
+        } catch (LoginFailException e) {
+            // 로그인 실패 이력 저장 (실패사유코드 포함)
+            memberService.saveLoginHistory(null, userId, loginTypCd,
+                    "F", e.getFailRsnCd(), loginIp, null, userAgent);
             result.put("success", false);
             result.put("message", "아이디 또는 비밀번호가 올바르지 않습니다.");
             return ResponseEntity.ok(result);
         }
 
+        // 세션 생성
         HttpSession session = request.getSession(true);
         session.setMaxInactiveInterval(600); // 10분
         long expiry = System.currentTimeMillis() + 600_000L;
@@ -57,6 +67,10 @@ public class MemberController {
         session.setAttribute("loginNickname", member.getNickname());
         session.setAttribute("loginMemberNo", member.getMemberNo());
         session.setAttribute("sessionExpiry", expiry);
+
+        // 로그인 성공 이력 저장 (트랜잭션: last_login_at UPDATE + 이력 INSERT)
+        memberService.saveLoginHistory(member, userId, loginTypCd,
+                "S", null, loginIp, session.getId(), userAgent);
 
         result.put("success", true);
         result.put("message", "로그인 성공!");
@@ -125,7 +139,7 @@ public class MemberController {
             if (birthDate != null && !birthDate.isEmpty()) {
                 member.setBirthDate(birthDate.replace("-", ""));
             }
-            member.setGender(gender);
+            member.setGenderCd(gender);
             member.setRegIp(resolveIpv4(request));
 
             memberService.join(member);
