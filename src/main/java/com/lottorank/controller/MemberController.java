@@ -2,16 +2,19 @@ package com.lottorank.controller;
 
 import com.lottorank.service.LoginFailException;
 import com.lottorank.service.MemberService;
+import com.lottorank.service.NaverOAuthService;
 import com.lottorank.vo.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/member")
@@ -19,6 +22,9 @@ public class MemberController {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private NaverOAuthService naverOAuthService;
 
     @GetMapping("/join")
     public String joinForm() {
@@ -43,16 +49,16 @@ public class MemberController {
             HttpServletRequest request) {
 
         Map<String, Object> result = new HashMap<>();
-        String loginIp    = resolveIpv4(request);
-        String userAgent  = request.getHeader("User-Agent");
-        String loginTypCd = "I"; // 아이디 로그인
+        String loginIp       = resolveIpv4(request);
+        String userAgent     = request.getHeader("User-Agent");
+        String regLoginTypCd = "I"; // 아이디 로그인
 
         MemberVO member;
         try {
             member = memberService.login(userId, userPw);
         } catch (LoginFailException e) {
             // 로그인 실패 이력 저장 (실패사유코드 포함)
-            memberService.saveLoginHistory(null, userId, loginTypCd,
+            memberService.saveLoginHistory(null, userId, regLoginTypCd,
                     "F", e.getFailRsnCd(), loginIp, null, userAgent);
             result.put("success", false);
             result.put("message", "아이디 또는 비밀번호가 올바르지 않습니다.");
@@ -69,7 +75,7 @@ public class MemberController {
         session.setAttribute("sessionExpiry", expiry);
 
         // 로그인 성공 이력 저장 (트랜잭션: last_login_at UPDATE + 이력 INSERT)
-        memberService.saveLoginHistory(member, userId, loginTypCd,
+        memberService.saveLoginHistory(member, userId, regLoginTypCd,
                 "S", null, loginIp, session.getId(), userAgent);
 
         result.put("success", true);
@@ -141,6 +147,7 @@ public class MemberController {
             }
             member.setGenderCd(gender);
             member.setRegIp(resolveIpv4(request));
+            member.setRegLoginTypCd("I"); // 아이디 회원가입
 
             memberService.join(member);
 
@@ -161,6 +168,208 @@ public class MemberController {
         Map<String, Object> result = new HashMap<>();
         result.put("available", memberService.isUserIdAvailable(userId));
         return ResponseEntity.ok(result);
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  네이버 OAuth 공통 유틸
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 네이버 OAuth 시작 (intent: "join" 또는 "login") */
+    private String naverOAuthStart(HttpServletRequest request, String intent) {
+        String state = UUID.randomUUID().toString().replace("-", "");
+        HttpSession session = request.getSession(true);
+        session.setAttribute("naverOAuthState",  state);
+        session.setAttribute("naverOAuthIntent", intent);
+
+        String baseUrl = resolveBaseUrl(request);
+        String naverAuthUrl = naverOAuthService.getAuthorizationUrl(state, baseUrl);
+        return "redirect:" + naverAuthUrl;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  네이버 OAuth 회원가입
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 가입 1단계: 네이버 인증 페이지로 리다이렉트 */
+    @GetMapping("/naver/join")
+    public String naverJoinRedirect(HttpServletRequest request) {
+        return naverOAuthStart(request, "join");
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  네이버 OAuth 로그인
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 로그인 1단계: 네이버 인증 페이지로 리다이렉트 */
+    @GetMapping("/naver/login-start")
+    public String naverLoginStart(HttpServletRequest request) {
+        // 이미 로그인된 경우 메인으로 리다이렉트
+        HttpSession existing = request.getSession(false);
+        if (existing != null && existing.getAttribute("loginUser") != null) {
+            return "redirect:/";
+        }
+        return naverOAuthStart(request, "login");
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  네이버 OAuth 공통 콜백
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 공통 콜백: intent에 따라 가입/로그인 분기 */
+    @GetMapping("/naver/callback")
+    public String naverCallback(
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) String error,
+            HttpServletRequest request) {
+
+        // intent 먼저 읽기 (오류 시 올바른 페이지로 리다이렉트하기 위함)
+        HttpSession session = request.getSession(false);
+        String intent = (session != null) ? (String) session.getAttribute("naverOAuthIntent") : null;
+        boolean isLogin = "login".equals(intent);
+        String errorBase = isLogin ? "/member/login" : "/member/join";
+
+        // 사용자가 네이버 로그인 취소한 경우
+        if (error != null || code == null) {
+            return "redirect:" + errorBase + "?error=naver_cancel";
+        }
+
+        // state 검증 (CSRF 방지)
+        String savedState = (session != null) ? (String) session.getAttribute("naverOAuthState") : null;
+        if (savedState == null || !savedState.equals(state)) {
+            return "redirect:" + errorBase + "?error=invalid_state";
+        }
+        session.removeAttribute("naverOAuthState");
+        session.removeAttribute("naverOAuthIntent");
+
+        try {
+            String baseUrl    = resolveBaseUrl(request);
+            String accessToken = naverOAuthService.getAccessToken(code, state, baseUrl);
+            if (accessToken == null) {
+                return "redirect:" + errorBase + "?error=naver_token_fail";
+            }
+
+            Map<String, String> profile = naverOAuthService.getUserProfile(accessToken);
+            String socialId = profile.get("socialId");
+            MemberVO member  = memberService.findBySocialId(socialId);
+
+            if (isLogin) {
+                // ── 로그인 처리 ──────────────────────────────────────
+                if (member == null) {
+                    return "redirect:/member/login?error=naver_not_registered";
+                }
+                if (member.getAcctStsCd() != 1) {
+                    return "redirect:/member/login?error=naver_inactive";
+                }
+
+                // 세션 생성 (기존 ID 로그인과 동일한 구조)
+                session.setMaxInactiveInterval(600);
+                long expiry = System.currentTimeMillis() + 600_000L;
+                session.setAttribute("loginUser",     member.getUserId());
+                session.setAttribute("loginNickname", member.getNickname());
+                session.setAttribute("loginMemberNo", member.getMemberNo());
+                session.setAttribute("sessionExpiry", expiry);
+
+                // 로그인 이력 저장 (reg_login_typ_cd = "N")
+                memberService.saveLoginHistory(member, member.getUserId(), "N",
+                        "S", null, resolveIpv4(request), session.getId(),
+                        request.getHeader("User-Agent"));
+
+                return "redirect:/";
+
+            } else {
+                // ── 가입 처리 ────────────────────────────────────────
+                if (member != null) {
+                    return "redirect:/member/join?error=already_registered";
+                }
+                session.setAttribute("naverProfile", profile);
+                return "redirect:/member/naver/join-form";
+            }
+
+        } catch (Exception e) {
+            return "redirect:" + errorBase + "?error=naver_error";
+        }
+    }
+
+    /** 3단계: 간편가입 폼 표시 (세션의 네이버 프로필 데이터 pre-fill) */
+    @GetMapping("/naver/join-form")
+    public String naverJoinForm(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("naverProfile") == null) {
+            return "redirect:/member/join";
+        }
+        @SuppressWarnings("unchecked")
+        Map<String, String> profile = (Map<String, String>) session.getAttribute("naverProfile");
+        model.addAttribute("naverProfile", profile);
+        return "member/naver-join";
+    }
+
+    /** 4단계: 네이버 회원가입 처리 */
+    @PostMapping("/naver/join")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> naverJoin(
+            @RequestParam String userId,
+            @RequestParam String nickname,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("naverProfile") == null) {
+            result.put("success", false);
+            result.put("message", "세션이 만료되었습니다. 다시 시도해 주세요.");
+            return ResponseEntity.ok(result);
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> profile = (Map<String, String>) session.getAttribute("naverProfile");
+
+        try {
+            if (!memberService.isUserIdAvailable(userId)) {
+                result.put("success", false);
+                result.put("message", "이미 사용 중인 아이디입니다.");
+                return ResponseEntity.ok(result);
+            }
+
+            MemberVO member = new MemberVO();
+            member.setUserId(userId);
+            member.setUserName(profile.getOrDefault("userName", ""));
+            member.setNickname(nickname);
+            member.setEmailId(profile.getOrDefault("emailId", ""));
+            member.setEmailAddr(profile.getOrDefault("emailAddr", ""));
+            member.setBirthDate(profile.getOrDefault("birthDate", ""));
+            member.setGenderCd(profile.getOrDefault("genderCd", ""));
+            member.setRegIp(resolveIpv4(request));
+            member.setRegLoginTypCd("N");
+            member.setSocialId(profile.get("socialId"));
+
+            memberService.joinBySocial(member);
+
+            session.removeAttribute("naverProfile");
+            result.put("success", true);
+            result.put("message", "네이버 계정으로 가입이 완료되었습니다.");
+
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "가입 처리 중 오류가 발생했습니다.");
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
+    /** 요청에서 scheme+host+port+contextPath 추출 */
+    private String resolveBaseUrl(HttpServletRequest request) {
+        String scheme = request.getScheme();
+        String serverName = request.getServerName();
+        int port = request.getServerPort();
+        String contextPath = request.getContextPath();
+
+        StringBuilder sb = new StringBuilder(scheme).append("://").append(serverName);
+        if (("http".equals(scheme) && port != 80) || ("https".equals(scheme) && port != 443)) {
+            sb.append(":").append(port);
+        }
+        sb.append(contextPath);
+        return sb.toString();
     }
 
     /** 모든 IPv6 루프백 및 IPv6-mapped IPv4를 IPv4 문자열로 변환 */

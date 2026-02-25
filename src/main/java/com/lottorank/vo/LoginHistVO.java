@@ -4,7 +4,7 @@ public class LoginHistVO {
 
     private Long   memberNo;     // nullable — 계정 없을 경우 null
     private String userId;
-    private String loginTypCd;   // I:아이디, N:네이버, K:카카오
+    private String regLoginTypCd; // I:아이디, N:네이버, K:카카오
     private String loginRsltCd;  // S:성공, F:실패
     private String failRsnCd;    // nullable — 실패사유코드 C005
     private String loginIp;
@@ -17,8 +17,8 @@ public class LoginHistVO {
     public String getUserId()      { return userId; }
     public void   setUserId(String userId)       { this.userId = userId; }
 
-    public String getLoginTypCd()  { return loginTypCd; }
-    public void   setLoginTypCd(String loginTypCd) { this.loginTypCd = loginTypCd; }
+    public String getRegLoginTypCd()  { return regLoginTypCd; }
+    public void   setRegLoginTypCd(String regLoginTypCd) { this.regLoginTypCd = regLoginTypCd; }
 
     public String getLoginRsltCd() { return loginRsltCd; }
     public void   setLoginRsltCd(String loginRsltCd) { this.loginRsltCd = loginRsltCd; }

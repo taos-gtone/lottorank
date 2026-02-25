@@ -13,6 +13,8 @@ public class MemberVO {
     private String genderCd;   // gender → gender_cd
     private String regIp;
     private int    acctStsCd;  // status → acct_sts_cd
+    private String regLoginTypCd; // I:아이디, N:네이버, K:카카오
+    private String socialId;      // 소셜 로그인 고유 ID (네이버/카카오 등)
 
     public long getMemberNo() { return memberNo; }
     public void setMemberNo(long memberNo) { this.memberNo = memberNo; }
@@ -46,4 +48,10 @@ public class MemberVO {
 
     public int getAcctStsCd() { return acctStsCd; }
     public void setAcctStsCd(int acctStsCd) { this.acctStsCd = acctStsCd; }
+
+    public String getRegLoginTypCd() { return regLoginTypCd; }
+    public void setRegLoginTypCd(String regLoginTypCd) { this.regLoginTypCd = regLoginTypCd; }
+
+    public String getSocialId() { return socialId; }
+    public void setSocialId(String socialId) { this.socialId = socialId; }
 }

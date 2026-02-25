@@ -8,13 +8,19 @@
         INSERT INTO MEM_JOIN_INFO (
             user_id, user_pw, user_name, nickname,
             email_id, email_addr, birth_date, gender_cd,
-            reg_ip, acct_sts_cd
+            reg_ip, reg_login_typ_cd, social_id, acct_sts_cd
         ) VALUES (
             #{userId}, #{userPw}, #{userName}, #{nickname},
             #{emailId}, #{emailAddr}, #{birthDate}, #{genderCd},
-            #{regIp}, 1
+            #{regIp}, #{regLoginTypCd}, #{socialId, jdbcType=VARCHAR}, 1
         )
     </insert>
+
+    <select id="findBySocialId" resultType="MemberVO">
+        SELECT member_no, user_id, user_name, nickname, acct_sts_cd, social_id, reg_login_typ_cd
+        FROM MEM_JOIN_INFO
+        WHERE social_id = #{socialId}
+    </select>
 
     <select id="countByUserId" resultType="int">
         SELECT COUNT(*) FROM MEM_JOIN_INFO WHERE user_id = #{userId}
@@ -36,12 +42,12 @@
     <!-- 로그인 이력 저장 (성공/실패 공통) -->
     <insert id="insertLoginHist" parameterType="LoginHistVO">
         INSERT INTO MEM_LOGIN_HIST (
-            member_no, user_id, login_typ_cd, login_rslt_cd, fail_rsn_cd,
+            member_no, user_id, reg_login_typ_cd, login_rslt_cd, fail_rsn_cd,
             login_ip, session_id, user_agent
         ) VALUES (
             #{memberNo,  jdbcType=BIGINT},
             #{userId},
-            #{loginTypCd},
+            #{regLoginTypCd},
             #{loginRsltCd},
             #{failRsnCd, jdbcType=VARCHAR},
             #{loginIp},

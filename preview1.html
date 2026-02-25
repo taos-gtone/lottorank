@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 후 헤더 변화 Preview</title>
+  <style>
+    /* ── CSS 변수 (base.css 동일) ── */
+    :root {
+      --navy:      #1B3175;
+      --blue:      #2851A3;
+      --blue-mid:  #3A6BC9;
+      --hero-from: #3655B8;
+      --hero-to:   #6A45C2;
+      --gold:      #E8A000;
+      --gold-lt:   #FFD54F;
+      --red:       #E53935;
+      --bg:        #F2F4F8;
+      --line:      #DDE3EE;
+      --txt:       #1A1A2E;
+      --txt2:      #4A5068;
+      --txt3:      #8891AA;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 14px; }
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background: #E8EBF2;
+      color: var(--txt);
+      padding: 32px 24px 80px;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+    /* ── 프리뷰 레이블 ── */
+    .preview-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--txt3);
+      margin-bottom: 10px;
+      padding-left: 2px;
+    }
+
+    .preview-block {
+      margin-bottom: 40px;
+    }
+
+    .preview-block + .preview-block::before {
+      content: '';
+      display: block;
+      height: 1px;
+      background: var(--line);
+      margin-bottom: 40px;
+    }
+
+    /* ═══════════════════════════════════════
+       유틸리티 바
+    ═══════════════════════════════════════ */
+    .util-bar {
+      background: var(--navy);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 6px 0;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .util-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .util-notice {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .util-notice-icon {
+      width: 18px;
+      height: 18px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .util-links {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .util-links a {
+      padding: 0 12px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+      transition: color 0.2s;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .util-links a:first-child { padding-left: 0; }
+    .util-links a:last-child { border-right: none; padding-right: 0; }
+    .util-links a:hover { color: #fff; }
+
+    /* 로그인 후 유저명 강조 */
+    .util-links a.util-username {
+      color: rgba(255,255,255,0.95);
+      font-weight: 700;
+    }
+
+    .util-links a.util-logout {
+      color: rgba(255,100,100,0.85);
+    }
+    .util-links a.util-logout:hover { color: #ff8080; }
+
+    .util-gold {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      background: linear-gradient(135deg, var(--gold), #F57F17);
+      border-radius: 3px;
+      color: #fff !important;
+      font-weight: 700;
+      margin-left: 12px;
+    }
+
+    /* ═══════════════════════════════════════
+       메인 헤더
+    ═══════════════════════════════════════ */
+    .main-header {
+      background: var(--blue);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      height: 58px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-right: 32px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+      margin-right: 8px;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .logo-img {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .logo-sub  { font-size: 0.65rem; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
+    .logo-main { font-size: 1.25rem; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      height: 100%;
+    }
+
+    .nav-item {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-item > a {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 18px;
+      color: rgba(255,255,255,0.88);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-item > a:hover { color: #fff; background: rgba(255,255,255,0.10); }
+    .nav-gold > a { color: var(--gold-lt) !important; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    /* 로그인 전 버튼 */
+    .btn-login {
+      padding: 7px 16px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .btn-join {
+      padding: 7px 16px;
+      border-radius: 4px;
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    /* ═══════════════════════════════════════
+       로그인 후 : 유저 프로필 영역
+    ═══════════════════════════════════════ */
+    .user-area {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-btn {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 6px 10px 6px 6px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .user-btn:hover { background: rgba(255,255,255,0.18); }
+
+    .user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: var(--navy);
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1px;
+    }
+
+    .user-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .user-rank {
+      font-size: 0.67rem;
+      color: var(--gold-lt);
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .user-chevron {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.6);
+      margin-left: 2px;
+      transition: transform 0.2s;
+    }
+
+    .user-area.open .user-chevron { transform: rotate(180deg); }
+
+    /* ── 드롭다운 메뉴 ── */
+    .user-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 232px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(27,49,117,0.18), 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      z-index: 300;
+      display: none;
+    }
+
+    .user-area.open .user-dropdown { display: block; }
+
+    /* 드롭다운 : 유저 정보 헤더 */
+    .dd-user-header {
+      padding: 16px 18px 14px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dd-avatar-lg {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--navy);
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .dd-user-meta { flex: 1; }
+
+    .dd-user-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+
+    .dd-user-tags {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dd-tag {
+      font-size: 0.67rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 50px;
+    }
+
+    .dd-tag-rank {
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.9);
+    }
+
+    .dd-tag-point {
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      color: var(--navy);
+    }
+
+    /* 드롭다운 : 메뉴 리스트 */
+    .dd-menu-list { padding: 6px 0; }
+
+    .dd-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--txt);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .dd-menu-item:hover { background: #F5F7FC; color: var(--blue); }
+
+    .dd-menu-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .dd-menu-icon.icon-my   { background: rgba(40,81,163,0.10);  color: var(--blue); }
+    .dd-menu-icon.icon-pred { background: rgba(232,160,0,0.12);  color: #c87f00; }
+    .dd-menu-icon.icon-pt   { background: rgba(34,197,94,0.12);  color: #16a34a; }
+    .dd-menu-icon.icon-set  { background: rgba(136,145,170,0.12); color: var(--txt2); }
+
+    .dd-divider { height: 1px; background: var(--line); margin: 4px 0; }
+
+    .dd-menu-item.dd-logout {
+      color: var(--red);
+    }
+
+    .dd-menu-item.dd-logout:hover { background: rgba(229,57,53,0.05); color: #c62828; }
+    .dd-menu-icon.icon-out  { background: rgba(229,57,53,0.10); color: var(--red); }
+
+    .dd-badge {
+      margin-left: auto;
+      font-size: 0.67rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 50px;
+      background: var(--red);
+      color: #fff;
+    }
+
+    .dd-badge.badge-new { background: var(--blue); }
+
+    /* ── 화살표 꼬리 ── */
+    .user-dropdown::before {
+      content: '';
+      position: absolute;
+      top: -7px;
+      right: 20px;
+      width: 14px;
+      height: 14px;
+      background: var(--navy);
+      transform: rotate(45deg);
+      border-left: 1px solid var(--line);
+      border-top: 1px solid var(--line);
+    }
+
+    /* ═══════════════════════════════════════
+       페이지 레이아웃 (데모용)
+    ═══════════════════════════════════════ */
+    .page-hero {
+      height: 80px;
+      background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+      display: flex;
+      align-items: center;
+    }
+
+    .page-hero .wrap { color: rgba(255,255,255,0.9); font-size: 0.88rem; font-weight: 500; }
+
+    .page-content {
+      background: var(--bg);
+      padding: 20px 0 32px;
+      min-height: 60px;
+    }
+
+    .page-content .wrap {
+      color: var(--txt3);
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ═══════════════════════════════════════
+       프리뷰 제목 섹션
+    ═══════════════════════════════════════ */
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .section-sub {
+      font-size: 0.82rem;
+      color: var(--txt3);
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .badge-before {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: var(--line);
+      color: var(--txt2);
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      vertical-align: middle;
+    }
+
+    .badge-after {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: var(--blue);
+      color: #fff;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      vertical-align: middle;
+    }
+
+    .preview-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(27,49,117,0.13);
+      border: 1px solid rgba(27,49,117,0.1);
+    }
+
+    /* ── 변화 포인트 주석 ── */
+    .change-notes {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .change-note {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.8rem;
+      color: var(--txt2);
+      font-weight: 500;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 7px 12px;
+    }
+
+    .note-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .note-dot.blue  { background: var(--blue); }
+    .note-dot.gold  { background: var(--gold); }
+    .note-dot.green { background: #22c55e; }
+    .note-dot.red   { background: var(--red); }
+
+    /* ── 페이지 타이틀 ── */
+    .page-head {
+      margin-bottom: 36px;
+    }
+
+    .page-head h1 {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .page-head p {
+      font-size: 0.88rem;
+      color: var(--txt3);
+      font-weight: 500;
+    }
+
+    .page-head-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .page-head-bar span {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--txt3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .page-head-bar::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 18px;
+      background: var(--blue);
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════
+       타이틀
+  ═══════════════════════ -->
+  <div class="page-head">
+    <div class="page-head-bar"><span>Header State Preview</span></div>
+    <h1>로그인 전 / 후 헤더 변화</h1>
+    <p>로그인 완료 시 우측 상단 영역의 디자인 변화 프리뷰입니다. 소스 파일은 수정되지 않습니다.</p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       BEFORE : 로그인 전
+  ══════════════════════════════════════════════ -->
+  <div class="preview-block">
+    <p class="preview-label">Before</p>
+    <div class="section-title"><span class="badge-before">로그인 전</span></div>
+    <p class="section-sub">비회원 상태 — 로그인 / 무료 회원가입 버튼이 표시됩니다.</p>
+
+    <div class="preview-card">
+      <!-- util-bar : 로그인 전 -->
+      <div class="util-bar">
+        <div class="wrap">
+          <div class="util-inner">
+            <div class="util-notice">
+              <div class="util-notice-icon">📢</div>
+              <span>[1162회 신규 TOP 랭커 등장!] 황금사자님 36주 연속 참여 달성 · 72.4% 적중률 1위!</span>
+            </div>
+            <div class="util-links">
+              <a href="#">로그인</a>
+              <a href="#">회원가입</a>
+              <a href="#">마이페이지</a>
+              <a href="#" class="util-gold">🏆 골드회원 간편결제</a>
+              <a href="#" style="margin-left:8px;">≡ 전체메뉴</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- header : 로그인 전 -->
+      <div class="main-header">
+        <div class="wrap">
+          <div class="header-inner">
+            <a href="#" class="logo">
+              <div class="logo-img">🎰</div>
+              <div class="logo-text-wrap">
+                <div class="logo-sub">LOTTO RANK</div>
+                <div class="logo-main">로또랭크</div>
+              </div>
+            </a>
+            <nav class="main-nav">
+              <div class="nav-item">
+                <a href="#">회차별 당첨번호</a>
+              </div>
+              <div class="nav-item">
+                <a href="#">예측 분석실</a>
+              </div>
+              <div class="nav-item">
+                <a href="#">랭킹 커뮤니티</a>
+              </div>
+              <div class="nav-item">
+                <a href="#">고객센터</a>
+              </div>
+              <div class="nav-item nav-gold">
+                <a href="#">🏆 골드 멤버십</a>
+              </div>
+            </nav>
+            <div class="header-actions">
+              <button class="btn-login">로그인</button>
+              <button class="btn-join">무료 회원가입</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 페이지 하단 (참고용) -->
+      <div class="page-hero">
+        <div class="wrap">홈 > 페이지</div>
+      </div>
+      <div class="page-content">
+        <div class="wrap">페이지 콘텐츠 영역 (참고용)</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       AFTER : 로그인 후
+  ══════════════════════════════════════════════ -->
+  <div class="preview-block">
+    <p class="preview-label">After</p>
+    <div class="section-title"><span class="badge-after">로그인 후</span></div>
+    <p class="section-sub">회원 상태 — 유저 프로필 버튼과 드롭다운 메뉴가 표시됩니다.</p>
+
+    <div class="preview-card">
+      <!-- util-bar : 로그인 후 -->
+      <div class="util-bar">
+        <div class="wrap">
+          <div class="util-inner">
+            <div class="util-notice">
+              <div class="util-notice-icon">📢</div>
+              <span>[1162회 신규 TOP 랭커 등장!] 황금사자님 36주 연속 참여 달성 · 72.4% 적중률 1위!</span>
+            </div>
+            <div class="util-links">
+              <a href="#" class="util-username">홍길동님</a>
+              <a href="#">마이페이지</a>
+              <a href="#" class="util-logout">로그아웃</a>
+              <a href="#" class="util-gold">🏆 골드회원 간편결제</a>
+              <a href="#" style="margin-left:8px;">≡ 전체메뉴</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- header : 로그인 후 (드롭다운 열린 상태) -->
+      <div class="main-header" style="position:relative; z-index:10;">
+        <div class="wrap">
+          <div class="header-inner">
+            <a href="#" class="logo">
+              <div class="logo-img">🎰</div>
+              <div class="logo-text-wrap">
+                <div class="logo-sub">LOTTO RANK</div>
+                <div class="logo-main">로또랭크</div>
+              </div>
+            </a>
+            <nav class="main-nav">
+              <div class="nav-item">
+                <a href="#">회차별 당첨번호</a>
+              </div>
+              <div class="nav-item">
+                <a href="#">예측 분석실</a>
+              </div>
+              <div class="nav-item">
+                <a href="#">랭킹 커뮤니티</a>
+              </div>
+              <div class="nav-item">
+                <a href="#">고객센터</a>
+              </div>
+              <div class="nav-item nav-gold">
+                <a href="#">🏆 골드 멤버십</a>
+              </div>
+            </nav>
+
+            <!-- ★ 로그인 후 영역 ★ -->
+            <div class="header-actions">
+              <div class="user-area open" id="userArea">
+                <button class="user-btn" id="userBtn">
+                  <div class="user-avatar">홍</div>
+                  <div class="user-info">
+                    <span class="user-name">홍길동</span>
+                    <span class="user-rank">🏅 일반회원</span>
+                  </div>
+                  <span class="user-chevron">▲</span>
+                </button>
+
+                <!-- 드롭다운 (open 상태) -->
+                <div class="user-dropdown">
+                  <!-- 유저 헤더 -->
+                  <div class="dd-user-header">
+                    <div class="dd-avatar-lg">홍</div>
+                    <div class="dd-user-meta">
+                      <div class="dd-user-name">홍길동님</div>
+                      <div class="dd-user-tags">
+                        <span class="dd-tag dd-tag-rank">🏅 일반회원</span>
+                        <span class="dd-tag dd-tag-point">1,250P</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 메뉴 -->
+                  <div class="dd-menu-list">
+                    <a href="#" class="dd-menu-item">
+                      <div class="dd-menu-icon icon-my">👤</div>
+                      마이페이지
+                    </a>
+                    <a href="#" class="dd-menu-item">
+                      <div class="dd-menu-icon icon-pred">📊</div>
+                      내 예측 현황
+                      <span class="dd-badge badge-new">NEW</span>
+                    </a>
+                    <a href="#" class="dd-menu-item">
+                      <div class="dd-menu-icon icon-pt">💰</div>
+                      포인트 내역
+                    </a>
+                    <a href="#" class="dd-menu-item">
+                      <div class="dd-menu-icon icon-set">⚙️</div>
+                      계정 설정
+                    </a>
+
+                    <div class="dd-divider"></div>
+
+                    <a href="#" class="dd-menu-item dd-logout">
+                      <div class="dd-menu-icon icon-out">🚪</div>
+                      로그아웃
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /로그인 후 영역 -->
+
+          </div>
+        </div>
+      </div>
+
+      <!-- 페이지 하단 (참고용) -->
+      <div class="page-hero" style="margin-top:150px;">
+        <div class="wrap">홈 > 페이지</div>
+      </div>
+      <div class="page-content">
+        <div class="wrap">페이지 콘텐츠 영역 (참고용)</div>
+      </div>
+    </div>
+
+    <!-- 변화 포인트 -->
+    <div class="change-notes">
+      <div class="change-note">
+        <div class="note-dot blue"></div>
+        util-bar: "로그인" → "홍길동님" 강조 표시
+      </div>
+      <div class="change-note">
+        <div class="note-dot red"></div>
+        util-bar: "회원가입" → "로그아웃" 링크로 교체
+      </div>
+      <div class="change-note">
+        <div class="note-dot gold"></div>
+        헤더: 로그인/회원가입 버튼 → 유저 프로필 칩 버튼
+      </div>
+      <div class="change-note">
+        <div class="note-dot green"></div>
+        드롭다운: 이름·등급·포인트 + 마이페이지·예측·설정·로그아웃
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       AFTER : 드롭다운 닫힌 상태
+  ══════════════════════════════════════════════ -->
+  <div class="preview-block">
+    <p class="preview-label">After — Dropdown Closed</p>
+    <div class="section-title"><span class="badge-after">로그인 후 (드롭다운 닫힘)</span></div>
+    <p class="section-sub">드롭다운이 닫혔을 때 헤더 우측의 기본 상태입니다.</p>
+
+    <div class="preview-card">
+      <!-- util-bar -->
+      <div class="util-bar">
+        <div class="wrap">
+          <div class="util-inner">
+            <div class="util-notice">
+              <div class="util-notice-icon">📢</div>
+              <span>[1162회 신규 TOP 랭커 등장!] 황금사자님 36주 연속 참여 달성 · 72.4% 적중률 1위!</span>
+            </div>
+            <div class="util-links">
+              <a href="#" class="util-username">홍길동님</a>
+              <a href="#">마이페이지</a>
+              <a href="#" class="util-logout">로그아웃</a>
+              <a href="#" class="util-gold">🏆 골드회원 간편결제</a>
+              <a href="#" style="margin-left:8px;">≡ 전체메뉴</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- header : 드롭다운 닫힌 상태 -->
+      <div class="main-header">
+        <div class="wrap">
+          <div class="header-inner">
+            <a href="#" class="logo">
+              <div class="logo-img">🎰</div>
+              <div class="logo-text-wrap">
+                <div class="logo-sub">LOTTO RANK</div>
+                <div class="logo-main">로또랭크</div>
+              </div>
+            </a>
+            <nav class="main-nav">
+              <div class="nav-item">
+                <a href="#">회차별 당첨번호</a>
+              </div>
+              <div class="nav-item">
+                <a href="#">예측 분석실</a>
+              </div>
+              <div class="nav-item">
+                <a href="#">랭킹 커뮤니티</a>
+              </div>
+              <div class="nav-item">
+                <a href="#">고객센터</a>
+              </div>
+              <div class="nav-item nav-gold">
+                <a href="#">🏆 골드 멤버십</a>
+              </div>
+            </nav>
+            <div class="header-actions">
+              <div class="user-area" id="userArea2">
+                <button class="user-btn" id="userBtn2">
+                  <div class="user-avatar">홍</div>
+                  <div class="user-info">
+                    <span class="user-name">홍길동</span>
+                    <span class="user-rank">🏅 일반회원</span>
+                  </div>
+                  <span class="user-chevron">▼</span>
+                </button>
+
+                <div class="user-dropdown">
+                  <div class="dd-user-header">
+                    <div class="dd-avatar-lg">홍</div>
+                    <div class="dd-user-meta">
+                      <div class="dd-user-name">홍길동님</div>
+                      <div class="dd-user-tags">
+                        <span class="dd-tag dd-tag-rank">🏅 일반회원</span>
+                        <span class="dd-tag dd-tag-point">1,250P</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dd-menu-list">
+                    <a href="#" class="dd-menu-item">
+                      <div class="dd-menu-icon icon-my">👤</div>마이페이지
+                    </a>
+                    <a href="#" class="dd-menu-item">
+                      <div class="dd-menu-icon icon-pred">📊</div>내 예측 현황
+                      <span class="dd-badge badge-new">NEW</span>
+                    </a>
+                    <a href="#" class="dd-menu-item">
+                      <div class="dd-menu-icon icon-pt">💰</div>포인트 내역
+                    </a>
+                    <a href="#" class="dd-menu-item">
+                      <div class="dd-menu-icon icon-set">⚙️</div>계정 설정
+                    </a>
+                    <div class="dd-divider"></div>
+                    <a href="#" class="dd-menu-item dd-logout">
+                      <div class="dd-menu-icon icon-out">🚪</div>로그아웃
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-hero">
+        <div class="wrap">홈 > 페이지</div>
+      </div>
+      <div class="page-content">
+        <div class="wrap">페이지 콘텐츠 영역 (참고용)</div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    /* 드롭다운 토글 (닫힌 상태 카드) */
+    const userBtn2  = document.getElementById('userBtn2');
+    const userArea2 = document.getElementById('userArea2');
+
+    userBtn2.addEventListener('click', function() {
+      userArea2.classList.toggle('open');
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!userArea2.contains(e.target)) {
+        userArea2.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>

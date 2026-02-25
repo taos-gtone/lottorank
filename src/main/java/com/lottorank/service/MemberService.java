@@ -6,7 +6,13 @@ public interface MemberService {
 
     void join(MemberVO member);
 
+    /** 소셜 회원가입 (비밀번호 자동 생성) */
+    void joinBySocial(MemberVO member);
+
     boolean isUserIdAvailable(String userId);
+
+    /** 소셜 ID로 기존 회원 조회 */
+    MemberVO findBySocialId(String socialId);
 
     MemberVO login(String userId, String userPw);
 
@@ -16,6 +22,6 @@ public interface MemberService {
      * - 실패(loginRsltCd="F") : MEM_LOGIN_HIST INSERT 만 수행
      */
     void saveLoginHistory(MemberVO member, String userId,
-                          String loginTypCd, String loginRsltCd, String failRsnCd,
+                          String regLoginTypCd, String loginRsltCd, String failRsnCd,
                           String loginIp, String sessionId, String userAgent);
 }

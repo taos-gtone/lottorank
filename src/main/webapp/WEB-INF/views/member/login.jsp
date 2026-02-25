@@ -50,7 +50,8 @@
         <div class="sns-section">
           <p class="sns-label">SNS 간편 로그인</p>
           <div class="sns-btns">
-            <button type="button" class="sns-btn sns-naver">
+            <button type="button" class="sns-btn sns-naver"
+                    onclick="window.location.href='${pageContext.request.contextPath}/member/naver/login-start'">
               <span class="sns-icon">N</span>네이버 로그인
             </button>
             <button type="button" class="sns-btn sns-kakao">
@@ -125,6 +126,24 @@
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
 <script>
+  /* ── 네이버 OAuth 오류 처리 ── */
+  (function() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var err = urlParams.get('error');
+    var messages = {
+      'naver_cancel':         '네이버 로그인이 취소되었습니다.',
+      'invalid_state':        '보안 검증에 실패했습니다. 다시 시도해 주세요.',
+      'naver_token_fail':     '네이버 인증 처리 중 오류가 발생했습니다.',
+      'naver_error':          '네이버 연동 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+      'naver_not_registered': '가입되지 않은 네이버 계정입니다. 먼저 회원가입을 해주세요.',
+      'naver_inactive':       '비활성화된 계정입니다. 고객센터로 문의해 주세요.'
+    };
+    if (err && messages[err]) {
+      alert(messages[err]);
+      history.replaceState(null, '', window.location.pathname);
+    }
+  })();
+
   /* ── 모바일 메뉴 ── */
   const menuBtn    = document.getElementById('menuBtn');
   const mobileMenu = document.getElementById('mobileMenu');

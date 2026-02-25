@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 public class MemberServiceImpl implements MemberService {
 
@@ -19,6 +21,19 @@ public class MemberServiceImpl implements MemberService {
         String hashedPw = BCrypt.hashpw(member.getUserPw(), BCrypt.gensalt());
         member.setUserPw(hashedPw);
         memberMapper.insertMember(member);
+    }
+
+    @Override
+    public void joinBySocial(MemberVO member) {
+        // 소셜 로그인 사용자는 비밀번호 직접 사용 안 함 → 랜덤 UUID를 해시하여 저장
+        String randomPw = BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt());
+        member.setUserPw(randomPw);
+        memberMapper.insertMember(member);
+    }
+
+    @Override
+    public MemberVO findBySocialId(String socialId) {
+        return memberMapper.findBySocialId(socialId);
     }
 
     @Override
@@ -43,7 +58,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void saveLoginHistory(MemberVO member, String userId,
-                                 String loginTypCd, String loginRsltCd, String failRsnCd,
+                                 String regLoginTypCd, String loginRsltCd, String failRsnCd,
                                  String loginIp, String sessionId, String userAgent) {
         // 1) 성공 시 최종 로그인 시각 UPDATE
         if ("S".equals(loginRsltCd) && member != null) {
@@ -54,7 +69,7 @@ public class MemberServiceImpl implements MemberService {
         LoginHistVO hist = new LoginHistVO();
         hist.setMemberNo(member != null ? member.getMemberNo() : null);
         hist.setUserId(userId);
-        hist.setLoginTypCd(loginTypCd);
+        hist.setRegLoginTypCd(regLoginTypCd);
         hist.setLoginRsltCd(loginRsltCd);
         hist.setFailRsnCd(failRsnCd);
         hist.setLoginIp(loginIp);

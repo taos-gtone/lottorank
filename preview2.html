@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 팝업 변화 Preview 2</title>
+  <style>
+    :root {
+      --navy:      #1B3175;
+      --blue:      #2851A3;
+      --blue-mid:  #3A6BC9;
+      --hero-from: #3655B8;
+      --hero-to:   #6A45C2;
+      --gold:      #E8A000;
+      --gold-lt:   #FFD54F;
+      --red:       #E53935;
+      --bg:        #F2F4F8;
+      --line:      #DDE3EE;
+      --txt:       #1A1A2E;
+      --txt2:      #4A5068;
+      --txt3:      #8891AA;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 14px; }
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background: #D8DCE8;
+      color: var(--txt);
+      padding: 36px 24px 80px;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+
+    /* ── 페이지 제목 ── */
+    .page-head { margin-bottom: 40px; }
+    .page-head-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .page-head-bar::before {
+      content: '';
+      display: block;
+      width: 4px; height: 18px;
+      background: var(--blue);
+      border-radius: 2px;
+    }
+    .page-head-bar span {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--txt3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .page-head h1 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .page-head p { font-size: 0.85rem; color: var(--txt3); font-weight: 500; }
+
+    /* ── 비교 레이아웃 ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .compare-col {}
+
+    .col-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 50px;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .col-badge.before { background: var(--line); color: var(--txt2); }
+    .col-badge.after  { background: var(--blue); color: #fff; }
+
+    .col-title {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .col-desc {
+      font-size: 0.8rem;
+      color: var(--txt3);
+      font-weight: 500;
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
+    /* ── 헤더 + 팝업 래퍼 ── */
+    .header-popup-wrap {
+      border-radius: 12px;
+      overflow: visible;
+      box-shadow: 0 6px 28px rgba(27,49,117,0.16);
+      position: relative;
+    }
+
+    /* ── 헤더 바 ── */
+    .mini-header {
+      background: var(--blue);
+      border-radius: 12px 12px 0 0;
+      padding: 0 18px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mini-logo {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .mini-logo-icon {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+    }
+    .mini-logo-text { font-size: 0.95rem; font-weight: 900; color: #fff; letter-spacing: -0.3px; }
+
+    .mini-header-right { display: flex; align-items: center; gap: 7px; }
+
+    .mini-btn-login {
+      padding: 5px 13px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.28);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .mini-btn-join {
+      padding: 5px 13px;
+      border-radius: 4px;
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* ── 페이지 배경 (팝업 뒤 컨텍스트) ── */
+    .mini-page-bg {
+      background: #E4E8F2;
+      padding: 14px 18px;
+      border-radius: 0 0 12px 12px;
+      min-height: 60px;
+      position: relative;
+    }
+    .mini-page-line {
+      height: 10px;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.07);
+      margin-bottom: 7px;
+    }
+    .mini-page-line:last-child { width: 60%; }
+
+    /* ══════════════════════════════
+       BEFORE : 로그인 팝업
+    ══════════════════════════════ */
+    .login-popup {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      width: 260px;
+      background: linear-gradient(160deg, #1e2f6e 0%, #1B3175 100%);
+      border-radius: 0 0 12px 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-top: none;
+      box-shadow: 0 12px 36px rgba(10,20,60,0.35);
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    /* 팝업 헤더 타이틀 */
+    .lp-head {
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .lp-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.3px;
+    }
+
+    /* 팝업 본문 */
+    .lp-body { padding: 14px 18px 18px; }
+
+    /* 입력 필드 */
+    .lp-input {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 7px;
+      color: #fff;
+      font-size: 0.85rem;
+      font-family: inherit;
+      margin-bottom: 8px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .lp-input::placeholder { color: rgba(255,255,255,0.38); }
+    .lp-input:focus {
+      outline: none;
+      border-color: rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.13);
+    }
+
+    /* 로그인 버튼 */
+    .lp-btn-submit {
+      display: block;
+      width: 100%;
+      padding: 11px;
+      background: var(--blue-mid);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 800;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background 0.2s;
+      margin-top: 4px;
+    }
+    .lp-btn-submit:hover { background: #2d5cb8; }
+
+    /* 유틸 링크 */
+    .lp-util-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-top: 12px;
+      margin-bottom: 14px;
+    }
+    .lp-util-links a {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      font-weight: 600;
+      padding: 0 8px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+      transition: color 0.2s;
+    }
+    .lp-util-links a:last-child { border-right: none; }
+    .lp-util-links a:hover { color: rgba(255,255,255,0.85); }
+
+    /* SNS 버튼 */
+    .lp-sns { display: flex; gap: 8px; }
+
+    .lp-sns-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 6px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .lp-sns-btn:hover { opacity: 0.88; }
+    .lp-naver { background: #03C75A; color: #fff; }
+    .lp-kakao { background: #FEE500; color: #191919; }
+
+    .lp-sns-icon {
+      width: 18px; height: 18px;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 900;
+      flex-shrink: 0;
+    }
+    .lp-kakao .lp-sns-icon { background: transparent; font-size: 0.85rem; }
+
+    /* ══════════════════════════════
+       AFTER : 로그인 완료 팝업
+    ══════════════════════════════ */
+    .logged-popup {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      width: 260px;
+      background: linear-gradient(160deg, #1e2f6e 0%, #1B3175 100%);
+      border-radius: 0 0 12px 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-top: none;
+      box-shadow: 0 12px 36px rgba(10,20,60,0.35);
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    /* 유저 프로필 헤더 */
+    .lp-user-header {
+      padding: 16px 18px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lp-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.05rem; font-weight: 900;
+      color: var(--navy);
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.22);
+    }
+
+    .lp-user-info { flex: 1; }
+
+    .lp-user-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .lp-user-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+    .lp-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 50px;
+    }
+    .lp-tag-rank  { background: rgba(255,255,255,0.13); color: rgba(255,255,255,0.85); }
+    .lp-tag-point { background: linear-gradient(135deg, var(--gold-lt), var(--gold)); color: var(--navy); }
+
+    /* 포인트 바 */
+    .lp-point-bar {
+      margin: 0 18px 0;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .lp-point-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .lp-point-label { font-size: 0.72rem; color: rgba(255,255,255,0.5); font-weight: 600; }
+    .lp-point-val   { font-size: 0.82rem; color: var(--gold-lt); font-weight: 800; }
+
+    .lp-progress-bg {
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .lp-progress-fill {
+      height: 100%;
+      width: 42%;
+      background: linear-gradient(90deg, var(--gold-lt), var(--gold));
+      border-radius: 2px;
+    }
+    .lp-progress-hint {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.35);
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* 메뉴 리스트 */
+    .lp-menu { padding: 6px 0; }
+
+    .lp-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 18px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .lp-menu-item:hover {
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+    }
+
+    .lp-menu-icon {
+      width: 26px; height: 26px;
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .icon-my   { background: rgba(255,255,255,0.10); }
+    .icon-pred { background: rgba(232,160,0,0.20); }
+    .icon-pt   { background: rgba(34,197,94,0.18); }
+    .icon-set  { background: rgba(255,255,255,0.07); }
+
+    .lp-menu-arrow {
+      margin-left: auto;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.25);
+    }
+
+    .lp-badge {
+      margin-left: auto;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 50px;
+      background: var(--red);
+      color: #fff;
+    }
+
+    .lp-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 4px 0; }
+
+    .lp-menu-item.lp-logout { color: rgba(255,120,120,0.85); }
+    .lp-menu-item.lp-logout:hover { background: rgba(229,57,53,0.08); color: #ff9090; }
+    .icon-out { background: rgba(229,57,53,0.15); }
+
+    /* ── 변화 설명 ── */
+    .change-notes {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .change-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--txt2);
+      font-weight: 500;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 8px 12px;
+    }
+    .note-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .note-dot.blue  { background: var(--blue); }
+    .note-dot.gold  { background: var(--gold); }
+    .note-dot.green { background: #22c55e; }
+    .note-dot.red   { background: var(--red); }
+
+    /* ── 헤더 버튼 (로그인 후 변화) ── */
+    .mini-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px 4px 5px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .mini-avatar {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 900;
+      color: var(--navy);
+    }
+    .mini-chip-name { font-size: 0.78rem; font-weight: 700; color: #fff; }
+    .mini-chip-chevron { font-size: 0.6rem; color: rgba(255,255,255,0.6); margin-left: 1px; }
+
+    @media (max-width: 680px) {
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 페이지 제목 -->
+  <div class="page-head">
+    <div class="page-head-bar"><span>Login Popup State Preview</span></div>
+    <h1>로그인 팝업 — 전 / 후 비교</h1>
+    <p>헤더의 로그인 버튼 클릭 시 나타나는 팝업의 로그인 전/후 디자인 변화입니다.</p>
+  </div>
+
+  <!-- 2단 비교 -->
+  <div class="compare-grid">
+
+    <!-- ══════════════════
+         BEFORE
+    ══════════════════ -->
+    <div class="compare-col">
+      <span class="col-badge before">로그인 전</span>
+      <div class="col-title">로그인 팝업</div>
+      <p class="col-desc">헤더의 "로그인" 버튼 클릭 시 나타나는 기본 상태입니다.</p>
+
+      <div class="header-popup-wrap">
+        <!-- 미니 헤더 -->
+        <div class="mini-header">
+          <div class="mini-logo">
+            <div class="mini-logo-icon">🎰</div>
+            <span class="mini-logo-text">로또랭크</span>
+          </div>
+          <div class="mini-header-right">
+            <button class="mini-btn-login">로그인</button>
+            <button class="mini-btn-join">무료 회원가입</button>
+          </div>
+        </div>
+
+        <!-- 로그인 팝업 -->
+        <div class="login-popup" style="position:relative; top:auto; right:auto; width:100%; border-radius:0 0 12px 12px;">
+          <div class="lp-head">
+            <div class="lp-title">회원 로그인</div>
+          </div>
+          <div class="lp-body">
+            <input class="lp-input" type="text"     placeholder="아이디" readonly>
+            <input class="lp-input" type="password" placeholder="비밀번호" readonly>
+            <button class="lp-btn-submit">로그인</button>
+
+            <div class="lp-util-links">
+              <a href="#">회원가입</a>
+              <a href="#">아이디 찾기</a>
+              <a href="#">비밀번호 찾기</a>
+            </div>
+
+            <div class="lp-sns">
+              <button class="lp-sns-btn lp-naver">
+                <span class="lp-sns-icon">N</span>네이버
+              </button>
+              <button class="lp-sns-btn lp-kakao">
+                <span class="lp-sns-icon">💬</span>카카오
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════
+         AFTER
+    ══════════════════ -->
+    <div class="compare-col">
+      <span class="col-badge after">로그인 후</span>
+      <div class="col-title">유저 정보 팝업</div>
+      <p class="col-desc">로그인 완료 후 같은 버튼 클릭 시 나타나는 변화된 상태입니다.</p>
+
+      <div class="header-popup-wrap">
+        <!-- 미니 헤더 (로그인 후) -->
+        <div class="mini-header">
+          <div class="mini-logo">
+            <div class="mini-logo-icon">🎰</div>
+            <span class="mini-logo-text">로또랭크</span>
+          </div>
+          <div class="mini-header-right">
+            <!-- 로그인 버튼 → 유저 칩으로 교체 -->
+            <div class="mini-user-chip">
+              <div class="mini-avatar">홍</div>
+              <span class="mini-chip-name">홍길동</span>
+              <span class="mini-chip-chevron">▼</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 로그인 완료 팝업 -->
+        <div class="logged-popup" style="position:relative; top:auto; right:auto; width:100%; border-radius:0 0 12px 12px;">
+
+          <!-- 유저 프로필 헤더 -->
+          <div class="lp-user-header">
+            <div class="lp-avatar">홍</div>
+            <div class="lp-user-info">
+              <div class="lp-user-name">홍길동님</div>
+              <div class="lp-user-tags">
+                <span class="lp-tag lp-tag-rank">🏅 일반회원</span>
+                <span class="lp-tag lp-tag-point">1,250P</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 포인트 / 레벨 진행 바 -->
+          <div class="lp-point-bar">
+            <div class="lp-point-row">
+              <span class="lp-point-label">다음 등급까지</span>
+              <span class="lp-point-val">3,750P 필요</span>
+            </div>
+            <div class="lp-progress-bg">
+              <div class="lp-progress-fill"></div>
+            </div>
+            <div class="lp-progress-hint">실버회원까지 42%</div>
+          </div>
+
+          <!-- 메뉴 -->
+          <div class="lp-menu">
+            <a href="#" class="lp-menu-item">
+              <div class="lp-menu-icon icon-my">👤</div>
+              마이페이지
+              <span class="lp-menu-arrow">›</span>
+            </a>
+            <a href="#" class="lp-menu-item">
+              <div class="lp-menu-icon icon-pred">📊</div>
+              내 예측 현황
+              <span class="lp-badge">3</span>
+            </a>
+            <a href="#" class="lp-menu-item">
+              <div class="lp-menu-icon icon-pt">💰</div>
+              포인트 내역
+              <span class="lp-menu-arrow">›</span>
+            </a>
+            <a href="#" class="lp-menu-item">
+              <div class="lp-menu-icon icon-set">⚙️</div>
+              계정 설정
+              <span class="lp-menu-arrow">›</span>
+            </a>
+            <div class="lp-divider"></div>
+            <a href="#" class="lp-menu-item lp-logout">
+              <div class="lp-menu-icon icon-out">🚪</div>
+              로그아웃
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 변화 포인트 -->
+      <div class="change-notes">
+        <div class="change-note">
+          <div class="note-dot gold"></div>
+          헤더: 로그인·회원가입 버튼 → 아바타 칩 버튼(이름+▼)으로 교체
+        </div>
+        <div class="change-note">
+          <div class="note-dot blue"></div>
+          팝업 상단: 입력폼 제거 → 아바타·이름·등급·포인트 표시
+        </div>
+        <div class="change-note">
+          <div class="note-dot green"></div>
+          포인트 진행 바: 다음 등급까지의 달성률 시각화
+        </div>
+        <div class="change-note">
+          <div class="note-dot red"></div>
+          메뉴: 마이페이지·예측현황·포인트·설정·로그아웃 제공
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

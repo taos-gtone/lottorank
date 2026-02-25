@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -84,7 +85,8 @@
       <div class="sns-section">
         <p class="sns-label">SNS 간편 가입</p>
         <div class="sns-btns">
-          <button type="button" class="sns-btn sns-naver">
+          <button type="button" class="sns-btn sns-naver"
+                  onclick="window.location.href='${pageContext.request.contextPath}/member/naver/join'">
             <span class="sns-icon">N</span>네이버 계정으로 가입
           </button>
           <button type="button" class="sns-btn sns-kakao">
@@ -294,6 +296,24 @@
 <%@ include file="/WEB-INF/views/common/scripts.jsp" %>
 
 <script>
+/* ── 네이버 OAuth 오류 처리 ── */
+(function() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var err = urlParams.get('error');
+  var messages = {
+    'naver_cancel':      '네이버 로그인이 취소되었습니다.',
+    'invalid_state':     '보안 검증에 실패했습니다. 다시 시도해 주세요.',
+    'naver_token_fail':  '네이버 인증 처리 중 오류가 발생했습니다.',
+    'naver_error':       '네이버 연동 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+    'already_registered':'이미 가입된 네이버 계정입니다. 로그인 페이지에서 네이버 로그인을 이용해 주세요.'
+  };
+  if (err && messages[err]) {
+    alert(messages[err]);
+    // URL에서 error 파라미터 제거
+    history.replaceState(null, '', window.location.pathname);
+  }
+})();
+
 /* ── 스텝 이동 ── */
 function goStep(n) {
   [1, 2, 3].forEach(function(i) {

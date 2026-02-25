@@ -19,7 +19,7 @@
       기본 JNDI 이름: jdbc/LottoRankDB (resourceRef=true 이므로 java:comp/env/jdbc/LottoRankDB로 조회)
       필요 시 JVM 옵션으로 변경 가능: -Dlottorank.datasource.jndi-name=jdbc/원하는이름
     -->
-    <context:property-placeholder ignore-unresolvable="true"/>
+    <context:property-placeholder location="classpath:oauth.properties" ignore-unresolvable="true"/>
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="${lottorank.datasource.jndi-name:jdbc/LottoRankDB}"/>
         <property name="resourceRef" value="true"/>

@@ -18,6 +18,9 @@ target/
 .DS_Store
 Thumbs.db
 
+# Secrets
+src/main/resources/oauth.properties
+
 # Logs
 *.log
 
