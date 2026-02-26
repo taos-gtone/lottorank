@@ -50,8 +50,7 @@
         <div class="sns-section">
           <p class="sns-label">SNS 간편 로그인</p>
           <div class="sns-btns">
-            <button type="button" class="sns-btn sns-naver"
-                    onclick="window.location.href='${pageContext.request.contextPath}/member/naver/login-start'">
+            <button type="button" class="sns-btn sns-naver" id="btnNaverLogin">
               <span class="sns-icon">N</span>네이버 로그인
             </button>
             <button type="button" class="sns-btn sns-kakao">
@@ -182,11 +181,13 @@
     params.append('userId', id);
     params.append('userPw', pw);
 
+    var redirectUrl = new URLSearchParams(window.location.search).get('redirect');
+
     fetch('${pageContext.request.contextPath}/member/login', { method: 'POST', body: params })
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.success) {
-          location.href = '${pageContext.request.contextPath}/';
+          location.href = redirectUrl || '${pageContext.request.contextPath}/';
         } else {
           alert(data.message);
           submitBtn.disabled = false;
@@ -198,6 +199,14 @@
         submitBtn.disabled = false;
         submitBtn.textContent = '로그인';
       });
+  });
+
+  /* ── 네이버 로그인 버튼: redirect 파라미터 전달 ── */
+  document.getElementById('btnNaverLogin').addEventListener('click', function() {
+    var redirect = new URLSearchParams(window.location.search).get('redirect');
+    var url = '${pageContext.request.contextPath}/member/naver/login-start';
+    if (redirect) url += '?redirect=' + encodeURIComponent(redirect);
+    window.location.href = url;
   });
 
   /* ── Enter 키 제출 ── */

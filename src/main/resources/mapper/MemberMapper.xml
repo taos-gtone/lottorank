@@ -8,11 +8,11 @@
         INSERT INTO MEM_JOIN_INFO (
             user_id, user_pw, user_name, nickname,
             email_id, email_addr, birth_date, gender_cd,
-            reg_ip, reg_login_typ_cd, social_id, acct_sts_cd
+            reg_ip, reg_login_typ_cd, social_id, mobile_no, acct_sts_cd
         ) VALUES (
             #{userId}, #{userPw}, #{userName}, #{nickname},
             #{emailId}, #{emailAddr}, #{birthDate}, #{genderCd},
-            #{regIp}, #{regLoginTypCd}, #{socialId, jdbcType=VARCHAR}, 1
+            #{regIp}, #{regLoginTypCd}, #{socialId, jdbcType=VARCHAR}, #{mobileNo, jdbcType=VARCHAR}, 1
         )
     </insert>
 
@@ -36,6 +36,36 @@
     <update id="updateLastLoginAt">
         UPDATE MEM_JOIN_INFO
         SET last_login_at = NOW()
+        WHERE member_no = #{memberNo}
+    </update>
+
+    <!-- 마이페이지: 회원 상세 정보 조회 -->
+    <select id="findMemberDetailByNo" resultType="MemberVO">
+        SELECT member_no, user_id, user_pw, user_name, nickname,
+               email_id, email_addr, mobile_no,
+               birth_date, gender_cd, reg_login_typ_cd, acct_sts_cd
+        FROM MEM_JOIN_INFO
+        WHERE member_no = #{memberNo}
+    </select>
+
+    <!-- 마이페이지: 비밀번호 변경 -->
+    <update id="updateMemberPw">
+        UPDATE MEM_JOIN_INFO
+        SET user_pw = #{userPw}
+        WHERE member_no = #{memberNo}
+    </update>
+
+    <!-- 마이페이지: 이메일 변경 -->
+    <update id="updateMemberEmail">
+        UPDATE MEM_JOIN_INFO
+        SET email_id = #{emailId}, email_addr = #{emailAddr}
+        WHERE member_no = #{memberNo}
+    </update>
+
+    <!-- 마이페이지: 휴대전화번호 변경 -->
+    <update id="updateMemberMobile">
+        UPDATE MEM_JOIN_INFO
+        SET mobile_no = #{mobileNo}
         WHERE member_no = #{memberNo}
     </update>
 

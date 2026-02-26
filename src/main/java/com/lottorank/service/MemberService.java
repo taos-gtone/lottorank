@@ -16,6 +16,18 @@ public interface MemberService {
 
     MemberVO login(String userId, String userPw);
 
+    /** 마이페이지: 회원 상세 정보 조회 */
+    MemberVO getMemberDetail(long memberNo);
+
+    /** 마이페이지: 비밀번호 변경 (현재 비밀번호 검증 후 변경) */
+    void updateMemberPw(long memberNo, String currentPw, String newPw);
+
+    /** 마이페이지: 이메일 변경 */
+    void updateMemberEmail(long memberNo, String emailId, String emailAddr);
+
+    /** 마이페이지: 휴대전화번호 변경 */
+    void updateMemberMobile(long memberNo, String mobileNo);
+
     /**
      * 로그인 결과를 트랜잭션으로 저장한다.
      * - 성공(loginRsltCd="S") : last_login_at UPDATE + MEM_LOGIN_HIST INSERT (1 transaction)

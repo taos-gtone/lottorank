@@ -85,6 +85,100 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/mypage")
+    public String mypage(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            return "redirect:/member/login?redirect=/member/mypage";
+        }
+        Long memberNo = (Long) session.getAttribute("loginMemberNo");
+        model.addAttribute("memberInfo", memberService.getMemberDetail(memberNo));
+        return "member/mypage";
+    }
+
+    @PostMapping("/mypage/updatePw")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updatePw(
+            @RequestParam String currentPw,
+            @RequestParam String newPw,
+            @RequestParam String newPwConfirm,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        if (!newPw.equals(newPwConfirm)) {
+            result.put("success", false);
+            result.put("message", "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+            return ResponseEntity.ok(result);
+        }
+        try {
+            Long memberNo = (Long) session.getAttribute("loginMemberNo");
+            memberService.updateMemberPw(memberNo, currentPw, newPw);
+            result.put("success", true);
+            result.put("message", "비밀번호가 변경되었습니다.");
+        } catch (IllegalArgumentException e) {
+            result.put("success", false);
+            result.put("message", e.getMessage());
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/mypage/updateEmail")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateEmail(
+            @RequestParam String emailId,
+            @RequestParam String emailAddr,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        try {
+            Long memberNo = (Long) session.getAttribute("loginMemberNo");
+            memberService.updateMemberEmail(memberNo, emailId, emailAddr);
+            result.put("success", true);
+            result.put("message", "이메일이 변경되었습니다.");
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "이메일 변경 중 오류가 발생했습니다.");
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/mypage/updateMobile")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateMobile(
+            @RequestParam String mobileNo,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        try {
+            Long memberNo = (Long) session.getAttribute("loginMemberNo");
+            memberService.updateMemberMobile(memberNo, mobileNo);
+            result.put("success", true);
+            result.put("message", "휴대전화번호가 변경되었습니다.");
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "휴대전화번호 변경 중 오류가 발생했습니다.");
+        }
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -202,11 +296,18 @@ public class MemberController {
 
     /** 로그인 1단계: 네이버 인증 페이지로 리다이렉트 */
     @GetMapping("/naver/login-start")
-    public String naverLoginStart(HttpServletRequest request) {
+    public String naverLoginStart(
+            @RequestParam(required = false) String redirect,
+            HttpServletRequest request) {
         // 이미 로그인된 경우 메인으로 리다이렉트
         HttpSession existing = request.getSession(false);
         if (existing != null && existing.getAttribute("loginUser") != null) {
             return "redirect:/";
+        }
+        // 로그인 후 돌아갈 URL을 세션에 저장
+        if (redirect != null && !redirect.isEmpty()) {
+            HttpSession session = request.getSession(true);
+            session.setAttribute("loginRedirect", redirect);
         }
         return naverOAuthStart(request, "login");
     }
@@ -275,7 +376,10 @@ public class MemberController {
                         "S", null, resolveIpv4(request), session.getId(),
                         request.getHeader("User-Agent"));
 
-                return "redirect:/";
+                // 로그인 후 redirect URL 처리
+                String loginRedirect = (String) session.getAttribute("loginRedirect");
+                session.removeAttribute("loginRedirect");
+                return "redirect:" + (loginRedirect != null ? loginRedirect : "/");
 
             } else {
                 // ── 가입 처리 ────────────────────────────────────────
@@ -339,6 +443,7 @@ public class MemberController {
             member.setEmailAddr(profile.getOrDefault("emailAddr", ""));
             member.setBirthDate(profile.getOrDefault("birthDate", ""));
             member.setGenderCd(profile.getOrDefault("genderCd", ""));
+            member.setMobileNo(profile.getOrDefault("mobileNo", ""));
             member.setRegIp(resolveIpv4(request));
             member.setRegLoginTypCd("N");
             member.setSocialId(profile.get("socialId"));

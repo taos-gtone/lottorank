@@ -106,6 +106,9 @@ public class NaverOAuthService {
             String birthday  = profile.path("birthday").asText("").replace("-", "");
             result.put("birthDate", birthYear + birthday); // 예: 19901001
 
+            // 휴대전화번호: 네이버는 "010-1234-5678" 형식으로 제공
+            result.put("mobileNo", profile.path("mobile").asText(""));
+
             return result;
         } catch (Exception e) {
             throw new RuntimeException("네이버 프로필 조회 실패", e);

@@ -22,4 +22,18 @@ public interface MemberMapper {
 
     /** 로그인 이력 저장 (성공/실패 공통) */
     void insertLoginHist(LoginHistVO hist);
+
+    /** 마이페이지: 회원 상세 정보 조회 */
+    MemberVO findMemberDetailByNo(@Param("memberNo") long memberNo);
+
+    /** 마이페이지: 비밀번호 변경 */
+    void updateMemberPw(@Param("memberNo") long memberNo, @Param("userPw") String userPw);
+
+    /** 마이페이지: 이메일 변경 */
+    void updateMemberEmail(@Param("memberNo") long memberNo,
+                           @Param("emailId") String emailId,
+                           @Param("emailAddr") String emailAddr);
+
+    /** 마이페이지: 휴대전화번호 변경 */
+    void updateMemberMobile(@Param("memberNo") long memberNo, @Param("mobileNo") String mobileNo);
 }

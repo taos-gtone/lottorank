@@ -168,6 +168,25 @@
       color: #fff;
     }
 
+    /* 마이페이지 버튼 */
+    .btn-mypage {
+      padding: 7px 14px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.28);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn-mypage:hover {
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.45);
+    }
+
     /* 로그아웃 버튼 */
     .btn-logout {
       padding: 7px 14px;

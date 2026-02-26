@@ -50,6 +50,31 @@ public class MemberServiceImpl implements MemberService {
         return member;
     }
 
+    @Override
+    public MemberVO getMemberDetail(long memberNo) {
+        return memberMapper.findMemberDetailByNo(memberNo);
+    }
+
+    @Override
+    public void updateMemberPw(long memberNo, String currentPw, String newPw) {
+        MemberVO member = memberMapper.findMemberDetailByNo(memberNo);
+        if (member == null) throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+        if (!BCrypt.checkpw(currentPw, member.getUserPw())) {
+            throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
+        }
+        memberMapper.updateMemberPw(memberNo, BCrypt.hashpw(newPw, BCrypt.gensalt()));
+    }
+
+    @Override
+    public void updateMemberEmail(long memberNo, String emailId, String emailAddr) {
+        memberMapper.updateMemberEmail(memberNo, emailId, emailAddr);
+    }
+
+    @Override
+    public void updateMemberMobile(long memberNo, String mobileNo) {
+        memberMapper.updateMemberMobile(memberNo, mobileNo);
+    }
+
     /**
      * 로그인 결과를 하나의 트랜잭션으로 저장한다.
      * 성공: MEM_JOIN_INFO.last_login_at UPDATE + MEM_LOGIN_HIST INSERT

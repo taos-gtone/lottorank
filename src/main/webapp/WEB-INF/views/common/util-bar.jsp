@@ -1,4 +1,8 @@
 <%@ page pageEncoding="UTF-8" %>
+  <%
+    String _uLoginUser = (String) session.getAttribute("loginUser");
+    boolean _uLoggedIn = (_uLoginUser != null);
+  %>
   <!-- ===========================
        상단 유틸리티 바
   =========================== -->
@@ -12,7 +16,11 @@
         <div class="util-links">
           <a href="/member/login">로그인</a>
           <a href="/member/join">회원가입</a>
-          <a href="#">마이페이지</a>
+          <% if (_uLoggedIn) { %>
+          <a href="/member/mypage">마이페이지</a>
+          <% } else { %>
+          <a href="/member/login?redirect=/member/mypage">마이페이지</a>
+          <% } %>
           <a href="#" class="util-gold">🏆 골드회원 간편결제</a>
           <a href="#" style="margin-left:8px;">≡ 전체메뉴</a>
         </div>

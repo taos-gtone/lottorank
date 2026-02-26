@@ -15,6 +15,7 @@ public class MemberVO {
     private int    acctStsCd;  // status → acct_sts_cd
     private String regLoginTypCd; // I:아이디, N:네이버, K:카카오
     private String socialId;      // 소셜 로그인 고유 ID (네이버/카카오 등)
+    private String mobileNo;      // 휴대전화번호
 
     public long getMemberNo() { return memberNo; }
     public void setMemberNo(long memberNo) { this.memberNo = memberNo; }
@@ -54,4 +55,7 @@ public class MemberVO {
 
     public String getSocialId() { return socialId; }
     public void setSocialId(String socialId) { this.socialId = socialId; }
+
+    public String getMobileNo() { return mobileNo; }
+    public void setMobileNo(String mobileNo) { this.mobileNo = mobileNo; }
 }
