@@ -2,6 +2,7 @@ package com.lottorank.service;
 
 import com.lottorank.mapper.MemberMapper;
 import com.lottorank.vo.LoginHistVO;
+import com.lottorank.vo.MemberInfoChgHistVO;
 import com.lottorank.vo.MemberVO;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,23 +57,61 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateMemberPw(long memberNo, String currentPw, String newPw) {
+    @Transactional
+    public void updateMemberPw(long memberNo, String currentPw, String newPw, String chgIp) {
         MemberVO member = memberMapper.findMemberDetailByNo(memberNo);
         if (member == null) throw new IllegalArgumentException("존재하지 않는 회원입니다.");
         if (!BCrypt.checkpw(currentPw, member.getUserPw())) {
             throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
         }
-        memberMapper.updateMemberPw(memberNo, BCrypt.hashpw(newPw, BCrypt.gensalt()));
+        String newHashedPw = BCrypt.hashpw(newPw, BCrypt.gensalt());
+        memberMapper.updateMemberPw(memberNo, newHashedPw);
+
+        MemberInfoChgHistVO hist = new MemberInfoChgHistVO();
+        hist.setMemberNo(memberNo);
+        hist.setMemInfoChgFldCd("01");
+        hist.setBeforeVal(member.getUserPw());
+        hist.setAfterVal(newHashedPw);
+        hist.setChgIp(chgIp);
+        memberMapper.insertMemberInfoChgHist(hist);
     }
 
     @Override
-    public void updateMemberEmail(long memberNo, String emailId, String emailAddr) {
+    @Transactional
+    public void updateMemberEmail(long memberNo, String emailId, String emailAddr, String chgIp) {
+        MemberVO current = memberMapper.findMemberDetailByNo(memberNo);
         memberMapper.updateMemberEmail(memberNo, emailId, emailAddr);
+
+        MemberInfoChgHistVO histId = new MemberInfoChgHistVO();
+        histId.setMemberNo(memberNo);
+        histId.setMemInfoChgFldCd("02");
+        histId.setBeforeVal(current != null ? current.getEmailId() : null);
+        histId.setAfterVal(emailId);
+        histId.setChgIp(chgIp);
+        memberMapper.insertMemberInfoChgHist(histId);
+
+        MemberInfoChgHistVO histAddr = new MemberInfoChgHistVO();
+        histAddr.setMemberNo(memberNo);
+        histAddr.setMemInfoChgFldCd("03");
+        histAddr.setBeforeVal(current != null ? current.getEmailAddr() : null);
+        histAddr.setAfterVal(emailAddr);
+        histAddr.setChgIp(chgIp);
+        memberMapper.insertMemberInfoChgHist(histAddr);
     }
 
     @Override
-    public void updateMemberMobile(long memberNo, String mobileNo) {
+    @Transactional
+    public void updateMemberMobile(long memberNo, String mobileNo, String chgIp) {
+        MemberVO current = memberMapper.findMemberDetailByNo(memberNo);
         memberMapper.updateMemberMobile(memberNo, mobileNo);
+
+        MemberInfoChgHistVO hist = new MemberInfoChgHistVO();
+        hist.setMemberNo(memberNo);
+        hist.setMemInfoChgFldCd("04");
+        hist.setBeforeVal(current != null ? current.getMobileNo() : null);
+        hist.setAfterVal(mobileNo);
+        hist.setChgIp(chgIp);
+        memberMapper.insertMemberInfoChgHist(hist);
     }
 
     /**

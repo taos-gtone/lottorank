@@ -1,6 +1,7 @@
 package com.lottorank.mapper;
 
 import com.lottorank.vo.LoginHistVO;
+import com.lottorank.vo.MemberInfoChgHistVO;
 import com.lottorank.vo.MemberVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -36,4 +37,7 @@ public interface MemberMapper {
 
     /** 마이페이지: 휴대전화번호 변경 */
     void updateMemberMobile(@Param("memberNo") long memberNo, @Param("mobileNo") String mobileNo);
+
+    /** 회원정보 변경이력 저장 */
+    void insertMemberInfoChgHist(MemberInfoChgHistVO hist);
 }

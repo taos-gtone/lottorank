@@ -118,7 +118,7 @@ public class MemberController {
         }
         try {
             Long memberNo = (Long) session.getAttribute("loginMemberNo");
-            memberService.updateMemberPw(memberNo, currentPw, newPw);
+            memberService.updateMemberPw(memberNo, currentPw, newPw, resolveIpv4(request));
             result.put("success", true);
             result.put("message", "비밀번호가 변경되었습니다.");
         } catch (IllegalArgumentException e) {
@@ -144,7 +144,7 @@ public class MemberController {
         }
         try {
             Long memberNo = (Long) session.getAttribute("loginMemberNo");
-            memberService.updateMemberEmail(memberNo, emailId, emailAddr);
+            memberService.updateMemberEmail(memberNo, emailId, emailAddr, resolveIpv4(request));
             result.put("success", true);
             result.put("message", "이메일이 변경되었습니다.");
         } catch (Exception e) {
@@ -169,7 +169,7 @@ public class MemberController {
         }
         try {
             Long memberNo = (Long) session.getAttribute("loginMemberNo");
-            memberService.updateMemberMobile(memberNo, mobileNo);
+            memberService.updateMemberMobile(memberNo, mobileNo, resolveIpv4(request));
             result.put("success", true);
             result.put("message", "휴대전화번호가 변경되었습니다.");
         } catch (Exception e) {

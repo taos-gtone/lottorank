@@ -20,13 +20,13 @@ public interface MemberService {
     MemberVO getMemberDetail(long memberNo);
 
     /** 마이페이지: 비밀번호 변경 (현재 비밀번호 검증 후 변경) */
-    void updateMemberPw(long memberNo, String currentPw, String newPw);
+    void updateMemberPw(long memberNo, String currentPw, String newPw, String chgIp);
 
     /** 마이페이지: 이메일 변경 */
-    void updateMemberEmail(long memberNo, String emailId, String emailAddr);
+    void updateMemberEmail(long memberNo, String emailId, String emailAddr, String chgIp);
 
     /** 마이페이지: 휴대전화번호 변경 */
-    void updateMemberMobile(long memberNo, String mobileNo);
+    void updateMemberMobile(long memberNo, String mobileNo, String chgIp);
 
     /**
      * 로그인 결과를 트랜잭션으로 저장한다.

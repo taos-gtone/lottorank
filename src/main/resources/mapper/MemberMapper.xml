@@ -69,6 +69,17 @@
         WHERE member_no = #{memberNo}
     </update>
 
+    <!-- 회원정보 변경이력 저장 -->
+    <insert id="insertMemberInfoChgHist" parameterType="MemberInfoChgHistVO">
+        INSERT INTO MEM_INFO_CHG_HIST (
+            member_no, mem_info_chg_fld_cd, before_val, after_val, chg_ip
+        ) VALUES (
+            #{memberNo}, #{memInfoChgFldCd},
+            #{beforeVal, jdbcType=VARCHAR}, #{afterVal, jdbcType=VARCHAR},
+            #{chgIp,     jdbcType=VARCHAR}
+        )
+    </insert>
+
     <!-- 로그인 이력 저장 (성공/실패 공통) -->
     <insert id="insertLoginHist" parameterType="LoginHistVO">
         INSERT INTO MEM_LOGIN_HIST (
