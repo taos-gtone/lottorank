@@ -89,7 +89,8 @@
                   onclick="window.location.href='${pageContext.request.contextPath}/member/naver/join'">
             <span class="sns-icon">N</span>네이버 계정으로 가입
           </button>
-          <button type="button" class="sns-btn sns-kakao">
+          <button type="button" class="sns-btn sns-kakao"
+                  onclick="window.location.href='${pageContext.request.contextPath}/member/kakao/join'">
             <span class="sns-icon">💬</span>카카오 계정으로 가입
           </button>
         </div>
@@ -301,11 +302,15 @@
   var urlParams = new URLSearchParams(window.location.search);
   var err = urlParams.get('error');
   var messages = {
-    'naver_cancel':      '네이버 로그인이 취소되었습니다.',
-    'invalid_state':     '보안 검증에 실패했습니다. 다시 시도해 주세요.',
-    'naver_token_fail':  '네이버 인증 처리 중 오류가 발생했습니다.',
-    'naver_error':       '네이버 연동 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-    'already_registered':'이미 가입된 네이버 계정입니다. 로그인 페이지에서 네이버 로그인을 이용해 주세요.'
+    'naver_cancel':           '네이버 로그인이 취소되었습니다.',
+    'invalid_state':          '보안 검증에 실패했습니다. 다시 시도해 주세요.',
+    'naver_token_fail':       '네이버 인증 처리 중 오류가 발생했습니다.',
+    'naver_error':            '네이버 연동 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+    'already_registered':     '이미 가입된 네이버 계정입니다. 로그인 페이지에서 네이버 로그인을 이용해 주세요.',
+    'kakao_cancel':           '카카오 로그인이 취소되었습니다.',
+    'kakao_token_fail':       '카카오 인증 처리 중 오류가 발생했습니다.',
+    'kakao_error':            '카카오 연동 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+    'kakao_already_registered':'이미 가입된 카카오 계정입니다. 로그인 페이지에서 카카오 로그인을 이용해 주세요.'
   };
   if (err && messages[err]) {
     alert(messages[err]);

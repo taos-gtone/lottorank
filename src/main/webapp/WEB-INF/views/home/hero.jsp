@@ -131,7 +131,8 @@
             <div class="social-login" style="margin-top:8px;">
               <button type="button" class="social-btn btn-naver"
                       onclick="window.location.href='${pageContext.request.contextPath}/member/naver/login-start'">N 네이버</button>
-              <button type="button" class="social-btn btn-kakao">💬 카카오</button>
+              <button type="button" class="social-btn btn-kakao"
+                      onclick="window.location.href='${pageContext.request.contextPath}/member/kakao/login-start'">💬 카카오</button>
             </div>
           </div>
           <% } %>

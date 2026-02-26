@@ -53,7 +53,7 @@
             <button type="button" class="sns-btn sns-naver" id="btnNaverLogin">
               <span class="sns-icon">N</span>네이버 로그인
             </button>
-            <button type="button" class="sns-btn sns-kakao">
+            <button type="button" class="sns-btn sns-kakao" id="btnKakaoLogin">
               <span class="sns-icon">💬</span>카카오 로그인
             </button>
           </div>
@@ -135,7 +135,12 @@
       'naver_token_fail':     '네이버 인증 처리 중 오류가 발생했습니다.',
       'naver_error':          '네이버 연동 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
       'naver_not_registered': '가입되지 않은 네이버 계정입니다. 먼저 회원가입을 해주세요.',
-      'naver_inactive':       '비활성화된 계정입니다. 고객센터로 문의해 주세요.'
+      'naver_inactive':       '비활성화된 계정입니다. 고객센터로 문의해 주세요.',
+      'kakao_cancel':         '카카오 로그인이 취소되었습니다.',
+      'kakao_token_fail':     '카카오 인증 처리 중 오류가 발생했습니다.',
+      'kakao_error':          '카카오 연동 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+      'kakao_not_registered': '가입되지 않은 카카오 계정입니다. 먼저 회원가입을 해주세요.',
+      'kakao_inactive':       '비활성화된 계정입니다. 고객센터로 문의해 주세요.'
     };
     if (err && messages[err]) {
       alert(messages[err]);
@@ -205,6 +210,14 @@
   document.getElementById('btnNaverLogin').addEventListener('click', function() {
     var redirect = new URLSearchParams(window.location.search).get('redirect');
     var url = '${pageContext.request.contextPath}/member/naver/login-start';
+    if (redirect) url += '?redirect=' + encodeURIComponent(redirect);
+    window.location.href = url;
+  });
+
+  /* ── 카카오 로그인 버튼: redirect 파라미터 전달 ── */
+  document.getElementById('btnKakaoLogin').addEventListener('click', function() {
+    var redirect = new URLSearchParams(window.location.search).get('redirect');
+    var url = '${pageContext.request.contextPath}/member/kakao/login-start';
     if (redirect) url += '?redirect=' + encodeURIComponent(redirect);
     window.location.href = url;
   });

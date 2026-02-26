@@ -1,5 +1,6 @@
 package com.lottorank.controller;
 
+import com.lottorank.service.KakaoOAuthService;
 import com.lottorank.service.LoginFailException;
 import com.lottorank.service.MemberService;
 import com.lottorank.service.NaverOAuthService;
@@ -25,6 +26,9 @@ public class MemberController {
 
     @Autowired
     private NaverOAuthService naverOAuthService;
+
+    @Autowired
+    private KakaoOAuthService kakaoOAuthService;
 
     @GetMapping("/join")
     public String joinForm() {
@@ -453,6 +457,206 @@ public class MemberController {
             session.removeAttribute("naverProfile");
             result.put("success", true);
             result.put("message", "네이버 계정으로 가입이 완료되었습니다.");
+
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "가입 처리 중 오류가 발생했습니다.");
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  카카오 OAuth 공통 유틸
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 카카오 OAuth 시작 (intent: "join" 또는 "login") */
+    private String kakaoOAuthStart(HttpServletRequest request, String intent) {
+        String state = UUID.randomUUID().toString().replace("-", "");
+        HttpSession session = request.getSession(true);
+        session.setAttribute("kakaoOAuthState",  state);
+        session.setAttribute("kakaoOAuthIntent", intent);
+
+        String baseUrl = resolveBaseUrl(request);
+        String kakaoAuthUrl = kakaoOAuthService.getAuthorizationUrl(state, baseUrl);
+        return "redirect:" + kakaoAuthUrl;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  카카오 OAuth 회원가입
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 가입 1단계: 카카오 인증 페이지로 리다이렉트 */
+    @GetMapping("/kakao/join")
+    public String kakaoJoinRedirect(HttpServletRequest request) {
+        return kakaoOAuthStart(request, "join");
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  카카오 OAuth 로그인
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 로그인 1단계: 카카오 인증 페이지로 리다이렉트 */
+    @GetMapping("/kakao/login-start")
+    public String kakaoLoginStart(
+            @RequestParam(required = false) String redirect,
+            HttpServletRequest request) {
+        HttpSession existing = request.getSession(false);
+        if (existing != null && existing.getAttribute("loginUser") != null) {
+            return "redirect:/";
+        }
+        if (redirect != null && !redirect.isEmpty()) {
+            HttpSession session = request.getSession(true);
+            session.setAttribute("loginRedirect", redirect);
+        }
+        return kakaoOAuthStart(request, "login");
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  카카오 OAuth 공통 콜백
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 공통 콜백: intent에 따라 가입/로그인 분기 */
+    @GetMapping("/kakao/callback")
+    public String kakaoCallback(
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) String error,
+            HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+        String intent  = (session != null) ? (String) session.getAttribute("kakaoOAuthIntent") : null;
+        boolean isLogin = "login".equals(intent);
+        String errorBase = isLogin ? "/member/login" : "/member/join";
+
+        // 사용자가 카카오 로그인 취소한 경우
+        if (error != null || code == null) {
+            return "redirect:" + errorBase + "?error=kakao_cancel";
+        }
+
+        // state 검증 (CSRF 방지)
+        String savedState = (session != null) ? (String) session.getAttribute("kakaoOAuthState") : null;
+        if (savedState == null || !savedState.equals(state)) {
+            return "redirect:" + errorBase + "?error=invalid_state";
+        }
+        session.removeAttribute("kakaoOAuthState");
+        session.removeAttribute("kakaoOAuthIntent");
+
+        try {
+            String baseUrl    = resolveBaseUrl(request);
+            String accessToken = kakaoOAuthService.getAccessToken(code, baseUrl);
+            if (accessToken == null) {
+                return "redirect:" + errorBase + "?error=kakao_token_fail";
+            }
+
+            Map<String, String> profile = kakaoOAuthService.getUserProfile(accessToken);
+            String socialId = profile.get("socialId");
+            MemberVO member  = memberService.findBySocialId(socialId);
+
+            if (isLogin) {
+                // ── 로그인 처리 ──────────────────────────────────────
+                if (member == null) {
+                    return "redirect:/member/login?error=kakao_not_registered";
+                }
+                if (member.getAcctStsCd() != 1) {
+                    return "redirect:/member/login?error=kakao_inactive";
+                }
+
+                session.setMaxInactiveInterval(600);
+                long expiry = System.currentTimeMillis() + 600_000L;
+                session.setAttribute("loginUser",     member.getUserId());
+                session.setAttribute("loginNickname", member.getNickname());
+                session.setAttribute("loginMemberNo", member.getMemberNo());
+                session.setAttribute("sessionExpiry", expiry);
+
+                // 로그인 이력 저장 (reg_login_typ_cd = "K")
+                memberService.saveLoginHistory(member, member.getUserId(), "K",
+                        "S", null, resolveIpv4(request), session.getId(),
+                        request.getHeader("User-Agent"));
+
+                String loginRedirect = (String) session.getAttribute("loginRedirect");
+                session.removeAttribute("loginRedirect");
+                return "redirect:" + (loginRedirect != null ? loginRedirect : "/");
+
+            } else {
+                // ── 가입 처리 ────────────────────────────────────────
+                if (member != null) {
+                    return "redirect:/member/join?error=kakao_already_registered";
+                }
+                session.setAttribute("kakaoProfile", profile);
+                return "redirect:/member/kakao/join-form";
+            }
+
+        } catch (Exception e) {
+            return "redirect:" + errorBase + "?error=kakao_error";
+        }
+    }
+
+    /** 3단계: 카카오 간편가입 폼 표시 */
+    @GetMapping("/kakao/join-form")
+    public String kakaoJoinForm(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("kakaoProfile") == null) {
+            return "redirect:/member/join";
+        }
+        @SuppressWarnings("unchecked")
+        Map<String, String> profile = (Map<String, String>) session.getAttribute("kakaoProfile");
+        model.addAttribute("kakaoProfile", profile);
+        return "member/kakao-join";
+    }
+
+    /** 4단계: 카카오 회원가입 처리 */
+    @PostMapping("/kakao/join")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> kakaoJoin(
+            @RequestParam String userId,
+            @RequestParam String userName,
+            @RequestParam String nickname,
+            @RequestParam String emailId,
+            @RequestParam String emailDomain,
+            @RequestParam(required = false) String birthDate,
+            @RequestParam String gender,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("kakaoProfile") == null) {
+            result.put("success", false);
+            result.put("message", "세션이 만료되었습니다. 다시 시도해 주세요.");
+            return ResponseEntity.ok(result);
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> profile = (Map<String, String>) session.getAttribute("kakaoProfile");
+
+        try {
+            if (!memberService.isUserIdAvailable(userId)) {
+                result.put("success", false);
+                result.put("message", "이미 사용 중인 아이디입니다.");
+                return ResponseEntity.ok(result);
+            }
+
+            MemberVO member = new MemberVO();
+            member.setUserId(userId);
+            member.setUserName(userName);
+            member.setNickname(nickname);
+            member.setEmailId(emailId);
+            member.setEmailAddr(emailDomain);
+            if (birthDate != null && !birthDate.isEmpty()) {
+                member.setBirthDate(birthDate.replace("-", ""));
+            }
+            member.setGenderCd(gender);
+            member.setMobileNo(profile.getOrDefault("mobileNo", ""));
+            member.setRegIp(resolveIpv4(request));
+            member.setRegLoginTypCd("K");
+            member.setSocialId(profile.get("socialId"));
+
+            memberService.joinBySocial(member);
+
+            session.removeAttribute("kakaoProfile");
+            result.put("success", true);
+            result.put("message", "카카오 계정으로 가입이 완료되었습니다.");
 
         } catch (Exception e) {
             result.put("success", false);

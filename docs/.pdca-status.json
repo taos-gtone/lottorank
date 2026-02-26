@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-26T08:22:22.174Z",
+  "lastUpdated": "2026-02-26T12:16:19.415Z",
   "activeFeatures": [
     "mapper",
     "service",
@@ -35,9 +35,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:18.396Z",
-        "lastUpdated": "2026-02-26T08:22:22.174Z"
+        "lastUpdated": "2026-02-26T12:09:48.568Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\service\\MemberServiceImpl.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\service\\KakaoOAuthService.java"
     },
     "controller": {
       "phase": "do",
@@ -48,7 +48,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:26.070Z",
-        "lastUpdated": "2026-02-26T08:16:01.286Z"
+        "lastUpdated": "2026-02-26T12:16:19.414Z"
       },
       "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\controller\\MemberController.java"
     },
@@ -101,7 +101,7 @@
   "session": {
     "startedAt": "2026-02-19T14:55:10.648Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-26T08:22:22.174Z"
+    "lastActivity": "2026-02-26T12:16:19.415Z"
   },
   "history": [
     {
@@ -617,6 +617,42 @@
     {
       "timestamp": "2026-02-26T08:22:22.174Z",
       "feature": "service",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T11:45:57.529Z",
+      "feature": "service",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T11:46:12.366Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T11:46:19.148Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T11:46:52.899Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T12:09:48.568Z",
+      "feature": "service",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T12:16:19.415Z",
+      "feature": "controller",
       "phase": "do",
       "action": "updated"
     }
