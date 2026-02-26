@@ -14,8 +14,10 @@
           <span>[1162회 신규 TOP 랭커 등장!] 황금사자님 36주 연속 참여 달성 · 72.4% 적중률 1위!</span>
         </div>
         <div class="util-links">
+          <% if (!_uLoggedIn) { %>
           <a href="/member/login">로그인</a>
           <a href="/member/join">회원가입</a>
+          <% } %>
           <% if (_uLoggedIn) { %>
           <a href="/member/mypage">마이페이지</a>
           <% } else { %>
