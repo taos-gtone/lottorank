@@ -328,9 +328,14 @@ public class BoardController {
             return ResponseEntity.ok(result);
         }
 
-        Map<String, Object> data = boardService.toggleCommentReaction(commentNo, memberNo, reactionTypCd);
-        result.put("success", true);
-        result.putAll(data);
+        try {
+            Map<String, Object> data = boardService.toggleCommentReaction(commentNo, memberNo, reactionTypCd);
+            result.put("success", true);
+            result.putAll(data);
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("msg", "처리 중 오류: " + e.getMessage());
+        }
         return ResponseEntity.ok(result);
     }
 }

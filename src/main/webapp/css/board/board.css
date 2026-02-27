@@ -220,7 +220,7 @@
   letter-spacing: 0.3px;
 }
 
-.board-table th.col-title,
+.board-table th.col-title { text-align: center; }
 .board-table td.col-title { text-align: left; }
 
 .board-table td {

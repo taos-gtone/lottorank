@@ -122,13 +122,13 @@
       <!-- 추천/비추천 버튼 -->
       <div class="post-view-footer">
         <button type="button" id="btnLike"
-                class="btn-reaction like<%= "L".equals(myReaction) ? " active" : "" %>"
-                onclick="doReaction('L')">
+                class="btn-reaction like<%= "1".equals(myReaction) ? " active" : "" %>"
+                onclick="doReaction('1')">
           ❤️ 추천 <span id="likeCount"><%= post.getLikeCnt() %></span>
         </button>
         <button type="button" id="btnDislike"
-                class="btn-reaction dislike<%= "D".equals(myReaction) ? " active" : "" %>"
-                onclick="doReaction('D')">
+                class="btn-reaction dislike<%= "2".equals(myReaction) ? " active" : "" %>"
+                onclick="doReaction('2')">
           👎 비추천 <span id="dislikeCount"><%= post.getDislikeCnt() %></span>
         </button>
       </div>
@@ -339,8 +339,8 @@
       if (!data.success) { alert(data.msg || '처리에 실패했습니다.'); return; }
       document.getElementById('likeCount').textContent    = data.likeCount;
       document.getElementById('dislikeCount').textContent = data.dislikeCount;
-      document.getElementById('btnLike').classList.toggle('active',    data.myReaction === 'L');
-      document.getElementById('btnDislike').classList.toggle('active', data.myReaction === 'D');
+      document.getElementById('btnLike').classList.toggle('active',    data.myReaction === '1');
+      document.getElementById('btnDislike').classList.toggle('active', data.myReaction === '2');
     });
   }
 
@@ -357,7 +357,8 @@
       document.getElementById('cDislikeCnt-' + commentNo).textContent = data.dislikeCount;
       document.getElementById('cLike-'    + commentNo).classList.toggle('active', data.myReaction === '1');
       document.getElementById('cDislike-' + commentNo).classList.toggle('active', data.myReaction === '2');
-    });
+    })
+    .catch(err => alert('댓글 반응 처리 실패: ' + err.message));
   }
 
   function submitComment() {
