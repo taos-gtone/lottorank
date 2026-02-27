@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lottorank.mapper.BoardMapper">
+
+    <!-- 공통 검색 WHERE -->
+    <sql id="searchWhere">
+        AND p.del_yn = 'N'
+        <if test="boardGbnCd != null and boardGbnCd != ''">
+            AND p.board_gbn_cd = #{boardGbnCd}
+        </if>
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchType == 'title'">
+                    AND p.title LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <when test="searchType == 'content'">
+                    AND p.content LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <otherwise>
+                    AND (p.title LIKE CONCAT('%', #{searchKeyword}, '%')
+                      OR p.content LIKE CONCAT('%', #{searchKeyword}, '%'))
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <!-- 게시글 목록 -->
+    <select id="selectPostList" resultType="BoardPostVO">
+        SELECT
+            p.post_no,
+            p.board_gbn_cd,
+            p.member_no,
+            p.title,
+            p.view_cnt,
+            p.like_cnt,
+            p.dislike_cnt,
+            p.comment_cnt,
+            p.del_yn,
+            p.create_ts,
+            p.update_ts,
+            m.nickname
+        FROM BRD_POST_MST p
+        JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+        WHERE 1=1
+        <include refid="searchWhere"/>
+        ORDER BY p.post_no DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 게시글 건수 -->
+    <select id="selectPostCount" resultType="int">
+        SELECT COUNT(*)
+        FROM BRD_POST_MST p
+        WHERE 1=1
+        <include refid="searchWhere"/>
+    </select>
+
+    <!-- 게시글 단건 -->
+    <select id="selectPost" resultType="BoardPostVO">
+        SELECT
+            p.post_no,
+            p.board_gbn_cd,
+            p.member_no,
+            p.title,
+            p.content,
+            p.view_cnt,
+            p.like_cnt,
+            p.dislike_cnt,
+            p.comment_cnt,
+            p.del_yn,
+            p.create_ts,
+            p.update_ts,
+            m.nickname
+        FROM BRD_POST_MST p
+        JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+        WHERE p.post_no = #{postNo}
+          AND p.del_yn = 'N'
+    </select>
+
+    <!-- 조회수 증가 -->
+    <update id="updateViewCnt">
+        UPDATE BRD_POST_MST
+           SET view_cnt = view_cnt + 1
+         WHERE post_no = #{postNo}
+    </update>
+
+    <!-- 게시글 등록 -->
+    <insert id="insertPost" useGeneratedKeys="true" keyProperty="postNo">
+        INSERT INTO BRD_POST_MST
+            (board_gbn_cd, member_no, title, content, view_cnt, like_cnt,
+             dislike_cnt, comment_cnt, reg_ip, approval_yn, del_yn)
+        VALUES
+            (#{boardGbnCd}, #{memberNo}, #{title}, #{content}, 0, 0,
+             0, 0, #{regIp}, 'N', 'N')
+    </insert>
+
+    <!-- 게시글 수정 -->
+    <update id="updatePost">
+        UPDATE BRD_POST_MST
+           SET title     = #{title},
+               content   = #{content},
+               update_ts = NOW()
+         WHERE post_no   = #{postNo}
+           AND member_no = #{memberNo}
+           AND del_yn    = 'N'
+    </update>
+
+    <!-- 게시글 삭제 (소프트) -->
+    <update id="deletePost">
+        UPDATE BRD_POST_MST
+           SET del_yn = 'Y',
+               del_ts = NOW()
+         WHERE post_no   = #{postNo}
+           AND member_no = #{memberNo}
+           AND del_yn    = 'N'
+    </update>
+
+    <!-- 댓글 목록 -->
+    <select id="selectCommentList" resultType="BoardCommentVO">
+        SELECT
+            c.comment_no,
+            c.post_no,
+            c.parent_comment_no,
+            c.depth,
+            c.member_no,
+            c.content,
+            c.like_cnt,
+            c.dislike_cnt,
+            c.del_yn,
+            c.create_ts,
+            c.update_ts,
+            m.nickname
+        FROM BRD_POST_COMMENT c
+        JOIN MEM_JOIN_INFO m ON m.member_no = c.member_no
+        WHERE c.post_no = #{postNo}
+          AND c.del_yn  = 'N'
+        ORDER BY COALESCE(c.parent_comment_no, c.comment_no), c.comment_no
+    </select>
+
+    <!-- 댓글 단건 (반응 동기화 후 카운트 조회용) -->
+    <select id="selectComment" resultType="BoardCommentVO">
+        SELECT comment_no, post_no, like_cnt, dislike_cnt
+          FROM BRD_POST_COMMENT
+         WHERE comment_no = #{commentNo}
+    </select>
+
+    <!-- 댓글 등록 -->
+    <insert id="insertComment" useGeneratedKeys="true" keyProperty="commentNo">
+        INSERT INTO BRD_POST_COMMENT
+            (post_no, parent_comment_no, depth, member_no, content,
+             like_cnt, dislike_cnt, reg_ip, approval_yn, del_yn)
+        VALUES
+            (#{postNo}, #{parentCommentNo}, #{depth}, #{memberNo}, #{content},
+             0, 0, #{regIp}, 'N', 'N')
+    </insert>
+
+    <!-- 댓글 삭제 (소프트) -->
+    <update id="deleteComment">
+        UPDATE BRD_POST_COMMENT
+           SET del_yn = 'Y'
+         WHERE comment_no = #{commentNo}
+           AND member_no  = #{memberNo}
+           AND del_yn     = 'N'
+    </update>
+
+    <!-- 댓글 수 동기화 -->
+    <update id="syncCommentCnt">
+        UPDATE BRD_POST_MST
+           SET comment_cnt = (
+                   SELECT COUNT(*)
+                     FROM BRD_POST_COMMENT
+                    WHERE post_no = #{postNo}
+                      AND del_yn  = 'N'
+               )
+         WHERE post_no = #{postNo}
+    </update>
+
+    <!-- ─────────────────────────────────────────
+         게시글 반응 (post_typ_cd = '1')
+    ───────────────────────────────────────── -->
+
+    <!-- 내 반응 조회 (게시글) -->
+    <select id="selectMyReaction" resultType="String">
+        SELECT reaction_typ_cd
+          FROM BRD_POST_REACTION
+         WHERE post_typ_cd = '1'
+           AND post_no     = #{postNo}
+           AND comment_no  = 0
+           AND member_no   = #{memberNo}
+         LIMIT 1
+    </select>
+
+    <!-- 반응 등록/수정 (게시글) -->
+    <insert id="insertReaction">
+        INSERT INTO BRD_POST_REACTION
+            (post_typ_cd, post_no, comment_no, member_no, reaction_typ_cd)
+        VALUES
+            ('1', #{postNo}, 0, #{memberNo}, #{reactionTypCd})
+        ON DUPLICATE KEY UPDATE
+            reaction_typ_cd = #{reactionTypCd}
+    </insert>
+
+    <!-- 반응 삭제 (게시글) -->
+    <delete id="deleteReaction">
+        DELETE FROM BRD_POST_REACTION
+         WHERE post_typ_cd = '1'
+           AND post_no     = #{postNo}
+           AND comment_no  = 0
+           AND member_no   = #{memberNo}
+    </delete>
+
+    <!-- 추천/비추천 수 동기화 (게시글) -->
+    <update id="syncReactionCnt">
+        UPDATE BRD_POST_MST
+           SET like_cnt = (
+                   SELECT COUNT(*) FROM BRD_POST_REACTION
+                    WHERE post_no = #{postNo} AND post_typ_cd = '1' AND reaction_typ_cd = '1'
+               ),
+               dislike_cnt = (
+                   SELECT COUNT(*) FROM BRD_POST_REACTION
+                    WHERE post_no = #{postNo} AND post_typ_cd = '1' AND reaction_typ_cd = '2'
+               )
+         WHERE post_no = #{postNo}
+    </update>
+
+    <!-- ─────────────────────────────────────────
+         댓글 반응 (post_typ_cd = '2')
+    ───────────────────────────────────────── -->
+
+    <!-- 내 반응 조회 (댓글 단건) -->
+    <select id="selectMyCommentReaction" resultType="String">
+        SELECT reaction_typ_cd
+          FROM BRD_POST_REACTION
+         WHERE post_typ_cd = '2'
+           AND comment_no  = #{commentNo}
+           AND post_no     = 0
+           AND member_no   = #{memberNo}
+         LIMIT 1
+    </select>
+
+    <!-- 해당 게시글의 내 댓글 반응 전체 조회 -->
+    <select id="selectMyCommentReactionList" resultType="map">
+        SELECT r.comment_no AS commentNo, r.reaction_typ_cd AS reactionTypCd
+          FROM BRD_POST_REACTION r
+          JOIN BRD_POST_COMMENT c ON c.comment_no = r.comment_no
+         WHERE r.post_typ_cd = '2'
+           AND r.post_no     = 0
+           AND c.post_no     = #{postNo}
+           AND r.member_no   = #{memberNo}
+    </select>
+
+    <!-- 반응 등록/수정 (댓글) -->
+    <insert id="insertCommentReaction">
+        INSERT INTO BRD_POST_REACTION
+            (post_typ_cd, post_no, comment_no, member_no, reaction_typ_cd)
+        VALUES
+            ('2', 0, #{commentNo}, #{memberNo}, #{reactionTypCd})
+        ON DUPLICATE KEY UPDATE
+            reaction_typ_cd = #{reactionTypCd}
+    </insert>
+
+    <!-- 반응 삭제 (댓글) -->
+    <delete id="deleteCommentReaction">
+        DELETE FROM BRD_POST_REACTION
+         WHERE post_typ_cd = '2'
+           AND comment_no  = #{commentNo}
+           AND post_no     = 0
+           AND member_no   = #{memberNo}
+    </delete>
+
+    <!-- 추천/비추천 수 동기화 (댓글) -->
+    <update id="syncCommentReactionCnt">
+        UPDATE BRD_POST_COMMENT
+           SET like_cnt = (
+                   SELECT COUNT(*) FROM BRD_POST_REACTION
+                    WHERE comment_no = #{commentNo} AND post_typ_cd = '2' AND reaction_typ_cd = '1'
+               ),
+               dislike_cnt = (
+                   SELECT COUNT(*) FROM BRD_POST_REACTION
+                    WHERE comment_no = #{commentNo} AND post_typ_cd = '2' AND reaction_typ_cd = '2'
+               )
+         WHERE comment_no = #{commentNo}
+    </update>
+
+</mapper>

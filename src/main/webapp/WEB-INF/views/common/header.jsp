@@ -112,8 +112,8 @@
           <div class="nav-item">
             <a href="#ranking">예측 분석실</a>
           </div>
-          <div class="nav-item">
-            <a href="#ranking">랭크 커뮤니티</a>
+          <div class="nav-item" data-path="/board">
+            <a href="/board/list">랭크 커뮤니티</a>
           </div>
           <div class="nav-item">
             <a href="#how">고객센터</a>
@@ -173,7 +173,7 @@
       <nav class="mobile-nav-links">
         <a href="#">로또 실제 당첨</a>
         <a href="#ranking">예측 분석실</a>
-        <a href="#ranking">랭크 커뮤니티</a>
+        <a href="/board/list">랭크 커뮤니티</a>
         <a href="#how">고객센터</a>
         <a href="#" style="color: #FFD54F;">🏆 골드 멤버십</a>
       </nav>
