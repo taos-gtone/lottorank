@@ -202,18 +202,22 @@
   font-weight: 700;
   padding: 10px 14px;
   border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
   text-align: center;
   white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
+.rounds-table th:last-child { border-right: none; }
 
 .rounds-table td {
   padding: 13px 14px;
   border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
   text-align: center;
   vertical-align: middle;
 }
+.rounds-table td:last-child { border-right: none; }
 
 .rounds-table tr:last-child td { border-bottom: none; }
 .rounds-table tr:hover td { background: #F7F9FD; }

@@ -139,10 +139,35 @@ public class BoardController {
        글쓰기 폼 (로그인 필요)
     ───────────────────────────────────────── */
     @GetMapping("/write")
-    public String writeForm(HttpServletRequest request) {
-        HttpSession session     = request.getSession(false);
-        long        memberNo    = getLoginMemberNo(session);
+    public String writeForm(@RequestParam(defaultValue = "1")  int    page,
+                            @RequestParam(required = false)    String searchType,
+                            @RequestParam(required = false)    String searchKeyword,
+                            HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        long memberNo = getLoginMemberNo(session);
         if (memberNo == 0) return "redirect:/member/login?redirect=/board/write";
+
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword);
+        int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
+        if (page < 1)          page = 1;
+        if (page > totalPages) page = totalPages;
+        int startPage = Math.max(1, page - (PAGE_BUTTON_COUNT / 2));
+        int endPage   = startPage + PAGE_BUTTON_COUNT - 1;
+        if (endPage > totalPages) {
+            endPage   = totalPages;
+            startPage = Math.max(1, endPage - PAGE_BUTTON_COUNT + 1);
+        }
+        List<BoardPostVO> postList = boardService.getPostList(
+                BOARD_GBN_CD, searchType, searchKeyword, page, PAGE_SIZE);
+
+        model.addAttribute("postList",      postList);
+        model.addAttribute("totalCount",    totalCount);
+        model.addAttribute("totalPages",    totalPages);
+        model.addAttribute("startPage",     startPage);
+        model.addAttribute("endPage",       endPage);
+        model.addAttribute("currentPage",   page);
+        model.addAttribute("searchType",    searchType != null ? searchType : "all");
+        model.addAttribute("searchKeyword", searchKeyword != null ? searchKeyword : "");
         return "board/write";
     }
 
@@ -171,6 +196,9 @@ public class BoardController {
     ───────────────────────────────────────── */
     @GetMapping("/edit/{postNo}")
     public String editForm(@PathVariable long postNo,
+                           @RequestParam(defaultValue = "1")  int    page,
+                           @RequestParam(required = false)    String searchType,
+                           @RequestParam(required = false)    String searchKeyword,
                            HttpServletRequest request, Model model) {
 
         HttpSession session  = request.getSession(false);
@@ -181,7 +209,28 @@ public class BoardController {
         if (post == null || post.getMemberNo() != memberNo)
             return "redirect:/board/list";
 
-        model.addAttribute("post", post);
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword);
+        int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
+        if (page < 1)          page = 1;
+        if (page > totalPages) page = totalPages;
+        int startPage = Math.max(1, page - (PAGE_BUTTON_COUNT / 2));
+        int endPage   = startPage + PAGE_BUTTON_COUNT - 1;
+        if (endPage > totalPages) {
+            endPage   = totalPages;
+            startPage = Math.max(1, endPage - PAGE_BUTTON_COUNT + 1);
+        }
+        List<BoardPostVO> postList = boardService.getPostList(
+                BOARD_GBN_CD, searchType, searchKeyword, page, PAGE_SIZE);
+
+        model.addAttribute("post",          post);
+        model.addAttribute("postList",      postList);
+        model.addAttribute("totalCount",    totalCount);
+        model.addAttribute("totalPages",    totalPages);
+        model.addAttribute("startPage",     startPage);
+        model.addAttribute("endPage",       endPage);
+        model.addAttribute("currentPage",   page);
+        model.addAttribute("searchType",    searchType != null ? searchType : "all");
+        model.addAttribute("searchKeyword", searchKeyword != null ? searchKeyword : "");
         return "board/edit";
     }
 

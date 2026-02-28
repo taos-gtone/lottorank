@@ -25,27 +25,29 @@
       return 'background:linear-gradient(135deg,#4CAF50,#1B5E20);color:#fff';
     };
 
-    for (let i = 1; i <= 45; i++) {
-      const btn = document.createElement('button');
-      btn.className = 'num-btn ' + getBallClass(i);
-      btn.textContent = i;
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.num-btn.selected').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedNum = i;
+    if (numGrid && submitBtn) {
+      for (let i = 1; i <= 45; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'num-btn ' + getBallClass(i);
+        btn.textContent = i;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.num-btn.selected').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedNum = i;
 
-        numDisplay.classList.remove('empty');
-        selectedBall.textContent = i;
-        selectedBall.style.cssText = getBallColorInline(i) + ';width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;box-shadow:0 4px 16px rgba(0,0,0,0.2)';
-        submitBtn.disabled = false;
+          numDisplay.classList.remove('empty');
+          selectedBall.textContent = i;
+          selectedBall.style.cssText = getBallColorInline(i) + ';width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;box-shadow:0 4px 16px rgba(0,0,0,0.2)';
+          submitBtn.disabled = false;
+        });
+        numGrid.appendChild(btn);
+      }
+
+      submitBtn.addEventListener('click', () => {
+        if (!selectedNum) return;
+        alert('제 ${empty latestResult ? 1 : latestResult.roundNo + 1}회 예측 번호 [' + selectedNum + ']이 제출되었습니다!\n마감은 토요일 오후 8시 30분입니다.');
       });
-      numGrid.appendChild(btn);
     }
-
-    submitBtn.addEventListener('click', () => {
-      if (!selectedNum) return;
-      alert('제 ${empty latestResult ? 1 : latestResult.roundNo + 1}회 예측 번호 [' + selectedNum + ']이 제출되었습니다!\n마감은 토요일 오후 8시 30분입니다.');
-    });
 
     // =============================================
     // 모바일 메뉴
@@ -65,12 +67,19 @@
     // =============================================
     function getNextSaturday830pm() {
       const now = new Date();
-      const day = now.getDay();
-      const daysUntilSat = (6 - day + 7) % 7 || 7;
-      const sat = new Date(now);
-      sat.setDate(now.getDate() + daysUntilSat);
-      sat.setHours(20, 30, 0, 0);
-      return sat;
+      // 토요일 20:30 KST = 토요일 11:30 UTC (KST = UTC+9)
+      const dayUTC = now.getUTCDay(); // 0=일, 6=토
+      const daysUntilSat = (6 - dayUTC + 7) % 7;
+
+      const target = new Date(now);
+      target.setUTCDate(now.getUTCDate() + daysUntilSat);
+      target.setUTCHours(11, 30, 0, 0); // 11:30 UTC = 20:30 KST
+
+      // 이미 지났으면 다음 주 토요일로
+      if (target <= now) {
+        target.setUTCDate(target.getUTCDate() + 7);
+      }
+      return target;
     }
 
     function updateCountdown() {

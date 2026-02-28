@@ -131,7 +131,7 @@
                   <% if (loggedIn) { %>
                   <a class="post-title-link"
                      href="<%= contextPath %>/board/view/<%= post.getPostNo() %>?page=<%= currentPage %><%= filterParams %>">
-                    <%= org.springframework.web.util.HtmlUtils.htmlEscape(post.getTitle()) %>
+                    <span class="title-text"><%= org.springframework.web.util.HtmlUtils.htmlEscape(post.getTitle()) %></span>
                     <% if (post.getCommentCnt() > 0) { %>
                     <span class="comment-cnt">[<%= post.getCommentCnt() %>]</span>
                     <% } %>
@@ -139,7 +139,7 @@
                   <% } else { %>
                   <a class="post-title-link"
                      href="<%= contextPath %>/member/login?redirect=/board/view/<%= post.getPostNo() %>">
-                    🔒 <%= org.springframework.web.util.HtmlUtils.htmlEscape(post.getTitle()) %>
+                    <span class="title-text">🔒 <%= org.springframework.web.util.HtmlUtils.htmlEscape(post.getTitle()) %></span>
                     <% if (post.getCommentCnt() > 0) { %>
                     <span class="comment-cnt">[<%= post.getCommentCnt() %>]</span>
                     <% } %>

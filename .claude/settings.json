@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(java -version)",
+      "Bash(javac -cp \"C:/apache-tomcat-10.0.20/lib/mysql-connector-j-8.4.0.jar\" tmp_db_check.java)",
+      "Bash(java -cp \".;C:/apache-tomcat-10.0.20/lib/mysql-connector-j-8.4.0.jar\" tmp_db_check)",
+      "Bash(javac -encoding UTF-8 -cp \"C:/apache-tomcat-10.0.20/lib/mysql-connector-j-8.4.0.jar\" tmp_db_check.java)"
+    ]
+  }
+}

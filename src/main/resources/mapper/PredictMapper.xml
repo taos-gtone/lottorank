@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lottorank.mapper.PredictMapper">
+
+    <select id="findByRoundAndMember" resultType="MemPredNumVO">
+        SELECT round_no, member_no, pred_num, hit_yn, submit_at, create_ts, update_ts
+        FROM MEM_PRED_NUM
+        WHERE round_no  = #{roundNo}
+          AND member_no = #{memberNo}
+    </select>
+
+    <insert id="insertPredNum" parameterType="MemPredNumVO">
+        INSERT INTO MEM_PRED_NUM (round_no, member_no, pred_num, submit_at)
+        VALUES (#{roundNo}, #{memberNo}, #{predNum}, NOW())
+    </insert>
+
+</mapper>

@@ -109,11 +109,25 @@
           <div class="nav-item" data-path="/lotto/results">
             <a href="/lotto/results">회차별 당첨번호</a>
           </div>
-          <div class="nav-item">
-            <a href="#ranking">예측 분석실</a>
+          <div class="nav-item has-dropdown" data-path="/ranking">
+            <a href="/ranking">회원번호/랭킹</a>
+            <div class="nav-dropdown">
+              <a href="/ranking/no" class="nav-dropdown-item">회원번호 조회</a>
+              <a href="/ranking/list" class="nav-dropdown-item">회원 랭킹</a>
+            </div>
           </div>
-          <div class="nav-item" data-path="/board">
+          <div class="nav-item has-dropdown" data-path="/predict">
+            <a href="/predict">예측/분석실</a>
+            <div class="nav-dropdown">
+              <a href="/predict" class="nav-dropdown-item">번호 예측하기</a>
+              <a href="/predict/analysis" class="nav-dropdown-item">분석실</a>
+            </div>
+          </div>
+          <div class="nav-item has-dropdown" data-path="/board">
             <a href="/board/list">랭크 커뮤니티</a>
+            <div class="nav-dropdown">
+              <a href="/board/list" class="nav-dropdown-item">자유게시판</a>
+            </div>
           </div>
           <div class="nav-item">
             <a href="#how">고객센터</a>
@@ -172,8 +186,14 @@
       </div>
       <nav class="mobile-nav-links">
         <a href="#">로또 실제 당첨</a>
-        <a href="#ranking">예측 분석실</a>
-        <a href="/board/list">랭크 커뮤니티</a>
+        <a href="/ranking" class="mobile-nav-parent">회원번호/랭킹 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
+        <a href="/ranking/no" class="mobile-nav-sub">회원번호 조회</a>
+        <a href="/ranking/list" class="mobile-nav-sub">회원 랭킹</a>
+        <a href="/predict" class="mobile-nav-parent">예측/분석실 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
+        <a href="/predict" class="mobile-nav-sub">번호 예측하기</a>
+        <a href="/predict/analysis" class="mobile-nav-sub">분석실</a>
+        <a href="/board/list" class="mobile-nav-parent">랭크 커뮤니티 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
+        <a href="/board/list" class="mobile-nav-sub">자유게시판</a>
         <a href="#how">고객센터</a>
         <a href="#" style="color: #FFD54F;">🏆 골드 멤버십</a>
       </nav>

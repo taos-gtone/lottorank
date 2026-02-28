@@ -14,6 +14,18 @@
     <!-- 컴포넌트 스캔 (Controller) -->
     <context:component-scan base-package="com.lottorank.controller"/>
 
+    <!-- 세션 자동 갱신 인터셉터: 페이지 이동 시마다 만료 시각 10분 리셋 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/css/**"/>
+            <mvc:exclude-mapping path="/images/**"/>
+            <mvc:exclude-mapping path="/resources/**"/>
+            <mvc:exclude-mapping path="/member/extend"/>
+            <bean class="com.lottorank.interceptor.SessionRefreshInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
     <!-- Spring MVC 활성화 -->
     <mvc:annotation-driven/>
 

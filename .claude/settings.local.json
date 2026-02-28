@@ -4,7 +4,8 @@
       "Bash(python3:*)",
       "Bash(where:*)",
       "Bash(powershell -ExecutionPolicy Bypass -File:*)",
-      "Bash(xargs grep -l \"SecurityConfig\\\\|HttpSecurity\\\\|filterChain\\\\|WebSecurityConfigurerAdapter\")"
+      "Bash(xargs grep -l \"SecurityConfig\\\\|HttpSecurity\\\\|filterChain\\\\|WebSecurityConfigurerAdapter\")",
+      "Bash(xargs grep -l \"LottoRankDB\\\\|lottorank\")"
     ]
   }
 }

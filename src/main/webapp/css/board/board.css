@@ -214,11 +214,13 @@
   font-weight: 700;
   padding: 10px 14px;
   border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
   text-align: center;
   white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
+.board-table th:last-child { border-right: none; }
 
 .board-table th.col-title { text-align: center; }
 .board-table td.col-title { text-align: left; }
@@ -226,10 +228,12 @@
 .board-table td {
   padding: 13px 14px;
   border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
   text-align: center;
   vertical-align: middle;
   font-size: 0.85rem;
 }
+.board-table td:last-child { border-right: none; }
 
 .board-table tr:last-child td { border-bottom: none; }
 .board-table tbody tr:hover td { background: #F7F9FD; }
@@ -242,28 +246,34 @@
 }
 
 .post-title-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   color: var(--txt);
   font-weight: 600;
   font-size: 0.88rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   transition: color 0.2s;
 }
 .post-title-link:hover { color: #6A45C2; }
 
+.title-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .comment-cnt {
   display: inline-flex;
   align-items: center;
-  margin-left: 6px;
+  flex-shrink: 0;
   padding: 1px 6px;
   border-radius: 10px;
   background: rgba(106,69,194,0.1);
   color: #6A45C2;
   font-size: 0.72rem;
   font-weight: 700;
-  vertical-align: middle;
 }
 
 .col-author { width: 90px; color: var(--txt2); font-size: 0.8rem; }
