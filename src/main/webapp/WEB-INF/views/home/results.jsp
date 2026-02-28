@@ -34,7 +34,7 @@
               <div class="ball <%= latestResult.getBallColor5() %>"><%= latestResult.getNum5() %></div>
               <div class="ball <%= latestResult.getBallColor6() %>"><%= latestResult.getNum6() %></div>
               <span class="plus-sign">+</span>
-              <div class="ball bonus"><%= latestResult.getBonusNum() %></div>
+              <div class="ball <%= latestResult.getBonusColor() %> bonus"><%= latestResult.getBonusNum() %></div>
             <% } else { %>
               <span style="color:#7f8fa6; font-size:0.85rem;">조회된 회차 데이터가 없습니다.</span>
             <% } %>

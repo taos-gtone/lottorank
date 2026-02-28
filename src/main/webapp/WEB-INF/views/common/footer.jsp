@@ -24,9 +24,9 @@
           <div class="footer-col-title">서비스</div>
           <ul class="footer-links">
             <li><a href="#">이번 주 랭킹</a></li>
-            <li><a href="#">번호 예측하기</a></li>
+            <li><a href="/predict">번호 예측하기</a></li>
             <li><a href="#">포인트 충전</a></li>
-            <li><a href="#">당첨번호 조회</a></li>
+            <li><a href="/lotto/results">당첨번호 조회</a></li>
           </ul>
         </div>
         <div>

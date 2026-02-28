@@ -14,7 +14,9 @@ public interface LottoMapper {
             @Param("offset")   int offset,
             @Param("pageSize") int pageSize,
             @Param("year")     Integer year,
-            @Param("round")    Integer round);
+            @Param("round")    Integer round,
+            @Param("sortCol")  String sortCol,
+            @Param("sortDir")  String sortDir);
 
     int selectResultCount(
             @Param("year")  Integer year,

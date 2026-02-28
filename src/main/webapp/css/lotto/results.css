@@ -168,8 +168,10 @@
 
 .rounds-card-title {
   font-size: 0.92rem;
-  font-weight: 800;
+  font-weight: 900;
   color: #fff;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -184,6 +186,92 @@
   color: rgba(255,255,255,0.9);
 }
 
+.page-size-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.page-size-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  white-space: nowrap;
+}
+
+/* 커스텀 드롭다운 */
+.csel-wrap {
+  position: relative;
+}
+
+.csel-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: #fff;
+  color: var(--blue);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.csel-arrow {
+  color: var(--blue);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+
+.csel-wrap.open .csel-btn {
+  border-color: rgba(255,255,255,0.6);
+}
+
+.csel-wrap.open .csel-arrow {
+  transform: rotate(180deg);
+}
+
+.csel-list {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 100%;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-top: none;
+  border-radius: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 200;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.csel-wrap.open .csel-list {
+  display: block;
+}
+
+.csel-item {
+  padding: 7px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0047CC;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.csel-item:hover {
+  background: #EEF2FF;
+}
+
+.csel-item.selected {
+  background: #DBEAFE;
+  color: var(--blue);
+}
+
 /* =============================================
    당첨번호 테이블
 ============================================= */
@@ -196,10 +284,10 @@
 }
 
 .rounds-table th {
-  background: #F7F9FD;
-  font-size: 0.72rem;
-  color: var(--txt3);
-  font-weight: 700;
+  background: #EEF2FA;
+  font-size: 0.82rem;
+  color: var(--txt2);
+  font-weight: 800;
   padding: 10px 14px;
   border-bottom: 1px solid var(--line);
   border-right: 1px solid var(--line);
@@ -209,6 +297,26 @@
   letter-spacing: 0.3px;
 }
 .rounds-table th:last-child { border-right: none; }
+
+.sort-th {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+  white-space: nowrap;
+}
+
+.sort-th:hover { color: var(--blue); }
+.sort-th.active { color: var(--blue); }
+
+.sort-icon {
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+.sort-th.active .sort-icon { opacity: 1; }
 
 .rounds-table td {
   padding: 13px 14px;

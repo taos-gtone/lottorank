@@ -55,7 +55,7 @@
             FST_PRZ_WINNER_CNT AS prize1stCount
         FROM LTT_ROUND_RESULT
         <include refid="whereCondition"/>
-        ORDER BY ROUND_NO DESC
+        ORDER BY ${sortCol} ${sortDir}
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 

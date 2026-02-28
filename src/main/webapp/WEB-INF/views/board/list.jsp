@@ -91,15 +91,6 @@
 <div class="board-content">
   <div class="wrap board-layout">
 
-    <!-- 글쓰기 버튼 -->
-    <div class="board-actions">
-      <% if (loggedIn) { %>
-      <a href="<%= contextPath %>/board/write" class="btn-write">✏️ 글쓰기</a>
-      <% } else { %>
-      <a href="<%= contextPath %>/member/login?redirect=/board/write" class="btn-write">✏️ 글쓰기</a>
-      <% } %>
-    </div>
-
     <!-- 게시글 목록 카드 -->
     <div class="board-card">
       <div class="board-card-header">
@@ -107,6 +98,11 @@
           💬 자유게시판
           <span class="board-card-badge"><%= currentPage %> / <%= totalPages %> 페이지</span>
         </div>
+        <% if (loggedIn) { %>
+        <a href="<%= contextPath %>/board/write" class="btn-write-header">✏️ 글쓰기</a>
+        <% } else { %>
+        <a href="<%= contextPath %>/member/login?redirect=/board/write" class="btn-write-header">✏️ 글쓰기</a>
+        <% } %>
       </div>
 
       <div class="board-table-wrap">

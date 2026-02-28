@@ -161,6 +161,26 @@
 }
 .btn-write:hover { background: #3A2080; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(106,69,194,0.4); }
 
+/* 헤더 내 글쓰기 버튼 */
+.btn-write-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 5px;
+  background: #fff;
+  color: #6A45C2;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-write-header:hover {
+  background: rgba(255,255,255,0.85);
+  transform: translateY(-1px);
+}
+
 /* =============================================
    게시글 카드형 목록
 ============================================= */

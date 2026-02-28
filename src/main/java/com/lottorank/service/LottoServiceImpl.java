@@ -19,9 +19,9 @@ public class LottoServiceImpl implements LottoService {
     }
 
     @Override
-    public List<LottoRoundResult> getResultList(int page, int pageSize, Integer year, Integer round) {
+    public List<LottoRoundResult> getResultList(int page, int pageSize, Integer year, Integer round, String sortCol, String sortDir) {
         int offset = (page - 1) * pageSize;
-        return lottoMapper.selectResultList(offset, pageSize, year, round);
+        return lottoMapper.selectResultList(offset, pageSize, year, round, sortCol, sortDir);
     }
 
     @Override

@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-28T11:28:21.377Z",
+  "lastUpdated": "2026-02-28T16:52:30.919Z",
   "activeFeatures": [
     "mapper",
     "service",
@@ -23,9 +23,9 @@
       },
       "timestamps": {
         "started": "2026-02-19T15:10:07.894Z",
-        "lastUpdated": "2026-02-28T11:27:40.482Z"
+        "lastUpdated": "2026-02-28T16:51:33.289Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\mapper\\PredictMapper.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\mapper\\LottoMapper.java"
     },
     "service": {
       "phase": "do",
@@ -36,9 +36,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:18.396Z",
-        "lastUpdated": "2026-02-28T11:28:00.120Z"
+        "lastUpdated": "2026-02-28T16:51:54.211Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\service\\PredictServiceImpl.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\service\\LottoServiceImpl.java"
     },
     "controller": {
       "phase": "do",
@@ -49,9 +49,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:26.070Z",
-        "lastUpdated": "2026-02-28T11:28:21.377Z"
+        "lastUpdated": "2026-02-28T16:52:30.919Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\controller\\PredictController.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\controller\\LottoController.java"
     },
     "lottorank": {
       "phase": "do",
@@ -115,7 +115,7 @@
   "session": {
     "startedAt": "2026-02-19T14:55:10.648Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-28T11:28:21.377Z"
+    "lastActivity": "2026-02-28T16:52:30.919Z"
   },
   "history": [
     {
@@ -864,6 +864,54 @@
     },
     {
       "timestamp": "2026-02-28T11:28:21.377Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-28T16:26:01.562Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-28T16:26:14.243Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-28T16:51:33.289Z",
+      "feature": "mapper",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-28T16:51:48.885Z",
+      "feature": "service",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-28T16:51:54.211Z",
+      "feature": "service",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-28T16:52:07.592Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-28T16:52:14.016Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-28T16:52:30.919Z",
       "feature": "controller",
       "phase": "do",
       "action": "updated"

@@ -74,7 +74,7 @@
     .ball.r  { background: var(--ball-r); color: #fff; }
     .ball.g  { background: var(--ball-g); color: #fff; }
     .ball.gr { background: var(--ball-gr); color: #fff; }
-    .ball.bonus { background: #fff; border: 2px dashed #9C27B0; color: #9C27B0; box-shadow: none; }
+    .ball.bonus { border: 2px dashed #9C27B0; box-shadow: 0 2px 6px rgba(0,0,0,0.18); }
 
     .plus-sign { color: var(--txt3); font-size: 1rem; font-weight: 700; }
 
@@ -93,6 +93,7 @@
     .prize-table {
       width: 100%;
       border-collapse: collapse;
+      border: 1px solid var(--line);
     }
 
     .prize-table th {
@@ -100,7 +101,7 @@
       color: var(--txt3);
       font-weight: 600;
       padding: 6px 4px;
-      border-bottom: 1px solid var(--line);
+      border: 1px solid var(--line);
       text-align: center;
     }
 
@@ -108,7 +109,7 @@
       font-size: 0.8rem;
       color: var(--txt);
       padding: 7px 4px;
-      border-bottom: 1px solid var(--line);
+      border: 1px solid var(--line);
       text-align: center;
     }
 

@@ -27,11 +27,17 @@
   Integer totalPagesObj   = (Integer) request.getAttribute("totalPages");
   Integer startPageObj    = (Integer) request.getAttribute("startPage");
   Integer endPageObj      = (Integer) request.getAttribute("endPage");
+  Integer pageSizeObj     = (Integer) request.getAttribute("pageSize");
+  String  sortAttr        = (String)  request.getAttribute("sort");
+  String  dirAttr         = (String)  request.getAttribute("dir");
 
   int currentPage = (currentPageObj != null && currentPageObj > 0) ? currentPageObj : 1;
   int totalPages  = (totalPagesObj != null && totalPagesObj > 0) ? totalPagesObj : 1;
   int startPage   = (startPageObj != null && startPageObj > 0) ? startPageObj : 1;
   int endPage     = (endPageObj != null && endPageObj > 0) ? endPageObj : totalPages;
+  int pageSize    = (pageSizeObj != null) ? pageSizeObj : 15;
+  String currentSort = (sortAttr != null) ? sortAttr : "round";
+  String currentDir  = (dirAttr  != null) ? dirAttr  : "desc";
 
   if (startPage > endPage) {
     startPage = 1;
@@ -40,9 +46,13 @@
 
   String contextPath = request.getContextPath();
   String filterParams = (selectedYearObj != null ? "&year=" + selectedYearObj : "")
-      + (searchRoundObj != null ? "&round=" + searchRoundObj : "");
+      + (searchRoundObj != null ? "&round=" + searchRoundObj : "")
+      + "&size=" + pageSize
+      + "&sort=" + currentSort
+      + "&dir="  + currentDir;
   int maxYearOption = java.time.Year.now().getValue();
   int minYearOption = 2002;
+  int[] pageSizeOptions = {10, 15, 20, 30, 50};
 
   @SuppressWarnings("unchecked")
   List<LottoRoundResult> resultList = (List<LottoRoundResult>) request.getAttribute("results");
@@ -102,17 +112,47 @@
           🏆 당첨번호 목록
           <span class="rounds-count-badge"><%= currentPage %> / <%= totalPages %> 페이지</span>
         </div>
+        <div class="page-size-wrap">
+          <span class="page-size-label">페이지당</span>
+          <div class="csel-wrap" id="pageSizeWrap">
+            <button type="button" class="csel-btn" id="pageSizeBtn">
+              <span id="pageSizeDisplay"><%= pageSize %>회차</span>
+              <svg class="csel-arrow" width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>
+            </button>
+            <ul class="csel-list" id="pageSizeList">
+              <% for (int ps : pageSizeOptions) { %>
+                <li class="csel-item<%= ps == pageSize ? " selected" : "" %>" data-value="<%= ps %>"><%= ps %>회차</li>
+              <% } %>
+            </ul>
+          </div>
+        </div>
       </div>
 
       <div class="rounds-table-wrap">
         <table class="rounds-table">
           <thead>
+            <%
+              // 정렬 링크 생성 헬퍼
+              String baseSort = (selectedYearObj != null ? "year=" + selectedYearObj + "&" : "")
+                              + (searchRoundObj != null ? "round=" + searchRoundObj + "&" : "")
+                              + "size=" + pageSize + "&page=1";
+              // 각 컬럼의 다음 방향 계산
+              String roundDir   = "round".equals(currentSort)   ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
+              String prizeDir   = "prize".equals(currentSort)   ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
+              String winnersDir = "winners".equals(currentSort) ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
+            %>
             <tr>
-              <th>회차</th>
+              <th><a href="<%= contextPath %>/lotto/results?<%= baseSort %>&sort=round&dir=<%= roundDir %>" class="sort-th<%= "round".equals(currentSort) ? " active" : "" %>">
+                회차 <span class="sort-icon"><%= "round".equals(currentSort) ? ("desc".equals(currentDir) ? "▼" : "▲") : "⇅" %></span>
+              </a></th>
               <th>추첨일</th>
               <th>당첨번호</th>
-              <th>1등 당첨금</th>
-              <th>1등 당첨자</th>
+              <th><a href="<%= contextPath %>/lotto/results?<%= baseSort %>&sort=prize&dir=<%= prizeDir %>" class="sort-th<%= "prize".equals(currentSort) ? " active" : "" %>">
+                1등 당첨금 <span class="sort-icon"><%= "prize".equals(currentSort) ? ("desc".equals(currentDir) ? "▼" : "▲") : "⇅" %></span>
+              </a></th>
+              <th><a href="<%= contextPath %>/lotto/results?<%= baseSort %>&sort=winners&dir=<%= winnersDir %>" class="sort-th<%= "winners".equals(currentSort) ? " active" : "" %>">
+                1등 당첨자 <span class="sort-icon"><%= "winners".equals(currentSort) ? ("desc".equals(currentDir) ? "▼" : "▲") : "⇅" %></span>
+              </a></th>
             </tr>
           </thead>
           <tbody>
@@ -132,7 +172,7 @@
                       <div class="ball <%= r.getBallColor5() %>"><%= r.getNum5() %></div>
                       <div class="ball <%= r.getBallColor6() %>"><%= r.getNum6() %></div>
                       <span class="plus-sign">+</span>
-                      <div class="ball bonus"><%= r.getBonusNum() %></div>
+                      <div class="ball <%= r.getBonusColor() %> bonus"><%= r.getBonusNum() %></div>
                     </div>
                   </td>
                   <td class="prize-1st"><%= r.getFormattedPrize() %></td>
@@ -207,6 +247,32 @@
       if (e.target === mobileMenu) mobileMenu.classList.remove('open');
     });
   }
+
+  (function () {
+    const wrap = document.getElementById('pageSizeWrap');
+    const btn  = document.getElementById('pageSizeBtn');
+    const list = document.getElementById('pageSizeList');
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const opening = !wrap.classList.contains('open');
+      wrap.classList.toggle('open', opening);
+    });
+
+    list.querySelectorAll('.csel-item').forEach(function (li) {
+      li.addEventListener('click', function () {
+        const size = this.dataset.value;
+        const params = new URLSearchParams(window.location.search);
+        params.set('size', size);
+        params.set('page', '1');
+        window.location.href = '/lotto/results?' + params.toString();
+      });
+    });
+
+    document.addEventListener('click', function () {
+      wrap.classList.remove('open');
+    });
+  })();
 </script>
 
 </body>
