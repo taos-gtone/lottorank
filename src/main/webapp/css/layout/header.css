@@ -122,23 +122,6 @@
     }
 
 
-    /* 모바일 드롭다운 서브메뉴 */
-    .mobile-nav-sub {
-      display: block;
-      padding: 9px 20px 9px 36px;
-      color: rgba(255,255,255,0.6);
-      font-size: 0.88rem;
-      font-weight: 500;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      transition: all 0.2s;
-      background: rgba(0,0,0,0.12);
-    }
-
-    .mobile-nav-sub:hover {
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.9);
-    }
-
     .mobile-nav-parent {
       display: flex;
       align-items: center;
@@ -278,6 +261,7 @@
       gap: 4px;
       padding: 8px;
       background: transparent;
+      margin-left: auto;
     }
 
     .hamburger span {
@@ -300,6 +284,7 @@
       bottom: 0;
       background: rgba(0,0,0,0.5);
       z-index: 200;
+      justify-content: flex-end;
     }
 
     .mobile-menu.open { display: flex; }
@@ -341,12 +326,26 @@
       font-size: 0.95rem;
       font-weight: 500;
       border-bottom: 1px solid rgba(255,255,255,0.06);
-      transition: all 0.2s;
+      transition: background 0.18s, color 0.18s;
     }
 
     .mobile-nav-links a:hover {
       background: rgba(255,255,255,0.07);
       color: #fff;
+    }
+
+    /* 서브메뉴: .mobile-nav-links a 이후에 선언해야 명시도(0,2,0 > 0,1,1)로 우선 적용 */
+    .mobile-nav-links .mobile-nav-sub {
+      padding: 9px 20px 9px 36px;
+      color: #3360BE;
+      font-size: 0.88rem;
+      background: #fff;
+      border-bottom: 1px solid rgba(51,96,190,0.25);
+    }
+
+    .mobile-nav-links .mobile-nav-sub:hover {
+      background: rgba(255,255,255,0.88);
+      color: #3360BE;
     }
 
     .mobile-actions {
