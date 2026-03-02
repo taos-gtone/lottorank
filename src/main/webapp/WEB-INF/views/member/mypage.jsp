@@ -1,5 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.lottorank.vo.MemberVO" %>
+<%@ page import="com.lottorank.vo.MemRankAllVO" %>
+<%@ page import="com.lottorank.vo.MemRank5RoundVO" %>
+<%@ page import="com.lottorank.vo.PredHistVO" %>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -20,6 +24,23 @@
 <%
   MemberVO m = (MemberVO) request.getAttribute("memberInfo");
   boolean isSocial = m != null && !"I".equals(m.getRegLoginTypCd());
+  List<MemRankAllVO>   myAllList = (List<MemRankAllVO>)   request.getAttribute("myAllRankingList");
+  List<MemRank5RoundVO> my5List  = (List<MemRank5RoundVO>) request.getAttribute("myRecent5RankingList");
+  List<PredHistVO>    myPredList = (List<PredHistVO>)      request.getAttribute("myPredHistory");
+  MemRankAllVO    myAllLatest = (myAllList != null && !myAllList.isEmpty()) ? myAllList.get(0) : null;
+  MemRank5RoundVO my5Latest   = (my5List  != null && !my5List.isEmpty())   ? my5List.get(0)  : null;
+
+  // 예측 통계 계산
+  int totalPred = 0, totalHit = 0;
+  if (myPredList != null) {
+    for (PredHistVO ph : myPredList) {
+      if (ph.isPredicted()) {
+        totalPred++;
+        if ("Y".equals(ph.getHitYn())) totalHit++;
+      }
+    }
+  }
+  double predHitRate = totalPred > 0 ? totalHit * 100.0 / totalPred : 0.0;
 
   // 표시용 값 준비
   String userId    = m != null && m.getUserId()    != null ? m.getUserId()    : "";
@@ -75,10 +96,16 @@
     <div class="mypage-tabs" role="tablist">
       <button class="mypage-tab-btn active" role="tab"
               aria-selected="true" aria-controls="tab-info"
-              onclick="switchTab('info', this)">내 정보 조회</button>
+              onclick="switchTab('info', this)">내 정보 조회/수정</button>
       <button class="mypage-tab-btn" role="tab"
               aria-selected="false" aria-controls="tab-predict"
-              onclick="switchTab('predict', this)">내 예측번호 조회</button>
+              onclick="switchTab('predict', this)">내 예측번호</button>
+      <button class="mypage-tab-btn" role="tab"
+              aria-selected="false" aria-controls="tab-rank-all"
+              onclick="switchTab('rank-all', this)">내 전체 랭킹</button>
+      <button class="mypage-tab-btn" role="tab"
+              aria-selected="false" aria-controls="tab-rank-5"
+              onclick="switchTab('rank-5', this)">내 최근5주 랭킹</button>
     </div>
 
     <!-- ════════════════════════════════════
@@ -223,12 +250,215 @@
          탭 2: 내 예측번호 조회
     ════════════════════════════════════ -->
     <div id="tab-predict" class="mypage-tab-content" role="tabpanel">
-      <div class="coming-soon-wrap">
-        <div class="coming-soon-icon">🎯</div>
-        <div class="coming-soon-title">내 예측번호 조회</div>
-        <div class="coming-soon-desc">준비 중입니다. 곧 서비스될 예정입니다.</div>
+
+      <!-- ── 예측 통계 요약 카드 ── -->
+      <div class="my-pred-summary">
+        <div class="my-pred-stat-col">
+          <div class="my-pred-stat-num"><%=totalPred%></div>
+          <div class="my-pred-stat-label">총 제출</div>
+        </div>
+        <div class="my-pred-divider"></div>
+        <div class="my-pred-stat-col">
+          <div class="my-pred-stat-num"><%=totalHit%></div>
+          <div class="my-pred-stat-label">적중</div>
+        </div>
+        <div class="my-pred-divider"></div>
+        <div class="my-pred-stat-col">
+          <div class="my-pred-stat-num"><%=String.format("%.1f%%", predHitRate)%></div>
+          <div class="my-pred-stat-label">적중률</div>
+        </div>
       </div>
+
+      <!-- ── 회차별 예측 이력 테이블 ── -->
+      <div class="rank-hist-panel">
+        <div class="rank-hist-label">회차별 예측 이력 <span>(전 회차 · 미제출 포함)</span></div>
+        <div class="rank-hist-wrap">
+          <table class="rank-hist-table pred-hist-table">
+            <thead>
+              <tr>
+                <th>회차</th>
+                <th>추첨일</th>
+                <th>당첨번호</th>
+                <th>내 번호</th>
+                <th>결과</th>
+                <th>제출일시</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyPred">
+              <% if (myPredList == null || myPredList.isEmpty()) { %>
+              <tr>
+                <td colspan="6" class="pred-empty-row">아직 예측 이력이 없습니다.</td>
+              </tr>
+              <% } else { %>
+              <% for (PredHistVO ph : myPredList) { %>
+              <tr class="<%=ph.isPredicted() ? "" : "pred-row-none"%>">
+                <td class="pred-round"><%=ph.getRoundNo()%>회</td>
+                <td class="pred-date"><%=ph.getRoundDateDisp()%></td>
+                <td class="pred-winning-nums">
+                  <div class="pred-nums-wrap">
+                    <span class="pred-ball <%=ph.getBallClass(ph.getNum1())%>"><%=ph.getNum1()%></span>
+                    <span class="pred-ball <%=ph.getBallClass(ph.getNum2())%>"><%=ph.getNum2()%></span>
+                    <span class="pred-ball <%=ph.getBallClass(ph.getNum3())%>"><%=ph.getNum3()%></span>
+                    <span class="pred-ball <%=ph.getBallClass(ph.getNum4())%>"><%=ph.getNum4()%></span>
+                    <span class="pred-ball <%=ph.getBallClass(ph.getNum5())%>"><%=ph.getNum5()%></span>
+                    <span class="pred-ball <%=ph.getBallClass(ph.getNum6())%>"><%=ph.getNum6()%></span>
+                    <span class="pred-plus-sign">+</span>
+                    <span class="pred-ball <%=ph.getBallClass(ph.getBonusNum())%> pred-ball-bonus"><%=ph.getBonusNum()%></span>
+                  </div>
+                </td>
+                <td class="pred-my-num">
+                  <% if (ph.isPredicted()) { %>
+                  <span class="pred-ball pred-ball-lg <%=ph.getPredBallClass()%>"><%=ph.getPredNum()%></span>
+                  <% } else { %>
+                  <span class="pred-none-dash">—</span>
+                  <% } %>
+                </td>
+                <td><span class="pred-hit-badge <%=ph.getHitCss()%>"><%=ph.getHitLabel()%></span></td>
+                <td class="pred-submit-at">
+                  <% if (ph.getSubmitAt() != null) { %>
+                  <%=new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(ph.getSubmitAt())%>
+                  <% } else { %>
+                  <span class="pred-none-dash">—</span>
+                  <% } %>
+                </td>
+              </tr>
+              <% } %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="rank-hist-pagination" id="paginPred"></div>
+
     </div><!-- /tab-predict -->
+
+    <!-- ════════════════════════════════════
+         탭 3: 내 전체 랭킹
+    ════════════════════════════════════ -->
+    <div id="tab-rank-all" class="mypage-tab-content" role="tabpanel">
+      <% if (myAllLatest == null) { %>
+      <div class="my-rank-empty">
+        <div class="my-rank-empty-icon">🏅</div>
+        <div class="my-rank-empty-title">아직 전체 랭킹이 없습니다</div>
+        <div class="my-rank-empty-desc">번호 예측에 참여하면 자동으로 랭킹이 생성됩니다.</div>
+      </div>
+      <% } else { %>
+
+      <!-- 최신 회차 요약 카드 -->
+      <div class="my-rank-summary">
+        <div class="my-rank-badge<%=myAllLatest.getRanking() <= 3 ? " rank-" + myAllLatest.getRanking() : ""%>">
+          <%=myAllLatest.getRanking()%>
+        </div>
+        <div class="my-rank-info">
+          <div class="my-rank-label">전체 랭킹 최신 (<%=myAllLatest.getRoundNo()%>회 기준)</div>
+          <div class="my-rank-number"><%=myAllLatest.getRanking()%>위</div>
+          <span class="my-rank-change <%=myAllLatest.getRankChangeCss()%>"><%=myAllLatest.getRankChangeLabel()%></span>
+        </div>
+        <div class="my-rank-hit">
+          <div class="my-rank-hit-label">적중률</div>
+          <div class="my-rank-hit-value"><%=myAllLatest.getHitRateStr()%></div>
+        </div>
+      </div>
+
+      <!-- 회차별 이력 테이블 -->
+      <div class="rank-hist-panel">
+        <div class="rank-hist-label">회차별 랭킹 이력 <span>(전체기간)</span></div>
+        <div class="rank-hist-wrap">
+          <table class="rank-hist-table">
+            <thead>
+              <tr>
+                <th>회차</th>
+                <th>순위</th>
+                <th>변동</th>
+                <th>적중률</th>
+                <th>선택수</th>
+                <th>정답수</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyRankAll">
+              <% for (MemRankAllVO r : myAllList) { %>
+              <tr>
+                <td><%=r.getRoundNo()%>회</td>
+                <td class="<%=r.getRanking()==1?"cell-r1":r.getRanking()==2?"cell-r2":r.getRanking()==3?"cell-r3":""%>"><%=r.getRanking()%>위</td>
+                <td class="<%=r.getRankChangeCss()%>"><%=r.getRankChangeLabel()%></td>
+                <td><span class="accuracy-tag"><%=r.getHitRateStr()%></span></td>
+                <td><%=r.getSelNumCnt()%></td>
+                <td><%=r.getWinCnt()%></td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="rank-hist-pagination" id="paginRankAll"></div>
+
+      <% } %>
+    </div><!-- /tab-rank-all -->
+
+    <!-- ════════════════════════════════════
+         탭 4: 내 최근5주 랭킹
+    ════════════════════════════════════ -->
+    <div id="tab-rank-5" class="mypage-tab-content" role="tabpanel">
+      <% if (my5Latest == null) { %>
+      <div class="my-rank-empty">
+        <div class="my-rank-empty-icon">📅</div>
+        <div class="my-rank-empty-title">아직 최근 5주 랭킹이 없습니다</div>
+        <div class="my-rank-empty-desc">최근 5회차 내에 번호 예측에 참여하면 자동으로 랭킹이 생성됩니다.</div>
+      </div>
+      <% } else { %>
+
+      <!-- 최신 회차 요약 카드 -->
+      <div class="my-rank-summary">
+        <div class="my-rank-badge<%=my5Latest.getRanking() <= 3 ? " rank-" + my5Latest.getRanking() : ""%>">
+          <%=my5Latest.getRanking()%>
+        </div>
+        <div class="my-rank-info">
+          <div class="my-rank-label">최근 5주 랭킹 최신 (<%=my5Latest.getRoundNo()%>회 기준)</div>
+          <div class="my-rank-number"><%=my5Latest.getRanking()%>위</div>
+          <span class="my-rank-change <%=my5Latest.getRankChangeCss()%>"><%=my5Latest.getRankChangeLabel()%></span>
+        </div>
+        <div class="my-rank-hit">
+          <div class="my-rank-hit-label">적중률</div>
+          <div class="my-rank-hit-value"><%=my5Latest.getHitRateStr()%></div>
+        </div>
+      </div>
+
+      <!-- 회차별 이력 테이블 -->
+      <div class="rank-hist-panel">
+        <div class="rank-hist-label">회차별 랭킹 이력 <span>(최근 5주 기준)</span></div>
+        <div class="rank-hist-wrap">
+          <table class="rank-hist-table">
+            <thead>
+              <tr>
+                <th>회차</th>
+                <th>순위</th>
+                <th>변동</th>
+                <th>적중률</th>
+                <th>선택수</th>
+                <th>정답수</th>
+                <th>오답수</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyRank5">
+              <% for (MemRank5RoundVO r : my5List) { %>
+              <tr>
+                <td><%=r.getRoundNo()%>회</td>
+                <td class="<%=r.getRanking()==1?"cell-r1":r.getRanking()==2?"cell-r2":r.getRanking()==3?"cell-r3":""%>"><%=r.getRanking()%>위</td>
+                <td class="<%=r.getRankChangeCss()%>"><%=r.getRankChangeLabel()%></td>
+                <td><span class="accuracy-tag"><%=r.getHitRateStr()%></span></td>
+                <td><%=r.getLastSelCnt()%></td>
+                <td><%=r.getWinCnt()%></td>
+                <td><%=r.getLostCnt()%></td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="rank-hist-pagination" id="paginRank5"></div>
+
+      <% } %>
+    </div><!-- /tab-rank-5 -->
 
   </div><!-- /mypage-container -->
 </main>
@@ -245,6 +475,19 @@
   if (mobileMenu) mobileMenu.addEventListener('click', (e) => {
     if (e.target === mobileMenu) mobileMenu.classList.remove('open');
   });
+
+  /* ── URL 해시로 탭 자동 전환 ── */
+  (function() {
+    var hash = window.location.hash.replace('#', '');
+    if (!hash) return;
+    var tabMap = { 'predict': 1, 'rank-all': 2, 'rank-5': 3 };
+    var idx = tabMap[hash];
+    if (idx === undefined) return;
+    var btn = document.querySelectorAll('.mypage-tab-btn')[idx];
+    if (btn) btn.click();
+    // 해시 제거 (뒤로가기 등 오작동 방지)
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  })();
 
   /* ── 탭 전환 ── */
   function switchTab(tabId, btn) {
@@ -373,6 +616,90 @@
   document.getElementById('mobileNo').addEventListener('input', function() {
     this.value = this.value.replace(/[^0-9]/g, '');
   });
+
+  /* ── 랭킹 이력 테이블 페이지네이션 ── */
+  function initTablePagination(tbodyId, ctrlId, pageSize) {
+    var tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    var rows = Array.from(tbody.rows);
+    if (!rows.length) return;
+
+    // 페이지 수가 1 이하면 페이지네이션 불필요
+    if (rows.length <= pageSize) return;
+
+    var total = Math.ceil(rows.length / pageSize);
+    var cur = 1;
+
+    function show(p) {
+      cur = Math.max(1, Math.min(p, total));
+      var s = (cur - 1) * pageSize;
+      rows.forEach(function(tr, i) {
+        tr.style.display = (i >= s && i < s + pageSize) ? '' : 'none';
+      });
+      buildControls();
+    }
+
+    function buildControls() {
+      var el = document.getElementById(ctrlId);
+      if (!el) return;
+      el.innerHTML = '';
+
+      var prev = document.createElement('button');
+      prev.className = 'pagin-btn';
+      prev.textContent = '‹';
+      prev.disabled = (cur === 1);
+      prev.onclick = function() { show(cur - 1); };
+      el.appendChild(prev);
+
+      // 페이지 번호 버튼 (최대 5개, 중간 생략)
+      var startPage = Math.max(1, cur - 2);
+      var endPage   = Math.min(total, cur + 2);
+      if (startPage > 1) {
+        var b = document.createElement('button');
+        b.className = 'pagin-btn'; b.textContent = '1';
+        b.onclick = function() { show(1); };
+        el.appendChild(b);
+        if (startPage > 2) {
+          var sp = document.createElement('span');
+          sp.className = 'pagin-ellipsis'; sp.textContent = '…';
+          el.appendChild(sp);
+        }
+      }
+      for (var p = startPage; p <= endPage; p++) {
+        (function(page) {
+          var btn = document.createElement('button');
+          btn.className = 'pagin-btn' + (page === cur ? ' active' : '');
+          btn.textContent = page;
+          btn.onclick = function() { show(page); };
+          el.appendChild(btn);
+        })(p);
+      }
+      if (endPage < total) {
+        if (endPage < total - 1) {
+          var ep = document.createElement('span');
+          ep.className = 'pagin-ellipsis'; ep.textContent = '…';
+          el.appendChild(ep);
+        }
+        var lb = document.createElement('button');
+        lb.className = 'pagin-btn'; lb.textContent = total;
+        lb.onclick = function() { show(total); };
+        el.appendChild(lb);
+      }
+
+      var next = document.createElement('button');
+      next.className = 'pagin-btn';
+      next.textContent = '›';
+      next.disabled = (cur === total);
+      next.onclick = function() { show(cur + 1); };
+      el.appendChild(next);
+    }
+
+    show(1);
+  }
+
+  initTablePagination('tbodyRankAll', 'paginRankAll', 10);
+  initTablePagination('tbodyRank5',   'paginRank5',   10);
+  initTablePagination('tbodyPred',    'paginPred',    15);
 </script>
 
 </body>

@@ -96,9 +96,9 @@
               <div class="countdown-timer" id="countdown2">3일 14:22:05</div>
             </div>
           </div>
-          <button class="btn-predict" onclick="document.querySelector('.predict-card').scrollIntoView({behavior:'smooth'})">
+          <a href="${pageContext.request.contextPath}/predict" class="btn-predict">
             🎰 지금 번호 예측하기
-          </button>
+          </a>
         </div>
 
       </div>

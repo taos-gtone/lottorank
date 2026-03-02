@@ -45,7 +45,7 @@
 
       submitBtn.addEventListener('click', () => {
         if (!selectedNum) return;
-        alert('제 ${empty latestResult ? 1 : latestResult.roundNo + 1}회 예측 번호 [' + selectedNum + ']이 제출되었습니다!\n마감은 토요일 오후 8시 30분입니다.');
+        alert('제 ${empty latestResult ? 1 : latestResult.roundNo + 1}회 예측 번호 [' + selectedNum + ']이 제출되었습니다!\n마감은 토요일 오후 7시입니다.');
       });
     }
 
@@ -67,13 +67,13 @@
     // =============================================
     function getNextSaturday830pm() {
       const now = new Date();
-      // 토요일 20:30 KST = 토요일 11:30 UTC (KST = UTC+9)
+      // 토요일 19:00 KST = 토요일 10:00 UTC (KST = UTC+9)
       const dayUTC = now.getUTCDay(); // 0=일, 6=토
       const daysUntilSat = (6 - dayUTC + 7) % 7;
 
       const target = new Date(now);
       target.setUTCDate(now.getUTCDate() + daysUntilSat);
-      target.setUTCHours(11, 30, 0, 0); // 11:30 UTC = 20:30 KST
+      target.setUTCHours(10, 0, 0, 0); // 10:00 UTC = 19:00 KST
 
       // 이미 지났으면 다음 주 토요일로
       if (target <= now) {

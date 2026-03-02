@@ -2,8 +2,11 @@ package com.lottorank.service;
 
 import com.lottorank.mapper.PredictMapper;
 import com.lottorank.vo.MemPredNumVO;
+import com.lottorank.vo.PredHistVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PredictServiceImpl implements PredictService {
@@ -27,5 +30,10 @@ public class PredictServiceImpl implements PredictService {
         vo.setPredNum(predNum);
         predictMapper.insertPredNum(vo);
         return true;
+    }
+
+    @Override
+    public List<PredHistVO> getMyPredHistory(long memberNo) {
+        return predictMapper.findMyPredHistory(memberNo);
     }
 }

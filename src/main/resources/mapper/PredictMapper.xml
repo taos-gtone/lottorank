@@ -16,4 +16,33 @@
         VALUES (#{roundNo}, #{memberNo}, #{predNum}, NOW())
     </insert>
 
+    <!--
+        회원의 전체 예측 이력 조회
+        - LTT_ROUND_RESULT 전 회차 기준으로 LEFT JOIN
+        - 예측하지 않은 회차는 predNum=NULL, hitYn=NULL, submitAt=NULL
+    -->
+    <select id="findMyPredHistory" resultType="PredHistVO">
+        SELECT
+            r.ROUND_NO      AS roundNo,
+            r.ROUND_DATE    AS roundDate,
+            r.NUM1          AS num1,
+            r.NUM2          AS num2,
+            r.NUM3          AS num3,
+            r.NUM4          AS num4,
+            r.NUM5          AS num5,
+            r.NUM6          AS num6,
+            r.BONUS_NUM     AS bonusNum,
+            p.pred_num      AS predNum,
+            p.hit_yn        AS hitYn,
+            p.submit_at     AS submitAt
+        FROM LTT_ROUND_RESULT r
+        LEFT JOIN MEM_PRED_NUM p
+            ON r.ROUND_NO = p.round_no
+           AND p.member_no = #{memberNo}
+        LEFT JOIN MEM_JOIN_INFO j
+          ON j.member_no = #{memberNo}
+       WHERE j.create_ts &lt;= STR_TO_DATE(CONCAT(r.round_date, ' 19:00:00'), '%Y%m%d %H:%i:%s')
+        ORDER BY r.ROUND_NO DESC
+    </select>
+
 </mapper>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lottorank.mapper.RankingMapper">
+
+    <!--
+        전체 랭킹 상위 10명 조회
+        - LTT_ROUND_RESULT 의 마지막 회차 기준
+        - 적중률 = ROUND(win_cnt * 100.0 / sel_num_cnt, 1)
+        - 순위변동 = prev_ranking - ranking (양수=상승, 음수=하락, 0=동일, NULL=신규)
+    -->
+    <select id="selectAllRanking" resultType="MemRankAllVO">
+        SELECT
+            r.round_no                                      AS roundNo,
+            r.member_no                                     AS memberNo,
+            m.nickname,
+            r.ranking,
+            r.grade,
+            r.elps_cnt                                      AS elpsCnt,
+            r.sel_num_cnt                                   AS selNumCnt,
+            r.win_cnt                                       AS winCnt,
+            r.cont_lost_cnt                                 AS contLostCnt,
+            r.prev_ranking                                  AS prevRanking,
+            r.prev_grade                                    AS prevGrade,
+            CASE WHEN r.sel_num_cnt > 0
+                 THEN ROUND(r.win_cnt * 100.0 / r.sel_num_cnt, 1)
+                 ELSE 0.0
+            END                                             AS hitRate,
+            CASE WHEN r.prev_ranking IS NULL THEN NULL
+                 ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+            END                                             AS rankChange
+        FROM MEM_RANK_ALL r
+        JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        WHERE r.round_no = (SELECT MAX(ROUND_NO) FROM LTT_ROUND_RESULT)
+        ORDER BY r.ranking
+        LIMIT 6
+    </select>
+
+    <!--
+        최근 5주 랭킹 상위 6명 조회
+        - LTT_ROUND_RESULT 의 마지막 회차 기준
+        - 적중률 = ROUND(win_cnt * 100.0 / last_sel_cnt, 1)
+        - 순위변동 = prev_ranking - ranking (UNSIGNED 컬럼이므로 SIGNED로 캐스팅)
+    -->
+    <select id="selectRecent5Ranking" resultType="MemRank5RoundVO">
+        SELECT
+            r.round_no                                      AS roundNo,
+            r.member_no                                     AS memberNo,
+            m.nickname,
+            r.ranking,
+            r.last_sel_cnt                                  AS lastSelCnt,
+            r.win_cnt                                       AS winCnt,
+            r.lost_cnt                                      AS lostCnt,
+            r.prev_ranking                                  AS prevRanking,
+            CASE WHEN r.last_sel_cnt > 0
+                 THEN ROUND(r.win_cnt * 100.0 / r.last_sel_cnt, 1)
+                 ELSE 0.0
+            END                                             AS hitRate,
+            CASE WHEN r.prev_ranking IS NULL THEN NULL
+                 ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+            END                                             AS rankChange
+        FROM MEM_RANK_5ROUND r
+        JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        WHERE r.round_no = (SELECT MAX(ROUND_NO) FROM LTT_ROUND_RESULT)
+        ORDER BY r.ranking
+        LIMIT 6
+    </select>
+
+
+    <!-- 특정 회원의 전체 랭킹 이력 전체 조회 (최신순) -->
+    <select id="selectMyAllRankingHistory" resultType="MemRankAllVO">
+        SELECT
+            r.round_no                                      AS roundNo,
+            r.member_no                                     AS memberNo,
+            m.nickname,
+            r.ranking,
+            r.grade,
+            r.elps_cnt                                      AS elpsCnt,
+            r.sel_num_cnt                                   AS selNumCnt,
+            r.win_cnt                                       AS winCnt,
+            r.cont_lost_cnt                                 AS contLostCnt,
+            r.prev_ranking                                  AS prevRanking,
+            r.prev_grade                                    AS prevGrade,
+            CASE WHEN r.sel_num_cnt > 0
+                 THEN ROUND(r.win_cnt * 100.0 / r.sel_num_cnt, 1)
+                 ELSE 0.0
+            END                                             AS hitRate,
+            CASE WHEN r.prev_ranking IS NULL THEN NULL
+                 ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+            END                                             AS rankChange
+        FROM MEM_RANK_ALL r
+        JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        WHERE r.member_no = #{memberNo}
+        ORDER BY r.round_no DESC
+    </select>
+
+    <!-- 특정 회원의 최근 5주 랭킹 이력 전체 조회 (최신순) -->
+    <select id="selectMyRecent5RankingHistory" resultType="MemRank5RoundVO">
+        SELECT
+            r.round_no                                      AS roundNo,
+            r.member_no                                     AS memberNo,
+            m.nickname,
+            r.ranking,
+            r.last_sel_cnt                                  AS lastSelCnt,
+            r.win_cnt                                       AS winCnt,
+            r.lost_cnt                                      AS lostCnt,
+            r.prev_ranking                                  AS prevRanking,
+            CASE WHEN r.last_sel_cnt > 0
+                 THEN ROUND(r.win_cnt * 100.0 / r.last_sel_cnt, 1)
+                 ELSE 0.0
+            END                                             AS hitRate,
+            CASE WHEN r.prev_ranking IS NULL THEN NULL
+                 ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+            END                                             AS rankChange
+        FROM MEM_RANK_5ROUND r
+        JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        WHERE r.member_no = #{memberNo}
+        ORDER BY r.round_no DESC
+    </select>
+
+    <!-- 다음 예측 회차 번호 조회 -->
+    <select id="selectNextPredRoundNo" resultType="int">
+        SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT
+    </select>
+
+    <!-- 다음 예측 회차 제출 인원 수 -->
+    <select id="countPredForNextRound" resultType="int">
+        SELECT COUNT(*)
+        FROM MEM_PRED_NUM
+        WHERE round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
+    </select>
+
+    <!-- 다음 예측 회차 제출 목록 (최신 랭킹순, 신규는 후순위) -->
+    <select id="selectPredForNextRound" resultType="PredRankingVO">
+        SELECT
+            r.ranking                                       AS ranking,
+            p.member_no                                     AS memberNo,
+            m.nickname,
+            p.pred_num                                      AS predNum,
+            p.submit_at                                     AS submitAt
+        FROM MEM_PRED_NUM p
+        JOIN MEM_JOIN_INFO m ON p.member_no = m.member_no
+        LEFT JOIN MEM_RANK_ALL r
+               ON r.member_no = p.member_no
+              AND r.round_no = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)
+        WHERE p.round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
+        ORDER BY ${sortCol} ${sortDir}
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 회원 랭킹 목록 전체 수 (전체기간, 최신 회차) -->
+    <select id="countAllRankingList" resultType="int">
+        SELECT COUNT(*)
+        FROM MEM_RANK_ALL
+        WHERE round_no = (SELECT MAX(ROUND_NO) FROM LTT_ROUND_RESULT)
+    </select>
+
+    <!-- 회원 랭킹 목록 페이징 (전체기간, 최신 회차) -->
+    <select id="selectAllRankingList" resultType="MemRankAllVO">
+        SELECT
+            r.round_no                                      AS roundNo,
+            r.member_no                                     AS memberNo,
+            m.nickname,
+            r.ranking,
+            r.grade,
+            r.elps_cnt                                      AS elpsCnt,
+            r.sel_num_cnt                                   AS selNumCnt,
+            r.win_cnt                                       AS winCnt,
+            r.cont_lost_cnt                                 AS contLostCnt,
+            r.prev_ranking                                  AS prevRanking,
+            r.prev_grade                                    AS prevGrade,
+            CASE WHEN r.sel_num_cnt > 0
+                 THEN ROUND(r.win_cnt * 100.0 / r.sel_num_cnt, 1)
+                 ELSE 0.0
+            END                                             AS hitRate,
+            CASE WHEN r.prev_ranking IS NULL THEN NULL
+                 ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+            END                                             AS rankChange
+        FROM MEM_RANK_ALL r
+        JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        WHERE r.round_no = (SELECT MAX(ROUND_NO) FROM LTT_ROUND_RESULT)
+        ORDER BY ${sortCol} ${sortDir}
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 회원 랭킹 목록 전체 수 (최근 5주, 최신 회차) -->
+    <select id="countRecent5RankingList" resultType="int">
+        SELECT COUNT(*)
+        FROM MEM_RANK_5ROUND
+        WHERE round_no = (SELECT MAX(ROUND_NO) FROM LTT_ROUND_RESULT)
+    </select>
+
+    <!-- 회원 랭킹 목록 페이징 (최근 5주, 최신 회차) -->
+    <select id="selectRecent5RankingList" resultType="MemRank5RoundVO">
+        SELECT
+            r.round_no                                      AS roundNo,
+            r.member_no                                     AS memberNo,
+            m.nickname,
+            r.ranking,
+            r.last_sel_cnt                                  AS lastSelCnt,
+            r.win_cnt                                       AS winCnt,
+            r.lost_cnt                                      AS lostCnt,
+            r.prev_ranking                                  AS prevRanking,
+            CASE WHEN r.last_sel_cnt > 0
+                 THEN ROUND(r.win_cnt * 100.0 / r.last_sel_cnt, 1)
+                 ELSE 0.0
+            END                                             AS hitRate,
+            CASE WHEN r.prev_ranking IS NULL THEN NULL
+                 ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+            END                                             AS rankChange
+        FROM MEM_RANK_5ROUND r
+        JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        WHERE r.round_no = (SELECT MAX(ROUND_NO) FROM LTT_ROUND_RESULT)
+        ORDER BY r.ranking
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 최신 회차 번호 조회 -->
+    <select id="selectLatestRoundNo" resultType="int">
+        SELECT MAX(round_no) FROM LTT_ROUND_RESULT
+    </select>
+
+    <!-- 특정 회원의 최신 전체 랭킹 1건 조회 (히어로 미니 통계용) -->
+    <select id="selectMyLatestAllRanking" resultType="MemRankAllVO">
+        SELECT
+            r.round_no                                      AS roundNo,
+            r.member_no                                     AS memberNo,
+            m.nickname,
+            r.ranking,
+            r.grade,
+            r.elps_cnt                                      AS elpsCnt,
+            r.sel_num_cnt                                   AS selNumCnt,
+            r.win_cnt                                       AS winCnt,
+            r.cont_lost_cnt                                 AS contLostCnt,
+            r.prev_ranking                                  AS prevRanking,
+            r.prev_grade                                    AS prevGrade,
+            CASE WHEN r.sel_num_cnt > 0
+                 THEN ROUND(r.win_cnt * 100.0 / r.sel_num_cnt, 1)
+                 ELSE 0.0
+            END                                             AS hitRate,
+            CASE WHEN r.prev_ranking IS NULL THEN NULL
+                 ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+            END                                             AS rankChange
+        FROM MEM_RANK_ALL r
+        JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        WHERE r.member_no = #{memberNo}
+        ORDER BY r.round_no DESC
+        LIMIT 1
+    </select>
+
+</mapper>

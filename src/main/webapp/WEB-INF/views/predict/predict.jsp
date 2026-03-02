@@ -28,6 +28,12 @@
       (com.lottorank.vo.MemPredNumVO) request.getAttribute("myPrediction");
   boolean alreadySubmitted = (myPred != null);
   int submittedNum = alreadySubmitted ? myPred.getPredNum() : 0;
+
+  com.lottorank.vo.MemRankAllVO myStats =
+      (com.lottorank.vo.MemRankAllVO) request.getAttribute("myStats");
+  int    statTotal   = (myStats != null) ? myStats.getSelNumCnt() : 0;
+  int    statHit     = (myStats != null) ? myStats.getWinCnt()    : 0;
+  String statHitRate = (myStats != null) ? myStats.getHitRateStr() : "0%";
 %>
 
 <!-- ===========================
@@ -46,7 +52,7 @@
       <div class="page-title">🎰 번호 예측하기</div>
       <span class="page-round-badge">제 <%= roundNo %>회</span>
     </div>
-    <p class="page-desc">1~45 중 1개의 번호를 선택하고 예측 번호를 제출하세요. 매주 토요일 오후 8시 30분 마감.</p>
+    <p class="page-desc">1~45 중 1개의 번호를 선택하고 예측 번호를 제출하세요. 매주 토요일 오후 7시 마감.</p>
   </div>
 </div>
 
@@ -91,7 +97,7 @@
               <line x1="12" y1="16" x2="12" y2="12"/>
               <line x1="12" y1="8" x2="12.01" y2="8"/>
             </svg>
-            매주 1개 &middot; 토요일 오후 8시 30분 마감 &middot; 번호 제출 후 변경 불가
+            매주 1개 &middot; 토요일 오후 7시 마감 &middot; 번호 제출 후 변경 불가
           </div>
 
           <button class="pf-submit-btn" disabled>이미 제출하셨습니다 🔒</button>
@@ -116,7 +122,7 @@
               <line x1="12" y1="16" x2="12" y2="12"/>
               <line x1="12" y1="8" x2="12.01" y2="8"/>
             </svg>
-            매주 1개 &middot; 토요일 오후 8시 30분 마감 &middot; 번호 제출 후 변경 불가
+            매주 1개 &middot; 토요일 오후 7시 마감 &middot; 번호 제출 후 변경 불가
           </div>
 
           <!-- 제출 버튼 -->
@@ -139,15 +145,15 @@
           <div class="card-body">
             <div class="my-stat-row">
               <div class="my-stat-box">
-                <div class="my-stat-num">0</div>
+                <div class="my-stat-num"><%= statTotal %></div>
                 <div class="my-stat-label">총 제출 횟수</div>
               </div>
               <div class="my-stat-box">
-                <div class="my-stat-num">0</div>
+                <div class="my-stat-num"><%= statHit %></div>
                 <div class="my-stat-label">적중 횟수</div>
               </div>
               <div class="my-stat-box">
-                <div class="my-stat-num">0%</div>
+                <div class="my-stat-num"><%= statHitRate %></div>
                 <div class="my-stat-label">적중률</div>
               </div>
             </div>
@@ -182,7 +188,7 @@
               <div class="howto-step-icon">🎰</div>
               <div>
                 <div class="howto-step-title">매주 번호 예측</div>
-                <div class="howto-step-desc">토요일 오후 8시 30분 전까지 1~45 중 1개를 선택해 제출하세요.</div>
+                <div class="howto-step-desc">토요일 오후 7시 전까지 1~45 중 1개를 선택해 제출하세요.</div>
               </div>
             </div>
             <div class="howto-step-item">

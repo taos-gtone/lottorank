@@ -52,7 +52,7 @@
 
 .mypage-container {
   width: 100%;
-  max-width: 720px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -391,6 +391,441 @@
 }
 
 /* ══════════════════════════════════════════
+   내 랭킹 탭
+══════════════════════════════════════════ */
+
+/* 데이터 없음 */
+.my-rank-empty {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.my-rank-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.my-rank-empty-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.my-rank-empty-desc {
+  font-size: 0.83rem;
+  color: var(--txt2);
+  line-height: 1.6;
+}
+
+/* 순위 요약 카드 */
+.my-rank-summary {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+}
+
+.my-rank-badge {
+  flex-shrink: 0;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+.my-rank-badge.rank-1 {
+  background: linear-gradient(135deg, #F9A825, #F57F17);
+  border-color: rgba(249,168,37,0.5);
+}
+
+.my-rank-badge.rank-2 {
+  background: linear-gradient(135deg, #BDBDBD, #757575);
+  border-color: rgba(189,189,189,0.5);
+}
+
+.my-rank-badge.rank-3 {
+  background: linear-gradient(135deg, #A0714F, #6D4C41);
+  border-color: rgba(160,113,79,0.5);
+}
+
+.my-rank-info {
+  color: #fff;
+  flex: 1;
+  min-width: 0;
+}
+
+.my-rank-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+
+.my-rank-number {
+  font-size: 1.7rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.my-rank-change {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+
+.my-rank-change.change-up   { background: rgba(239,68,68,0.25); }
+.my-rank-change.change-down { background: rgba(99,102,241,0.25); }
+.my-rank-change.change-new  { background: rgba(245,158,11,0.3); }
+
+.my-rank-hit {
+  text-align: right;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.my-rank-hit-label {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+
+.my-rank-hit-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #4ade80;
+}
+
+/* 순위 변동 색상 — 테이블 td 특이도(0,1,1) 이상으로 스코프 지정 */
+.rank-hist-table .change-up   { color: #EF4444 !important;     font-size: 0.72rem; font-weight: 700; }
+.rank-hist-table .change-down { color: var(--blue) !important; font-size: 0.72rem; font-weight: 700; }
+.rank-hist-table .change-same { color: var(--txt3);            font-size: 0.72rem; }
+.rank-hist-table .change-new  { color: #f59e0b !important;     font-size: 0.68rem; font-weight: 700; }
+
+/* 적중률 태그 (ranking.css 미로드 대비) */
+.mypage-wrap .accuracy-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(22,163,74,0.10);
+  border: 1px solid rgba(22,163,74,0.2);
+  color: #16A34A;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* 랭킹 이력 패널 */
+.rank-hist-panel {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.rank-hist-label {
+  padding: 10px 14px 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--blue);
+  border-bottom: 1px solid var(--line);
+  background: #F7F9FD;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rank-hist-label span { color: var(--txt2); font-size: 0.72rem; font-weight: 500; }
+
+.rank-hist-wrap { overflow-x: auto; }
+
+.rank-hist-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.rank-hist-table th {
+  background: #FAFBFD;
+  font-size: 0.72rem;
+  color: var(--txt3);
+  font-weight: 600;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  text-align: center;
+}
+
+.rank-hist-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  font-size: 0.82rem;
+  color: var(--txt);
+  text-align: center;
+}
+
+.rank-hist-table th:first-child,
+.rank-hist-table td:first-child { border-left: none; }
+
+.rank-hist-table tr:last-child td { border-bottom: none; }
+.rank-hist-table tr:hover td     { background: #F7F9FD; }
+
+/* 순위 강조 (1~3위) */
+.rank-hist-table .cell-r1 { color: var(--gold); font-weight: 900; font-size: 0.9rem; }
+.rank-hist-table .cell-r2 { color: var(--txt3); font-weight: 900; font-size: 0.9rem; }
+.rank-hist-table .cell-r3 { color: #A0714F;     font-weight: 900; font-size: 0.9rem; }
+
+/* 페이지네이션 */
+.rank-hist-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 18px 0 2px;
+  flex-wrap: wrap;
+}
+
+.pagin-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--txt2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pagin-btn:hover:not(:disabled) {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.pagin-btn.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.pagin-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.pagin-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  color: var(--txt3);
+  font-size: 0.82rem;
+}
+
+/* 상세 통계 그리드 */
+.my-rank-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.my-rank-stat-item {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+.my-rank-stat-item:nth-child(even) {
+  border-right: none;
+}
+
+.my-rank-stat-item:nth-last-child(1),
+.my-rank-stat-item:nth-last-child(2) {
+  border-bottom: none;
+}
+
+.my-rank-stat-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--txt3);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.my-rank-stat-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--txt);
+}
+
+/* ══════════════════════════════════════════
+   내 예측번호 조회 탭
+══════════════════════════════════════════ */
+
+/* 예측 통계 요약 카드 */
+.my-pred-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
+  border-radius: 10px;
+  padding: 22px 30px;
+  margin-bottom: 20px;
+}
+
+.my-pred-stat-col {
+  flex: 1;
+  text-align: center;
+  color: #fff;
+}
+
+.my-pred-stat-num {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #4ade80;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.my-pred-stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+}
+
+.my-pred-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+
+/* 예측번호 볼 (소형) */
+.pred-ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 1px;
+  flex-shrink: 0;
+}
+
+.pred-ball.ball-y  { background: linear-gradient(135deg, #FDD835, #F9A825); color: #333; }
+.pred-ball.ball-b  { background: linear-gradient(135deg, #42A5F5, #1565C0); }
+.pred-ball.ball-r  { background: linear-gradient(135deg, #EF5350, #C62828); }
+.pred-ball.ball-g  { background: linear-gradient(135deg, #66BB6A, #2E7D32); }
+.pred-ball.ball-gr { background: linear-gradient(135deg, #BDBDBD, #757575); }
+
+/* 보너스 볼 — results 화면과 동일한 점선 테두리 디자인 */
+.pred-ball-bonus {
+  margin-left: 4px;
+  border: 2px dashed #9C27B0 !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
+
+/* 보너스 볼 앞 + 기호 */
+.pred-plus-sign {
+  color: var(--txt3);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+/* 내 번호 볼 (당첨번호와 동일 크기) */
+.pred-ball-lg {
+  width: 28px;
+  height: 28px;
+  font-size: 0.72rem;
+}
+
+/* 당첨번호 셀 */
+.pred-winning-nums {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* 당첨번호 볼 래퍼 — td 내부 div로 flex 적용 */
+.pred-nums-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0;
+  min-width: 220px;
+}
+
+/* 미제출 대시 */
+.pred-none-dash {
+  color: var(--txt3);
+  font-size: 1rem;
+}
+
+/* 미제출 행 배경 */
+.pred-row-none td {
+  background: #FAFBFD;
+  color: var(--txt3);
+}
+.pred-row-none:hover td { background: #F3F5FA !important; }
+
+/* 결과 뱃지 */
+.pred-hit-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.pred-hit-badge.hit-yes  { background: rgba(22,163,74,0.12);  color: #16A34A;  border: 1px solid rgba(22,163,74,0.25); }
+.pred-hit-badge.hit-no   { background: rgba(239,68,68,0.10);  color: #EF4444;  border: 1px solid rgba(239,68,68,0.2);  }
+.pred-hit-badge.hit-wait { background: rgba(245,158,11,0.12); color: #D97706;  border: 1px solid rgba(245,158,11,0.25); }
+.pred-hit-badge.hit-none { background: rgba(0,0,0,0.04);      color: var(--txt3); border: 1px solid var(--line);       }
+
+/* 예측 테이블 셀 */
+.pred-hist-table .pred-round { font-weight: 700; font-size: 0.8rem; }
+.pred-hist-table .pred-date  { color: var(--txt2); font-size: 0.75rem; }
+.pred-hist-table .pred-submit-at { color: var(--txt3); font-size: 0.72rem; }
+.pred-hist-table .pred-my-num { padding: 7px 6px; }
+.pred-hist-table .pred-winning-nums { /* padding: 6px 8px; */ }
+
+/* 빈 행 */
+.pred-empty-row {
+  text-align: center;
+  padding: 30px;
+  color: var(--txt3);
+  font-size: 0.85rem;
+}
+
+/* ══════════════════════════════════════════
    반응형
 ══════════════════════════════════════════ */
 
@@ -407,7 +842,13 @@
   .page-title    { font-size: 1.15rem; }
   .page-desc     { font-size: 0.78rem; }
 
-  .mypage-tab-btn { padding: 13px 10px; font-size: 0.82rem; }
+  .mypage-tabs   { flex-wrap: wrap; border-radius: 8px 8px 0 0; }
+  .mypage-tab-btn { flex: 1 1 50%; padding: 12px 8px; font-size: 0.78rem; border-bottom: 1px solid var(--line); }
+  .mypage-tab-btn:nth-child(1),
+  .mypage-tab-btn:nth-child(2) { border-radius: 0; }
+  .mypage-tab-btn:nth-child(2) { border-left: 1px solid var(--line); }
+  .mypage-tab-btn:nth-child(3) { border-left: none; }
+  .mypage-tab-btn:nth-child(4) { border-left: 1px solid var(--line); }
   .mypage-tab-content { padding: 20px 16px; }
 
   .info-grid { grid-template-columns: 1fr; }
@@ -417,4 +858,13 @@
 
   .info-label { width: 90px; font-size: 0.77rem; }
   .info-value { font-size: 0.85rem; }
+
+  .my-rank-summary { padding: 18px 16px; gap: 14px; }
+  .my-rank-badge   { width: 56px; height: 56px; font-size: 1.3rem; }
+  .my-rank-number  { font-size: 1.4rem; }
+  .my-rank-hit-value { font-size: 1.2rem; }
+
+  .my-rank-stats-grid { grid-template-columns: 1fr 1fr; }
+  .my-rank-stat-item  { padding: 12px 14px; }
+  .my-rank-stat-value { font-size: 1rem; }
 }

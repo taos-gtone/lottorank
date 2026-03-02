@@ -4,6 +4,8 @@ import com.lottorank.service.KakaoOAuthService;
 import com.lottorank.service.LoginFailException;
 import com.lottorank.service.MemberService;
 import com.lottorank.service.NaverOAuthService;
+import com.lottorank.service.PredictService;
+import com.lottorank.service.RankingService;
 import com.lottorank.vo.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -29,6 +31,12 @@ public class MemberController {
 
     @Autowired
     private KakaoOAuthService kakaoOAuthService;
+
+    @Autowired
+    private RankingService rankingService;
+
+    @Autowired
+    private PredictService predictService;
 
     @GetMapping("/join")
     public String joinForm() {
@@ -97,6 +105,9 @@ public class MemberController {
         }
         Long memberNo = (Long) session.getAttribute("loginMemberNo");
         model.addAttribute("memberInfo", memberService.getMemberDetail(memberNo));
+        model.addAttribute("myAllRankingList", rankingService.getMyAllRankingHistory(memberNo));
+        model.addAttribute("myRecent5RankingList", rankingService.getMyRecent5RankingHistory(memberNo));
+        model.addAttribute("myPredHistory", predictService.getMyPredHistory(memberNo));
         return "member/mypage";
     }
 

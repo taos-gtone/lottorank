@@ -2,8 +2,10 @@ package com.lottorank.controller;
 
 import com.lottorank.service.LottoService;
 import com.lottorank.service.PredictService;
+import com.lottorank.service.RankingService;
 import com.lottorank.vo.LottoRoundResult;
 import com.lottorank.vo.MemPredNumVO;
+import com.lottorank.vo.MemRankAllVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class PredictController {
     @Autowired
     private PredictService predictService;
 
+    @Autowired
+    private RankingService rankingService;
+
     /* ─────────────────────────────────────────
        번호 예측하기 (로그인 필요)
     ───────────────────────────────────────── */
@@ -45,9 +50,13 @@ public class PredictController {
         long memberNo = (Long) session.getAttribute("loginMemberNo");
         MemPredNumVO myPrediction = predictService.getPrediction(predictionRoundNo, memberNo);
 
+        // 나의 예측 현황 통계 (MEM_RANK_ALL 최신 집계)
+        MemRankAllVO myStats = rankingService.getMyLatestAllRanking(memberNo);
+
         model.addAttribute("latestResult", latestResult);
         model.addAttribute("predictionRoundNo", predictionRoundNo);
         model.addAttribute("myPrediction", myPrediction);
+        model.addAttribute("myStats", myStats);
 
         return "predict/predict";
     }

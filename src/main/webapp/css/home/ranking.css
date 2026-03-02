@@ -91,10 +91,10 @@
       background: #F7F9FD;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 6px;
     }
 
-    .rank-table-label span { color: var(--txt3); font-weight: 400; }
+    .rank-table-label span { color: var(--txt2); font-size: 0.72rem; font-weight: 500; }
 
     .rank-table {
       width: 100%;
@@ -140,6 +140,7 @@
     .change-up   { color: var(--red); font-size: 0.72rem; font-weight: 700; }
     .change-down { color: var(--blue); font-size: 0.72rem; font-weight: 700; }
     .change-same { color: var(--txt3); font-size: 0.72rem; }
+    .change-new  { color: #f59e0b; font-size: 0.68rem; font-weight: 700; }
 
     .nick-wrap {
       display: flex;

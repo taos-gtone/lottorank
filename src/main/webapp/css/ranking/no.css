@@ -1,0 +1,345 @@
+/* =============================================
+   회원 예측번호 조회 페이지
+============================================= */
+
+/* ── 페이지 배너 ── */
+.page-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
+  padding: 32px 0;
+}
+
+.page-breadcrumb {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.page-breadcrumb a { color: rgba(255,255,255,0.75); transition: color 0.2s; }
+.page-breadcrumb a:hover { color: #fff; }
+.breadcrumb-sep { margin: 0 5px; }
+
+.page-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.page-desc {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.88);
+  font-weight: 500;
+}
+
+/* ── 본문 래퍼 ── */
+.pred-no-wrap {
+  min-height: calc(100vh - 200px);
+  padding: 36px 16px 72px;
+  background: var(--bg);
+}
+
+.pred-no-container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ── 상단 정보 바 ── */
+.pred-no-infobar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.pred-no-round-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--navy), var(--hero-to));
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: 50px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.pred-no-round-badge .live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: blink 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+.pred-no-count {
+  font-size: 0.82rem;
+  color: var(--txt2);
+  font-weight: 600;
+}
+
+.pred-no-count strong {
+  color: var(--blue);
+  font-weight: 800;
+}
+
+/* ── 페이지당 개수 선택 ── */
+.pred-no-size-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--txt2);
+}
+
+.pred-no-size-select {
+  padding: 5px 10px;
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: var(--txt);
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── 테이블 패널 ── */
+.pred-no-panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.pred-no-table-wrap {
+  overflow-x: auto;
+}
+
+/* ── 테이블 ── */
+.pred-no-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.pred-no-table th {
+  background: #FAFBFD;
+  font-size: 0.75rem;
+  color: var(--txt3);
+  font-weight: 700;
+  padding: 0;
+  border-bottom: 2px solid var(--line);
+  border-left: 1px solid var(--line);
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+
+.pred-no-table th:first-child { border-left: none; }
+
+/* ── 정렬 링크 ── */
+.sort-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 11px 14px;
+  color: var(--txt3);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.sort-link:hover {
+  color: var(--blue);
+  background: #F0F3FA;
+}
+
+.sort-link.sort-active {
+  color: var(--blue);
+}
+
+.sort-icon {
+  font-size: 0.7rem;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+.pred-no-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  font-size: 0.85rem;
+  color: var(--txt);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.pred-no-table td:first-child { border-left: none; }
+.pred-no-table tr:last-child td { border-bottom: none; }
+.pred-no-table tr:hover td { background: #F7F9FD; }
+
+/* ── 순위 셀 ── */
+.col-rank {
+  font-weight: 900;
+  font-size: 0.9rem;
+  min-width: 56px;
+}
+
+.col-rank.rank-1 { color: var(--gold); }
+.col-rank.rank-2 { color: #9E9E9E; }
+.col-rank.rank-3 { color: #A0714F; }
+.col-rank.rank-new {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #F59E0B;
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 4px;
+  padding: 2px 7px;
+  display: inline-block;
+}
+
+/* ── 닉네임 셀 ── */
+.col-nickname {
+  font-weight: 700;
+  text-align: left !important;
+  min-width: 110px;
+}
+
+.nick-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--navy));
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-right: 8px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* ── 예측번호 볼 ── */
+.pred-ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+.pred-ball.ball-y  { background: linear-gradient(135deg, #FDD835, #F9A825); color: #333; }
+.pred-ball.ball-b  { background: linear-gradient(135deg, #42A5F5, #1565C0); }
+.pred-ball.ball-r  { background: linear-gradient(135deg, #EF5350, #C62828); }
+.pred-ball.ball-g  { background: linear-gradient(135deg, #66BB6A, #2E7D32); }
+.pred-ball.ball-gr { background: linear-gradient(135deg, #BDBDBD, #757575); }
+
+/* ── 제출일시 셀 ── */
+.col-submit {
+  font-size: 0.78rem;
+  color: var(--txt3);
+  min-width: 145px;
+}
+
+/* ── 빈 결과 ── */
+.pred-no-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--txt3);
+}
+
+.pred-no-empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.pred-no-empty-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.pred-no-empty-desc { font-size: 0.83rem; color: var(--txt2); }
+
+/* ── 페이지네이션 ── */
+.pred-no-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 20px 0 4px;
+  flex-wrap: wrap;
+}
+
+.pagin-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--txt2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagin-btn:hover { border-color: var(--blue); color: var(--blue); }
+.pagin-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+.pagin-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+.pagin-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  color: var(--txt3);
+  font-size: 0.82rem;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+  .pred-no-wrap { padding: 24px 12px 60px; }
+  .page-banner  { padding: 22px 0; }
+  .page-title   { font-size: 1.3rem; }
+}
+
+@media (max-width: 480px) {
+  .pred-no-wrap  { padding: 16px 10px 52px; }
+  .page-title    { font-size: 1.15rem; }
+  .page-desc     { font-size: 0.78rem; }
+  .pred-no-table th,
+  .pred-no-table td { padding: 8px 10px; }
+}

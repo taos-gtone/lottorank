@@ -17,8 +17,8 @@
           <p class="cta-note">✅ 무료 회원가입 · 기본 기능 무료 · 열람 시에만 포인트 사용</p>
         </div>
         <div class="cta-actions">
-          <button class="btn-cta-gold">🎰 무료로 시작하기</button>
-          <button class="btn-cta-outline">📊 랭킹 둘러보기</button>
+          <a href="${pageContext.request.contextPath}/member/join" class="btn-cta-gold">🎰 무료로 시작하기</a>
+          <a href="${pageContext.request.contextPath}/ranking/list" class="btn-cta-outline">📊 랭킹 둘러보기</a>
         </div>
       </div>
     </div>

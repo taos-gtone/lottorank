@@ -29,8 +29,8 @@
           </p>
 
           <div class="hero-btns">
-            <button class="hero-btn-main">🎰 지금 번호 예측하기</button>
-            <a href="#ranking" class="hero-btn-sub">📊 랭킹 보기</a>
+            <a href="${pageContext.request.contextPath}/predict" class="hero-btn-main">🎰 지금 번호 예측하기</a>
+            <a href="${pageContext.request.contextPath}/ranking/list" class="hero-btn-sub">📊 랭킹 보기</a>
           </div>
 
           <div class="hero-stats">
@@ -64,6 +64,13 @@
                                     ? String.valueOf(_loginNickname.charAt(0)).toUpperCase() : "U";
           %>
 
+          <%
+            com.lottorank.vo.MemRankAllVO _heroRank =
+                (com.lottorank.vo.MemRankAllVO) request.getAttribute("myHeroRanking");
+            String _heroSelCnt  = (_heroRank != null) ? _heroRank.getSelNumCnt() + "회" : "0회";
+            String _heroRanking = (_heroRank != null) ? _heroRank.getRanking() + "위"   : "—";
+            String _heroHitRate = (_heroRank != null) ? _heroRank.getHitRateStr()       : "0%";
+          %>
           <% if (_isLoggedIn) { %>
           <!-- 로그인 후: 유저 패널 -->
           <div class="login-panel member-panel">
@@ -81,30 +88,30 @@
             <!-- 미니 통계 -->
             <div class="up-mini-stats">
               <div class="up-mini-stat">
-                <div class="up-mini-num">0회</div>
+                <div class="up-mini-num"><%=_heroSelCnt%></div>
                 <div class="up-mini-label">예측 참여</div>
               </div>
               <div class="up-mini-stat">
-                <div class="up-mini-num">—</div>
-                <div class="up-mini-label">이번주 순위</div>
+                <div class="up-mini-num"><%=_heroRanking%></div>
+                <div class="up-mini-label">현재 순위</div>
               </div>
               <div class="up-mini-stat">
-                <div class="up-mini-num">0%</div>
+                <div class="up-mini-num"><%=_heroHitRate%></div>
                 <div class="up-mini-label">적중률</div>
               </div>
             </div>
 
             <!-- 빠른 메뉴 -->
             <div class="up-menu">
-              <a href="#" class="up-menu-item">
+              <a href="${pageContext.request.contextPath}/predict" class="up-menu-item">
                 <span class="up-menu-icon">🎯</span>
                 <span>번호 예측하기</span>
                 <span class="up-menu-arrow">›</span>
               </a>
-              <a href="#" class="up-menu-item">
+              <a href="${pageContext.request.contextPath}/member/mypage#predict" class="up-menu-item">
                 <span class="up-menu-icon">📊</span>
                 <span>내 예측 현황</span>
-                <span class="up-menu-badge">NEW</span>
+                <span class="up-menu-arrow">›</span>
               </a>
             </div>
 
