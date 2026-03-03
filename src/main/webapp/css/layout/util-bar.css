@@ -19,6 +19,26 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .util-ticker {
+      overflow: hidden;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .util-ticker span {
+      display: inline-block;
+      white-space: nowrap;
+      animation: ticker-scroll 20s linear infinite;
+    }
+
+    @keyframes ticker-scroll {
+      from { transform: translateX(30vw); }
+      to   { transform: translateX(-100%); }
     }
 
     .util-notice-icon {
@@ -38,6 +58,7 @@
       display: flex;
       align-items: center;
       gap: 0;
+      flex-shrink: 0;
     }
 
     .util-links a {
@@ -65,14 +86,6 @@
 
 /* ── 태블릿 (768px 이하) ── */
 @media (max-width: 768px) {
-  .util-notice span {
-    max-width: 220px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-  }
-
   .util-gold { display: none; }
 }
 

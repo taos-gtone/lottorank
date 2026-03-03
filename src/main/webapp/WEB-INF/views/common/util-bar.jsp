@@ -11,7 +11,9 @@
       <div class="util-inner">
         <div class="util-notice">
           <div class="util-notice-icon">📢</div>
-          <span>[1162회 신규 TOP 랭커 등장!] 황금사자님 36주 연속 참여 달성 · 72.4% 적중률 1위!</span>
+          <div class="util-ticker">
+            <span>[1162회 신규 TOP 랭커 등장!] 황금사자님 36주 연속 참여 달성 · 72.4% 적중률 1위!</span>
+          </div>
         </div>
         <div class="util-links">
           <% if (!_uLoggedIn) { %>
