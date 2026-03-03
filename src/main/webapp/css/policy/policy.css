@@ -129,6 +129,7 @@
   margin: 28px 0 10px;
   padding-bottom: 6px;
   border-bottom: 2px solid var(--line);
+  scroll-margin-top: 74px; /* sticky 헤더(58px) + 여백 */
 }
 
 .policy-card-body h4:first-child {
@@ -204,6 +205,41 @@
 .policy-toc ul li a:hover {
   color: var(--navy);
   text-decoration: underline;
+}
+
+/* ── 맨 위로 버튼 ── */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 32px;
+  /* 본문(max-width:800px) 우측에서 12px 바깥에 배치, 좁은 화면엔 최소 16px */
+  right: max(16px, calc((100vw - 800px) / 2 - 56px));
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-top-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.scroll-top-btn:hover {
+  background: var(--blue);
+  transform: translateY(-3px);
 }
 
 /* ── 반응형 ── */

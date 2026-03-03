@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/header.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/policy/policy.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
 </head>
 <body>
 
@@ -112,6 +113,30 @@
 
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 <%@ include file="/WEB-INF/views/common/scripts.jsp" %>
+
+<!-- 맨 위로 버튼 -->
+<button id="scrollTopBtn" class="scroll-top-btn" aria-label="맨 위로">&#8679;</button>
+
+<script>
+  /* ── 맨위로 버튼 ── */
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 300);
+  });
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ── 모바일 메뉴 ── */
+  const menuBtn    = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuClose  = document.getElementById('menuClose');
+  if (menuBtn)    menuBtn.addEventListener('click', () => mobileMenu.classList.add('open'));
+  if (menuClose)  menuClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  if (mobileMenu) mobileMenu.addEventListener('click', (e) => {
+    if (e.target === mobileMenu) mobileMenu.classList.remove('open');
+  });
+</script>
 
 </body>
 </html>

@@ -66,7 +66,7 @@
       <!-- ── 좌측: 번호 예측 카드 ── -->
       <div class="predict-card-full">
         <div class="pf-header">
-          <div class="pf-title">🎰 이번 주 번호 예측</div>
+          <div class="pf-title">🎰 이번 회차 번호 예측</div>
           <span class="pf-round-badge">제 <%= roundNo %>회</span>
         </div>
         <div class="pf-body">
@@ -217,7 +217,7 @@
             <span class="pgc-title">골드 멤버십</span>
           </div>
           <p class="pgc-desc">
-            TOP 랭커의 이번 주 예측 번호를 무제한으로 확인하고<br>
+            TOP 랭커의 이번 회차 예측 번호를 무제한으로 확인하고<br>
             실제 1등 당첨 배출 실적을 참고하세요.
           </p>
           <button class="pgc-btn">🏆 골드 멤버십 가입하기</button>

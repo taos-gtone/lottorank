@@ -15,6 +15,7 @@ public class MemRankAllVO {
     private Integer prevGrade;
     private double  hitRate;       // ROUND(win_cnt * 100.0 / sel_num_cnt, 1)
     private Integer rankChange;    // prev_ranking - ranking (null이면 신규)
+    private boolean hasPred;       // 다음 예측 회차 예측번호 제출 여부
 
     private static final String[] EMOJIS = {"🦁", "🎯", "🔮", "🌊", "🌙", "🍀"};
 
@@ -33,11 +34,16 @@ public class MemRankAllVO {
         return String.format("%.1f%%", hitRate);
     }
 
-    /** 순위 변동 텍스트 예: "-", "▲2", "▼1", "NEW" */
+    /** 순위 표시 (천 단위 콤마) */
+    public String getRankingStr() {
+        return String.format("%,d", ranking);
+    }
+
+    /** 순위 변동 텍스트 예: "-", "▲2", "▼1,234", "NEW" */
     public String getRankChangeLabel() {
         if (rankChange == null) return "NEW";
-        if (rankChange > 0)     return "▲" + rankChange;
-        if (rankChange < 0)     return "▼" + Math.abs(rankChange);
+        if (rankChange > 0)     return "▲" + String.format("%,d", rankChange);
+        if (rankChange < 0)     return "▼" + String.format("%,d", Math.abs(rankChange));
         return "-";
     }
 
@@ -88,4 +94,7 @@ public class MemRankAllVO {
 
     public Integer getRankChange()        { return rankChange; }
     public void setRankChange(Integer v)  { this.rankChange = v; }
+
+    public boolean isHasPred()            { return hasPred; }
+    public void setHasPred(boolean v)     { this.hasPred = v; }
 }

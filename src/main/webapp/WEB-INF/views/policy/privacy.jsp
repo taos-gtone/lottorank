@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/header.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/policy/policy.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
 </head>
 <body>
 
@@ -138,6 +139,19 @@
 
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 <%@ include file="/WEB-INF/views/common/scripts.jsp" %>
+
+<!-- 맨 위로 버튼 -->
+<button id="scrollTopBtn" class="scroll-top-btn" aria-label="맨 위로">&#8679;</button>
+
+<script>
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 300);
+  });
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
 
 </body>
 </html>

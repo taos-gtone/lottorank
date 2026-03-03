@@ -797,10 +797,6 @@
     grid-template-columns: 1fr;
   }
 
-  .predict-sidebar {
-    order: -1;
-  }
-
   .pf-num-grid {
     grid-template-columns: repeat(10, 1fr);
     gap: 5px;

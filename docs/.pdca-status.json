@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-03T06:50:59.832Z",
+  "lastUpdated": "2026-03-03T13:58:24.384Z",
   "activeFeatures": [
     "mapper",
     "service",
@@ -49,9 +49,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:26.070Z",
-        "lastUpdated": "2026-03-03T05:44:59.164Z"
+        "lastUpdated": "2026-03-03T13:47:03.924Z"
       },
-      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/controller/PolicyController.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\controller\\MemberController.java"
     },
     "lottorank": {
       "phase": "do",
@@ -89,9 +89,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-21T04:54:35.500Z",
-        "lastUpdated": "2026-03-02T08:43:40.698Z"
+        "lastUpdated": "2026-03-03T13:58:24.383Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\vo\\PredRankingVO.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\vo\\MemRank5RoundVO.java"
     },
     "interceptor": {
       "phase": "do",
@@ -115,7 +115,7 @@
   "session": {
     "startedAt": "2026-02-19T14:55:10.648Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-03T06:50:59.832Z"
+    "lastActivity": "2026-03-03T13:58:24.384Z"
   },
   "history": [
     {
@@ -1309,6 +1309,72 @@
     {
       "timestamp": "2026-03-03T06:50:59.831Z",
       "feature": "interceptor",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:31:32.008Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:31:36.560Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:31:42.725Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:35:29.359Z",
+      "feature": "vo",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:35:33.840Z",
+      "feature": "vo",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:36:20.058Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:36:24.532Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:36:30.477Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:47:03.924Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:58:18.527Z",
+      "feature": "vo",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-03T13:58:24.383Z",
+      "feature": "vo",
       "phase": "do",
       "action": "updated"
     }

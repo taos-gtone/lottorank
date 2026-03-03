@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/header.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/member/join.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
   <style>
     /* 가입완료 SVG 체크 애니메이션 */
     .check-svg { width: 88px; height: 88px; display: block; margin: 0 auto; }

@@ -39,7 +39,17 @@
 
     @media (max-width: 600px) {
       .hero-banner { padding: 28px 20px; }
-      .hero-lotto-bg { display: none; }
+      .hero-lotto-bg {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        border-radius: 0;
+        background-size: auto, contain;
+        background-position: center, center center;
+        opacity: 0.10;
+      }
       .hero-title { font-size: 1.5rem; }
       .hero-stats { gap: 16px; }
       .num-grid { grid-template-columns: repeat(8, 1fr); }

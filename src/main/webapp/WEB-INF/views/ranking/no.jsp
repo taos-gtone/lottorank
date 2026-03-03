@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/header.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ranking/no.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
 </head>
 <body>
 
@@ -131,7 +132,7 @@
                   순위<span class="sort-icon"><%=rankIcon%></span>
                 </a>
               </th>
-              <th style="text-align:left;">닉네임</th>
+              <th>닉네임</th>
               <th style="width:110px;">
                 <a class="sort-link <%=currentSort.equals("predNum") ? "sort-active" : ""%>"
                    href="<%=ctx%>/ranking/no?page=1&size=<%=pageSize%>&sort=predNum&dir=<%=predNumDir%>">

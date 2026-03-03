@@ -29,9 +29,13 @@
             END                                             AS hitRate,
             CASE WHEN r.prev_ranking IS NULL THEN NULL
                  ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
-            END                                             AS rankChange
+            END                                             AS rankChange,
+            CASE WHEN p.member_no IS NOT NULL THEN TRUE ELSE FALSE END AS hasPred
         FROM MEM_RANK_ALL r
         JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        LEFT JOIN MEM_PRED_NUM p
+               ON p.member_no = r.member_no
+              AND p.round_no  = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
         WHERE r.round_no = (SELECT MAX(ROUND_NO) FROM LTT_ROUND_RESULT)
         ORDER BY r.ranking
         LIMIT 6

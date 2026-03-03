@@ -3,6 +3,7 @@
 <%@ page import="com.lottorank.vo.MemRankAllVO" %>
 <%@ page import="com.lottorank.vo.MemRank5RoundVO" %>
 <%@ page import="com.lottorank.vo.PredHistVO" %>
+<%@ page import="com.lottorank.vo.MemPredNumVO" %>
 <%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -15,6 +16,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/header.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/member/mypage.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
 </head>
 <body>
 
@@ -27,6 +29,8 @@
   List<MemRankAllVO>   myAllList = (List<MemRankAllVO>)   request.getAttribute("myAllRankingList");
   List<MemRank5RoundVO> my5List  = (List<MemRank5RoundVO>) request.getAttribute("myRecent5RankingList");
   List<PredHistVO>    myPredList = (List<PredHistVO>)      request.getAttribute("myPredHistory");
+  MemPredNumVO nextRoundPred = (MemPredNumVO) request.getAttribute("nextRoundPred");
+  int nextRoundNo = request.getAttribute("nextRoundNo") != null ? (Integer) request.getAttribute("nextRoundNo") : 0;
   MemRankAllVO    myAllLatest = (myAllList != null && !myAllList.isEmpty()) ? myAllList.get(0) : null;
   MemRank5RoundVO my5Latest   = (my5List  != null && !my5List.isEmpty())   ? my5List.get(0)  : null;
 
@@ -285,6 +289,31 @@
               </tr>
             </thead>
             <tbody id="tbodyPred">
+              <!-- 이번 회차(미추첨) 고정 행 – data-fixed 속성으로 페이지네이션 제외 -->
+              <% if (nextRoundNo > 0) { %>
+              <tr class="pred-row-current" data-fixed="true">
+                <td class="pred-round"><%=nextRoundNo%>회</td>
+                <td class="pred-date"></td>
+                <td class="pred-winning-nums"></td>
+                <td class="pred-my-num">
+                  <% if (nextRoundPred != null) {
+                     int pn = nextRoundPred.getPredNum();
+                     String pnBall = pn<=10?"ball-y":pn<=20?"ball-b":pn<=30?"ball-r":pn<=40?"ball-g":"ball-gr"; %>
+                  <span class="pred-ball pred-ball-lg <%=pnBall%>"><%=pn%></span>
+                  <% } else { %>
+                  <span class="pred-none-dash">—</span>
+                  <% } %>
+                </td>
+                <td></td>
+                <td class="pred-submit-at">
+                  <% if (nextRoundPred != null && nextRoundPred.getSubmitAt() != null) { %>
+                  <%=new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(nextRoundPred.getSubmitAt())%>
+                  <% } else { %>
+                  <span class="pred-none-dash">—</span>
+                  <% } %>
+                </td>
+              </tr>
+              <% } %>
               <% if (myPredList == null || myPredList.isEmpty()) { %>
               <tr>
                 <td colspan="6" class="pred-empty-row">아직 예측 이력이 없습니다.</td>
@@ -347,11 +376,11 @@
       <!-- 최신 회차 요약 카드 -->
       <div class="my-rank-summary">
         <div class="my-rank-badge<%=myAllLatest.getRanking() <= 3 ? " rank-" + myAllLatest.getRanking() : ""%>">
-          <%=myAllLatest.getRanking()%>
+          <%=myAllLatest.getRankingStr()%>
         </div>
         <div class="my-rank-info">
           <div class="my-rank-label">전체 랭킹 최신 (<%=myAllLatest.getRoundNo()%>회 기준)</div>
-          <div class="my-rank-number"><%=myAllLatest.getRanking()%>위</div>
+          <div class="my-rank-number"><%=myAllLatest.getRankingStr()%>위</div>
           <span class="my-rank-change <%=myAllLatest.getRankChangeCss()%>"><%=myAllLatest.getRankChangeLabel()%></span>
         </div>
         <div class="my-rank-hit">
@@ -379,7 +408,7 @@
               <% for (MemRankAllVO r : myAllList) { %>
               <tr>
                 <td><%=r.getRoundNo()%>회</td>
-                <td class="<%=r.getRanking()==1?"cell-r1":r.getRanking()==2?"cell-r2":r.getRanking()==3?"cell-r3":""%>"><%=r.getRanking()%>위</td>
+                <td class="<%=r.getRanking()==1?"cell-r1":r.getRanking()==2?"cell-r2":r.getRanking()==3?"cell-r3":""%>"><%=r.getRankingStr()%>위</td>
                 <td class="<%=r.getRankChangeCss()%>"><%=r.getRankChangeLabel()%></td>
                 <td><span class="accuracy-tag"><%=r.getHitRateStr()%></span></td>
                 <td><%=r.getSelNumCnt()%></td>
@@ -410,11 +439,11 @@
       <!-- 최신 회차 요약 카드 -->
       <div class="my-rank-summary">
         <div class="my-rank-badge<%=my5Latest.getRanking() <= 3 ? " rank-" + my5Latest.getRanking() : ""%>">
-          <%=my5Latest.getRanking()%>
+          <%=my5Latest.getRankingStr()%>
         </div>
         <div class="my-rank-info">
           <div class="my-rank-label">최근 5주 랭킹 최신 (<%=my5Latest.getRoundNo()%>회 기준)</div>
-          <div class="my-rank-number"><%=my5Latest.getRanking()%>위</div>
+          <div class="my-rank-number"><%=my5Latest.getRankingStr()%>위</div>
           <span class="my-rank-change <%=my5Latest.getRankChangeCss()%>"><%=my5Latest.getRankChangeLabel()%></span>
         </div>
         <div class="my-rank-hit">
@@ -443,7 +472,7 @@
               <% for (MemRank5RoundVO r : my5List) { %>
               <tr>
                 <td><%=r.getRoundNo()%>회</td>
-                <td class="<%=r.getRanking()==1?"cell-r1":r.getRanking()==2?"cell-r2":r.getRanking()==3?"cell-r3":""%>"><%=r.getRanking()%>위</td>
+                <td class="<%=r.getRanking()==1?"cell-r1":r.getRanking()==2?"cell-r2":r.getRanking()==3?"cell-r3":""%>"><%=r.getRankingStr()%>위</td>
                 <td class="<%=r.getRankChangeCss()%>"><%=r.getRankChangeLabel()%></td>
                 <td><span class="accuracy-tag"><%=r.getHitRateStr()%></span></td>
                 <td><%=r.getLastSelCnt()%></td>
@@ -621,7 +650,10 @@
   function initTablePagination(tbodyId, ctrlId, pageSize) {
     var tbody = document.getElementById(tbodyId);
     if (!tbody) return;
-    var rows = Array.from(tbody.rows);
+    // data-fixed 행은 페이지네이션 대상에서 제외하고 항상 표시 유지
+    var rows = Array.from(tbody.rows).filter(function(tr) {
+      return !tr.hasAttribute('data-fixed');
+    });
     if (!rows.length) return;
 
     // 페이지 수가 1 이하면 페이지네이션 불필요

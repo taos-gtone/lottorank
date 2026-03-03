@@ -104,10 +104,13 @@ public class MemberController {
             return "redirect:/member/login?redirect=/member/mypage";
         }
         Long memberNo = (Long) session.getAttribute("loginMemberNo");
+        int nextRoundNo = rankingService.getNextPredRoundNo();
         model.addAttribute("memberInfo", memberService.getMemberDetail(memberNo));
         model.addAttribute("myAllRankingList", rankingService.getMyAllRankingHistory(memberNo));
         model.addAttribute("myRecent5RankingList", rankingService.getMyRecent5RankingHistory(memberNo));
         model.addAttribute("myPredHistory", predictService.getMyPredHistory(memberNo));
+        model.addAttribute("nextRoundNo", nextRoundNo);
+        model.addAttribute("nextRoundPred", predictService.getPrediction(nextRoundNo, memberNo));
         return "member/mypage";
     }
 

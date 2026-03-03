@@ -27,10 +27,15 @@ public class MemRank5RoundVO {
         return String.format("%.1f%%", hitRate);
     }
 
+    /** 순위 표시 (천 단위 콤마) */
+    public String getRankingStr() {
+        return String.format("%,d", ranking);
+    }
+
     public String getRankChangeLabel() {
         if (rankChange == null) return "NEW";
-        if (rankChange > 0)     return "▲" + rankChange;
-        if (rankChange < 0)     return "▼" + Math.abs(rankChange);
+        if (rankChange > 0)     return "▲" + String.format("%,d", rankChange);
+        if (rankChange < 0)     return "▼" + String.format("%,d", Math.abs(rankChange));
         return "-";
     }
 

@@ -121,8 +121,18 @@
                         <div class="top3-name">${r.nickname}</div>
                         <div class="top3-meta">${r.selNumCnt}회 참여</div>
                         <div class="top3-acc">★ ${r.hitRateStr}</div>
-                        <div class="top3-lock">🔒 이번 주 예측번호 잠김</div>
-                        <button class="btn-unlock-sm">🔓 열람 (500P)</button>
+                        <c:choose>
+                          <c:when test="${r.hasPred}">
+                            <a href="${pageContext.request.contextPath}/ranking/no" class="btn-pred-view">
+                              🔍 ${predictionRoundNo}회차 예측번호 조회
+                            </a>
+                          </c:when>
+                          <c:otherwise>
+                            <button class="btn-pred-view disabled" disabled>
+                              🔍 ${predictionRoundNo}회차 예측번호 조회
+                            </button>
+                          </c:otherwise>
+                        </c:choose>
                       </div>
                     </c:if>
                   </c:forEach>
@@ -134,8 +144,9 @@
                     <div class="top3-name">황금사자님</div>
                     <div class="top3-meta">36주 연속 · 812회 참여</div>
                     <div class="top3-acc">★ 72.4%</div>
-                    <div class="top3-lock">🔒 이번 주 예측번호 잠김</div>
-                    <button class="btn-unlock-sm">🔓 열람 (500P)</button>
+                    <button class="btn-pred-view disabled" disabled>
+                      🔍 ${predictionRoundNo}회차 예측번호 조회
+                    </button>
                   </div>
                   <div class="top3-card">
                     <div class="top3-rank-badge rb-silver">2위</div>
@@ -143,8 +154,9 @@
                     <div class="top3-name">로또신화님</div>
                     <div class="top3-meta">22주 연속 · 654회 참여</div>
                     <div class="top3-acc">★ 68.9%</div>
-                    <div class="top3-lock">🔒 이번 주 예측번호 잠김</div>
-                    <button class="btn-unlock-sm">🔓 열람 (500P)</button>
+                    <button class="btn-pred-view disabled" disabled>
+                      🔍 ${predictionRoundNo}회차 예측번호 조회
+                    </button>
                   </div>
                   <div class="top3-card">
                     <div class="top3-rank-badge rb-bronze">3위</div>
@@ -152,8 +164,9 @@
                     <div class="top3-name">번호마스터님</div>
                     <div class="top3-meta">18주 연속 · 503회 참여</div>
                     <div class="top3-acc">★ 65.2%</div>
-                    <div class="top3-lock">🔒 이번 주 예측번호 잠김</div>
-                    <button class="btn-unlock-sm">🔓 열람 (500P)</button>
+                    <button class="btn-pred-view disabled" disabled>
+                      🔍 ${predictionRoundNo}회차 예측번호 조회
+                    </button>
                   </div>
                 </c:otherwise>
               </c:choose>

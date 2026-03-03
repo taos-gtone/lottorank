@@ -789,6 +789,24 @@
   font-size: 1rem;
 }
 
+/* 이번 회차(미추첨) 고정 행 */
+.pred-row-current td {
+  background: rgba(124,58,237,0.04);
+}
+.pred-row-current:hover td { background: rgba(124,58,237,0.08) !important; }
+
+.pred-current-badge {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #7C3AED, #5B21B6);
+  color: #fff;
+  vertical-align: middle;
+}
+
 /* 미제출 행 배경 */
 .pred-row-none td {
   background: #FAFBFD;

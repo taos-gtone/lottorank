@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/header.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/member/join.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
   <style>
     .naver-info-box {
       background: #f0fdf4;
