@@ -546,8 +546,7 @@
 
   .ball-row {
     justify-content: flex-end;
-    flex-wrap: wrap;
-    max-width: 180px;
+    flex-wrap: nowrap;
   }
 
   .rounds-table .ball {
@@ -585,7 +584,7 @@
     padding: 2px 8px;
   }
 
-  .ball-row { max-width: 150px; }
+  .ball-row { gap: 3px; }
   .rounds-table .ball {
     width: 24px;
     height: 24px;

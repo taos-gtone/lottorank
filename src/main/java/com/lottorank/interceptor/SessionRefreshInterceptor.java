@@ -19,6 +19,11 @@ public class SessionRefreshInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler) {
 
+        // 모바일 브라우저 포함 모든 클라이언트의 페이지 캐시 방지
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+
         HttpSession session = request.getSession(false);
         if (session == null) return true;
 
