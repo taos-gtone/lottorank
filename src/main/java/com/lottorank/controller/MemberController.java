@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -294,14 +296,15 @@ public class MemberController {
             @RequestParam String email) {
         Map<String, Object> result = new HashMap<>();
         String trimmedEmail = email.trim();
-        String foundId = memberService.findUserId(userName.trim(), trimmedEmail);
+        String trimmedName  = userName.trim();
+        String foundId = memberService.findUserId(trimmedName, trimmedEmail);
         if (foundId == null) {
             result.put("success", false);
             result.put("message", "입력하신 정보와 일치하는 아이디를 찾을 수 없습니다.");
         } else {
-            emailService.sendSimple(trimmedEmail,
-                    "[로또랭크] 아이디 찾기 결과",
-                    "회원님의 아이디는 [" + foundId + "] 입니다.\n\n로또랭크를 이용해 주셔서 감사합니다.");
+            String subject = "[로또랭크] " + trimmedName + " 님의 아이디 찾기 결과입니다";
+            String html    = buildFindIdEmailHtml(trimmedName, foundId);
+            emailService.sendHtml(trimmedEmail, subject, html);
             result.put("success", true);
         }
         return ResponseEntity.ok(result);
@@ -437,7 +440,7 @@ public class MemberController {
                 if (member == null) {
                     return "redirect:/member/login?error=naver_not_registered";
                 }
-                if (member.getAcctStsCd() != 1) {
+                if (!"01".equals(member.getAcctStsCd())) {
                     return "redirect:/member/login?error=naver_inactive";
                 }
 
@@ -632,7 +635,7 @@ public class MemberController {
                 if (member == null) {
                     return "redirect:/member/login?error=kakao_not_registered";
                 }
-                if (member.getAcctStsCd() != 1) {
+                if (!"01".equals(member.getAcctStsCd())) {
                     return "redirect:/member/login?error=kakao_inactive";
                 }
 
@@ -738,6 +741,22 @@ public class MemberController {
         }
 
         return ResponseEntity.ok(result);
+    }
+
+    /** 아이디 찾기 HTML 이메일 생성 */
+    private String buildFindIdEmailHtml(String userName, String userId) {
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream("email/find-id.html");
+            if (is == null) {
+                return "<p>" + userName + " 님의 아이디: <strong>" + userId + "</strong></p>";
+            }
+            String html = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            html = html.replace("{{userName}}", userName);
+            html = html.replace("{{userId}}",   userId);
+            return html;
+        } catch (Exception e) {
+            return "<p>" + userName + " 님의 아이디: <strong>" + userId + "</strong></p>";
+        }
     }
 
     /** 요청에서 scheme+host+port+contextPath 추출 */

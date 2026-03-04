@@ -1,11 +1,13 @@
 package com.lottorank.service;
 
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,6 +33,22 @@ public class EmailServiceImpl implements EmailService {
             log.info("이메일 발송 성공: {}", to);
         } catch (Exception e) {
             log.error("이메일 발송 실패: {} - {}", to, e.getMessage());
+        }
+    }
+
+    @Override
+    public void sendHtml(String to, String subject, String html) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
+            helper.setFrom(from);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(html, true);
+            mailSender.send(message);
+            log.info("HTML 이메일 발송 성공: {}", to);
+        } catch (Exception e) {
+            log.error("HTML 이메일 발송 실패: {} - {}", to, e.getMessage());
         }
     }
 }

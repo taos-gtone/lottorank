@@ -8,11 +8,11 @@
         INSERT INTO MEM_JOIN_INFO (
             user_id, user_pw, user_name, nickname,
             email_id, email_addr, birth_date, gender_cd,
-            reg_ip, reg_login_typ_cd, social_id, mobile_no, acct_sts_cd
+            reg_ip, reg_login_typ_cd, social_id, mobile_no, acct_sts_cd, mem_grade_cd, reg_date
         ) VALUES (
             #{userId}, #{userPw}, #{userName}, #{nickname},
             #{emailId}, #{emailAddr}, #{birthDate}, #{genderCd},
-            #{regIp}, #{regLoginTypCd}, #{socialId, jdbcType=VARCHAR}, #{mobileNo, jdbcType=VARCHAR}, 1
+            #{regIp}, #{regLoginTypCd}, #{socialId, jdbcType=VARCHAR}, #{mobileNo, jdbcType=VARCHAR}, '01', '01', DATE_FORMAT(NOW(), '%Y%m%d')
         )
     </insert>
 
@@ -87,7 +87,7 @@
         WHERE user_name  = #{userName}
           AND email_id   = #{emailId}
           AND email_addr = #{emailAddr}
-          AND acct_sts_cd = 1
+          AND acct_sts_cd = '01'
         LIMIT 1
     </select>
 
@@ -99,7 +99,7 @@
           AND user_name  = #{userName}
           AND email_id   = #{emailId}
           AND email_addr = #{emailAddr}
-          AND acct_sts_cd = 1
+          AND acct_sts_cd = '01'
         LIMIT 1
     </select>
 

@@ -12,7 +12,7 @@ public class MemberVO {
     private String birthDate;
     private String genderCd;   // gender → gender_cd
     private String regIp;
-    private int    acctStsCd;  // status → acct_sts_cd
+    private String acctStsCd;  // status → acct_sts_cd (예: '01':정상, '02':탈퇴 등)
     private String regLoginTypCd; // I:아이디, N:네이버, K:카카오
     private String socialId;      // 소셜 로그인 고유 ID (네이버/카카오 등)
     private String mobileNo;      // 휴대전화번호
@@ -47,8 +47,8 @@ public class MemberVO {
     public String getRegIp() { return regIp; }
     public void setRegIp(String regIp) { this.regIp = regIp; }
 
-    public int getAcctStsCd() { return acctStsCd; }
-    public void setAcctStsCd(int acctStsCd) { this.acctStsCd = acctStsCd; }
+    public String getAcctStsCd() { return acctStsCd; }
+    public void setAcctStsCd(String acctStsCd) { this.acctStsCd = acctStsCd; }
 
     public String getRegLoginTypCd() { return regLoginTypCd; }
     public void setRegLoginTypCd(String regLoginTypCd) { this.regLoginTypCd = regLoginTypCd; }

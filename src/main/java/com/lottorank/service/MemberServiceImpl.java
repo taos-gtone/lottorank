@@ -47,7 +47,7 @@ public class MemberServiceImpl implements MemberService {
         MemberVO member = memberMapper.findByUserId(userId);
         if (member == null)                              throw new LoginFailException("02"); // 없는 계정
         if (!BCrypt.checkpw(userPw, member.getUserPw())) throw new LoginFailException("01"); // 비밀번호 불일치
-        if (member.getAcctStsCd() != 1)                  throw new LoginFailException("03"); // 계정 비활성
+        if (!"01".equals(member.getAcctStsCd()))         throw new LoginFailException("03"); // 계정 비활성
         return member;
     }
 

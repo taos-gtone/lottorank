@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[로또랭크] 아이디 찾기 결과</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap');
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#F2F4F8;font-family:'Noto Sans KR',sans-serif;">
+
+  <!-- 외부 래퍼 -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F2F4F8;">
+    <tr>
+      <td align="center" style="padding:24px 16px;">
+
+        <!-- 메일 컨테이너 -->
+        <table width="700" cellpadding="0" cellspacing="0" border="0"
+               style="max-width:700px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;
+                      box-shadow:0 4px 20px rgba(27,49,117,0.10);">
+
+          <!-- ── 헤더 ── -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#1B3175 0%,#2851A3 60%,#3A6BC9 100%);
+                       padding:22px 40px;text-align:center;">
+              <span style="font-size:11px;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,0.55);
+                           font-family:'Noto Sans KR',sans-serif;">LOTTO RANK &nbsp;|&nbsp;</span>
+              <span style="font-size:20px;font-weight:900;color:#ffffff;
+                           font-family:'Noto Sans KR',sans-serif;">🎯 로또랭크</span>
+              <div style="width:40px;height:2px;background:linear-gradient(90deg,#E8A000,#FFD54F);
+                          border-radius:2px;margin:10px auto 0;"></div>
+            </td>
+          </tr>
+
+          <!-- ── 타이틀 배지 ── -->
+          <tr>
+            <td style="padding:0 40px;text-align:center;">
+              <div style="display:inline-block;margin-top:-13px;background:#E8A000;color:#ffffff;
+                          font-size:12px;font-weight:700;letter-spacing:0.5px;padding:5px 18px;
+                          border-radius:20px;box-shadow:0 2px 8px rgba(232,160,0,0.35);
+                          font-family:'Noto Sans KR',sans-serif;">
+                아이디 찾기 결과
+              </div>
+            </td>
+          </tr>
+
+          <!-- ── 인사말 ── -->
+          <tr>
+            <td style="padding:20px 40px 0;">
+              <p style="margin:0;font-size:14px;color:#4A5068;line-height:1.6;
+                        font-family:'Noto Sans KR',sans-serif;">
+                안녕하세요, <strong style="color:#1B3175;font-family:'Noto Sans KR',sans-serif;">{{userName}}</strong> 님.
+                요청하신 아이디 찾기 결과를 안내해 드립니다.
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── 구분선 ── -->
+          <tr>
+            <td style="padding:14px 40px 0;">
+              <div style="border-top:1px solid #DDE3EE;"></div>
+            </td>
+          </tr>
+
+          <!-- ── 아이디 결과 박스 ── -->
+          <tr>
+            <td style="padding:18px 40px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background:linear-gradient(135deg,#F2F4F8 0%,#EEF1F8 100%);
+                             border:2px solid #DDE3EE;border-radius:10px;padding:18px 24px;text-align:center;">
+                    <p style="margin:0 0 6px;font-size:12px;color:#8891AA;font-weight:600;letter-spacing:1px;
+                               font-family:'Noto Sans KR',sans-serif;">회원 아이디</p>
+                    <p style="margin:0;font-size:26px;font-weight:900;color:#1B3175;letter-spacing:2px;
+                               font-family:'Noto Sans KR',sans-serif;">{{userId}}</p>
+                    <div style="width:36px;height:2px;background:#E8A000;border-radius:1px;margin:10px auto 0;"></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── 안내 메시지 ── -->
+          <tr>
+            <td style="padding:0 40px 20px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background:#EEF3FF;border-left:4px solid #2851A3;
+                             border-radius:0 6px 6px 0;padding:12px 16px;
+                             font-size:12px;color:#2851A3;line-height:1.7;
+                             font-family:'Noto Sans KR',sans-serif;">
+                    &#128274; 아이디 분실 방지를 위해 이 메일을 안전한 곳에 보관해 두세요.<br>
+                    &#128274; 아이디가 기억나지 않을 경우 이 메일을 다시 확인하세요.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── CTA 버튼 ── -->
+          <tr>
+            <td style="padding:0 40px 24px;text-align:center;">
+              <a href="http://www.lottorank.co.kr" target="_blank" rel="noopener noreferrer"
+                 style="display:inline-block;
+                        padding:13px 48px;
+                        background-color:#2851A3;
+                        background-image:linear-gradient(135deg,#1B3175 0%,#2851A3 55%,#3A6BC9 100%);
+                        color:#ffffff;
+                        font-family:'Noto Sans KR',sans-serif;
+                        font-size:14px;
+                        font-weight:700;
+                        text-decoration:none;
+                        letter-spacing:0.3px;
+                        border-radius:50px;
+                        border:none;
+                        border-top:1px solid rgba(255,255,255,0.20);
+                        box-shadow:0 4px 14px rgba(27,49,117,0.45),inset 0 1px 0 rgba(255,255,255,0.15);
+                        white-space:nowrap;
+                        mso-padding-alt:13px 48px;">
+                로그인 하러 가기 &nbsp;&#8594;
+              </a>
+            </td>
+          </tr>
+
+          <!-- ── 푸터 ── -->
+          <tr>
+            <td style="background:#F2F4F8;padding:14px 40px;text-align:center;border-top:1px solid #DDE3EE;">
+              <p style="margin:0 0 4px;font-size:11px;color:#8891AA;line-height:1.7;
+                        font-family:'Noto Sans KR',sans-serif;">
+                본 메일은 로또랭크 공식 이메일입니다. 본인이 요청하지 않으셨다면
+                <a href="http://www.lottorank.co.kr" target="_blank" rel="noopener noreferrer"
+                   style="color:#2851A3;text-decoration:underline;font-family:'Noto Sans KR',sans-serif;">로또랭크</a>에 즉시 문의해 주세요.
+              </p>
+              <p style="margin:0;font-size:11px;color:#8891AA;font-family:'Noto Sans KR',sans-serif;">
+                <strong style="color:#1B3175;font-family:'Noto Sans KR',sans-serif;">로또랭크 (LOTTORANK)</strong>
+                &nbsp;|&nbsp; &#169; 2026 LottoRank. All rights reserved. &nbsp;|&nbsp;
+                <a href="http://www.lottorank.co.kr" target="_blank" rel="noopener noreferrer"
+                   style="color:#8891AA;text-decoration:none;font-family:'Noto Sans KR',sans-serif;">www.lottorank.co.kr</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- /메일 컨테이너 -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
