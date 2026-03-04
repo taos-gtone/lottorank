@@ -19,7 +19,7 @@
       기본 JNDI 이름: jdbc/LottoRankDB (resourceRef=true 이므로 java:comp/env/jdbc/LottoRankDB로 조회)
       필요 시 JVM 옵션으로 변경 가능: -Dlottorank.datasource.jndi-name=jdbc/원하는이름
     -->
-    <context:property-placeholder location="classpath:oauth.properties" ignore-unresolvable="true"/>
+    <context:property-placeholder location="classpath:oauth.properties,classpath:email.properties" ignore-unresolvable="true"/>
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="${lottorank.datasource.jndi-name:jdbc/LottoRankDB}"/>
         <property name="resourceRef" value="true"/>
@@ -36,6 +36,23 @@
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.lottorank.mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+    <!-- JavaMailSender -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host"     value="${mail.smtp.host}"/>
+        <property name="port"     value="${mail.smtp.port}"/>
+        <property name="username" value="${mail.smtp.username}"/>
+        <property name="password" value="${mail.smtp.password}"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.ssl.trust">smtp.gmail.com</prop>
+                <prop key="mail.smtp.timeout">5000</prop>
+                <prop key="mail.smtp.connectiontimeout">5000</prop>
+            </props>
+        </property>
     </bean>
 
     <!-- 트랜잭션 매니저 -->

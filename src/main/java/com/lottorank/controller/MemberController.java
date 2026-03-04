@@ -1,5 +1,6 @@
 package com.lottorank.controller;
 
+import com.lottorank.service.EmailService;
 import com.lottorank.service.KakaoOAuthService;
 import com.lottorank.service.LoginFailException;
 import com.lottorank.service.MemberService;
@@ -37,6 +38,9 @@ public class MemberController {
 
     @Autowired
     private PredictService predictService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/join")
     public String joinForm() {
@@ -271,6 +275,62 @@ public class MemberController {
             result.put("message", "가입 처리 중 오류가 발생했습니다.");
         }
 
+        return ResponseEntity.ok(result);
+    }
+
+    // ──────────────────────────────────────────────────
+    //  아이디 찾기
+    // ──────────────────────────────────────────────────
+
+    @GetMapping("/find-id")
+    public String findIdForm() {
+        return "member/find-id";
+    }
+
+    @PostMapping("/find-id")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> findId(
+            @RequestParam String userName,
+            @RequestParam String email) {
+        Map<String, Object> result = new HashMap<>();
+        String trimmedEmail = email.trim();
+        String foundId = memberService.findUserId(userName.trim(), trimmedEmail);
+        if (foundId == null) {
+            result.put("success", false);
+            result.put("message", "입력하신 정보와 일치하는 아이디를 찾을 수 없습니다.");
+        } else {
+            emailService.sendSimple(trimmedEmail,
+                    "[로또랭크] 아이디 찾기 결과",
+                    "회원님의 아이디는 [" + foundId + "] 입니다.\n\n로또랭크를 이용해 주셔서 감사합니다.");
+            result.put("success", true);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    // ──────────────────────────────────────────────────
+    //  비밀번호 찾기
+    // ──────────────────────────────────────────────────
+
+    @GetMapping("/find-pw")
+    public String findPwForm() {
+        return "member/find-pw";
+    }
+
+    @PostMapping("/find-pw")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> findPw(
+            @RequestParam String userId,
+            @RequestParam String userName,
+            @RequestParam String email) {
+        Map<String, Object> result = new HashMap<>();
+        String tempPw = memberService.resetPasswordTemp(userId.trim(), userName.trim(), email.trim());
+        if (tempPw == null) {
+            result.put("success", false);
+            result.put("message", "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
+        } else {
+            result.put("success", true);
+            result.put("tempPw", tempPw);
+        }
         return ResponseEntity.ok(result);
     }
 

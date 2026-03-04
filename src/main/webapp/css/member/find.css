@@ -1,0 +1,277 @@
+/* =============================================
+   아이디 찾기 / 비밀번호 찾기 페이지
+============================================= */
+
+/* ── 페이지 배너 ── */
+.page-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
+  padding: 32px 0;
+}
+.page-breadcrumb {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.page-breadcrumb a { color: rgba(255,255,255,0.75); transition: color 0.2s; }
+.page-breadcrumb a:hover { color: #fff; }
+.breadcrumb-sep { margin: 0 5px; }
+.page-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+.page-desc {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.88);
+  font-weight: 500;
+}
+
+/* ── 페이지 래퍼 ── */
+.find-wrap {
+  min-height: calc(100vh - 200px);
+  padding: 32px 16px 72px;
+  background: var(--bg);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.find-container {
+  width: 100%;
+  max-width: 480px;
+}
+
+/* ── 탭 전환 링크 ── */
+.find-tabs {
+  display: flex;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+}
+.find-tab-btn {
+  flex: 1;
+  padding: 13px 20px;
+  border: none;
+  background: transparent;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--txt2);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.18s;
+  font-family: inherit;
+  letter-spacing: -0.2px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.find-tab-btn:hover { color: var(--blue); background: #F5F7FC; }
+.find-tab-btn.active {
+  color: var(--blue);
+  border-bottom-color: var(--blue);
+  background: #fff;
+}
+.find-tab-btn + .find-tab-btn { border-left: 1px solid var(--line); }
+
+/* ── 카드 ── */
+.find-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  overflow: hidden;
+}
+.find-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--blue);
+}
+.find-card-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.find-card-body {
+  padding: 36px 40px;
+}
+
+/* ── 폼 ── */
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--txt);
+  margin-bottom: 8px;
+}
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: var(--txt);
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(40,81,163,0.10);
+}
+.form-input::placeholder { color: var(--txt3); }
+
+/* ── 제출 버튼 ── */
+.btn-find-submit {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  border-radius: 10px;
+  letter-spacing: 0.4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 24px;
+}
+.btn-find-submit:hover {
+  background: var(--navy);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(27,49,117,0.22);
+}
+.btn-find-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── 결과 영역 ── */
+.find-result {
+  display: none;
+  margin-top: 24px;
+  padding: 20px 24px;
+  border-radius: 10px;
+  text-align: center;
+}
+.find-result.success {
+  background: linear-gradient(135deg, rgba(40,81,163,0.06), rgba(106,69,194,0.06));
+  border: 1px solid rgba(40,81,163,0.18);
+}
+.find-result.error {
+  background: rgba(220,38,38,0.05);
+  border: 1px solid rgba(220,38,38,0.18);
+}
+.find-result-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+.find-result-label {
+  font-size: 0.78rem;
+  color: var(--txt3);
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.find-result-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--navy);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.find-result-msg {
+  font-size: 0.84rem;
+  color: var(--txt2);
+  font-weight: 500;
+  line-height: 1.6;
+}
+.find-result.error .find-result-msg { color: #DC2626; }
+
+/* 임시비밀번호 박스 */
+.find-tempPw-box {
+  display: inline-block;
+  background: var(--navy);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  padding: 10px 28px;
+  border-radius: 8px;
+  margin: 8px 0 12px;
+}
+.find-tempPw-warn {
+  font-size: 0.78rem;
+  color: var(--txt3);
+  margin-top: 6px;
+}
+
+/* ── 하단 액션 바 ── */
+.find-action-row {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.find-action-row a {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--blue);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.find-action-row a:hover { color: var(--navy); }
+.find-action-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--line);
+}
+
+/* ══════════════════════════════════════════
+   반응형
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .find-wrap  { padding: 24px 12px 60px; }
+  .page-banner { padding: 22px 0; }
+  .page-title  { font-size: 1.3rem; }
+}
+@media (max-width: 480px) {
+  .find-wrap  { padding: 16px 10px 52px; }
+  .page-banner { padding: 18px 0; }
+  .page-title  { font-size: 1.15rem; }
+  .page-desc   { font-size: 0.78rem; }
+  .find-card-body { padding: 24px 20px; }
+  .btn-find-submit { padding: 14px; font-size: 0.95rem; }
+}

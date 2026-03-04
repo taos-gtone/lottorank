@@ -132,8 +132,8 @@
             </form>
             <div class="login-links" style="margin-top:8px;">
               <a href="/member/join">회원가입</a>
-              <a href="#">아이디 찾기</a>
-              <a href="#">비밀번호 찾기</a>
+              <a href="${pageContext.request.contextPath}/member/find-id">아이디 찾기</a>
+              <a href="${pageContext.request.contextPath}/member/find-pw">비밀번호 찾기</a>
             </div>
             <div class="social-login" style="margin-top:8px;">
               <button type="button" class="social-btn btn-naver"

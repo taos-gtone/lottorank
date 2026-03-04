@@ -40,4 +40,15 @@ public interface MemberMapper {
 
     /** 회원정보 변경이력 저장 */
     void insertMemberInfoChgHist(MemberInfoChgHistVO hist);
+
+    /** 아이디 찾기: 이름 + 이메일로 userId 조회 */
+    String findUserIdByNameAndEmail(@Param("userName")  String userName,
+                                    @Param("emailId")   String emailId,
+                                    @Param("emailAddr") String emailAddr);
+
+    /** 비밀번호 찾기: userId + 이름 + 이메일로 회원 조회 */
+    MemberVO findByUserIdAndNameAndEmail(@Param("userId")    String userId,
+                                         @Param("userName")  String userName,
+                                         @Param("emailId")   String emailId,
+                                         @Param("emailAddr") String emailAddr);
 }

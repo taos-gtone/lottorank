@@ -377,4 +377,12 @@
   .page-desc      { font-size: 0.78rem; }
   .rank-list-table th,
   .rank-list-table td { padding: 9px 10px; }
+
+  /* 선택수, 정답수, 오답수 컬럼 숨김 */
+  .rank-list-table th:nth-child(5),
+  .rank-list-table th:nth-child(6),
+  .rank-list-table th:nth-child(7),
+  .rank-list-table td:nth-child(5),
+  .rank-list-table td:nth-child(6),
+  .rank-list-table td:nth-child(7) { display: none; }
 }

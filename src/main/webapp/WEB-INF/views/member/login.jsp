@@ -92,8 +92,8 @@
               자동 로그인
             </label>
             <div class="login-util-links">
-              <a href="#">아이디 찾기</a>
-              <a href="#">비밀번호 찾기</a>
+              <a href="${pageContext.request.contextPath}/member/find-id">아이디 찾기</a>
+              <a href="${pageContext.request.contextPath}/member/find-pw">비밀번호 찾기</a>
             </div>
           </div>
 

@@ -224,7 +224,7 @@
 /* ── 닉네임 셀 ── */
 .col-nickname {
   font-weight: 700;
-  text-align: center;
+  text-align: left !important;
   min-width: 110px;
 }
 
@@ -342,4 +342,8 @@
   .page-desc     { font-size: 0.78rem; }
   .pred-no-table th,
   .pred-no-table td { padding: 8px 10px; }
+
+  /* 제출일시 컬럼 숨김 */
+  .pred-no-table th:nth-child(4),
+  .col-submit { display: none; }
 }

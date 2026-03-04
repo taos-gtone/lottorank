@@ -161,6 +161,31 @@
 
     .btn-join:hover { background: #D49200; }
 
+    /* ── 비로그인 헤더: 아이디/비밀번호 찾기 링크 ── */
+    .header-actions-guest {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .header-btn-group {
+      display: flex;
+      gap: 8px;
+    }
+    .header-find-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.62);
+    }
+    .header-find-links a {
+      color: rgba(255,255,255,0.72);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .header-find-links a:hover { color: #fff; }
+    .header-find-links span { opacity: 0.4; font-size: 0.65rem; }
+
     /* ── 로그인 후 헤더 영역 ── */
 
     /* 세션 표시 래퍼 */
@@ -362,4 +387,21 @@
       font-size: 0.9rem;
       font-weight: 700;
     }
+
+    .mobile-find-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding-top: 4px;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.55);
+    }
+    .mobile-find-links a {
+      color: rgba(255,255,255,0.7);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .mobile-find-links a:hover { color: #fff; }
+    .mobile-find-links span { opacity: 0.4; font-size: 0.65rem; }
 

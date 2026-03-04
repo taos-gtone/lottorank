@@ -114,6 +114,34 @@ public class MemberServiceImpl implements MemberService {
         memberMapper.insertMemberInfoChgHist(hist);
     }
 
+    @Override
+    public String findUserId(String userName, String email) {
+        String[] parts = email != null ? email.split("@") : new String[]{};
+        if (parts.length != 2) return null;
+        return memberMapper.findUserIdByNameAndEmail(userName, parts[0], parts[1]);
+    }
+
+    @Override
+    @Transactional
+    public String resetPasswordTemp(String userId, String userName, String email) {
+        String[] parts = email != null ? email.split("@") : new String[]{};
+        if (parts.length != 2) return null;
+        MemberVO member = memberMapper.findByUserIdAndNameAndEmail(userId, userName, parts[0], parts[1]);
+        if (member == null) return null;
+        String tempPw = generateTempPassword();
+        String hashed = BCrypt.hashpw(tempPw, BCrypt.gensalt());
+        memberMapper.updateMemberPw(member.getMemberNo(), hashed);
+        return tempPw;
+    }
+
+    private String generateTempPassword() {
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+        StringBuilder sb = new StringBuilder("lotto");
+        java.util.Random rnd = new java.util.Random();
+        for (int i = 0; i < 5; i++) sb.append(chars.charAt(rnd.nextInt(chars.length())));
+        return sb.toString();
+    }
+
     /**
      * 로그인 결과를 하나의 트랜잭션으로 저장한다.
      * 성공: MEM_JOIN_INFO.last_login_at UPDATE + MEM_LOGIN_HIST INSERT

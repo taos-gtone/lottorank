@@ -28,6 +28,12 @@ public interface MemberService {
     /** 마이페이지: 휴대전화번호 변경 */
     void updateMemberMobile(long memberNo, String mobileNo, String chgIp);
 
+    /** 아이디 찾기: 이름 + 이메일(전체)로 마스킹된 userId 반환, 없으면 null */
+    String findUserId(String userName, String email);
+
+    /** 비밀번호 찾기: userId + 이름 + 이메일 검증 후 임시 비밀번호 반환, 없으면 null */
+    String resetPasswordTemp(String userId, String userName, String email);
+
     /**
      * 로그인 결과를 트랜잭션으로 저장한다.
      * - 성공(loginRsltCd="S") : last_login_at UPDATE + MEM_LOGIN_HIST INSERT (1 transaction)
