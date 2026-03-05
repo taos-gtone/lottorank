@@ -93,15 +93,22 @@
 
     <!-- 비밀번호 찾기: userId + 이름 + 이메일로 회원 조회 -->
     <select id="findByUserIdAndNameAndEmail" resultType="MemberVO">
-        SELECT member_no, user_id, user_name, nickname
+        SELECT member_no, user_id, user_pw, user_name, nickname
         FROM MEM_JOIN_INFO
         WHERE user_id    = #{userId}
           AND user_name  = #{userName}
           AND email_id   = #{emailId}
           AND email_addr = #{emailAddr}
-          AND acct_sts_cd = '01'
         LIMIT 1
     </select>
+
+    <!-- 비밀번호 찾기: 임시 비밀번호 업데이트 + 계정상태 변경 -->
+    <update id="updateMemberPwAndAcctSts">
+        UPDATE MEM_JOIN_INFO
+        SET user_pw     = #{userPw},
+            acct_sts_cd = #{acctStsCd}
+        WHERE member_no = #{memberNo}
+    </update>
 
     <!-- 로그인 이력 저장 (성공/실패 공통) -->
     <insert id="insertLoginHist" parameterType="LoginHistVO">

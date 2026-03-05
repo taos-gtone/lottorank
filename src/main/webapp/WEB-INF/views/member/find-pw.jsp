@@ -124,15 +124,14 @@
   var msg     = document.getElementById('resultMsg');
   var warn    = document.getElementById('resultWarn');
 
-  function showResult(success, tempPw, message) {
+  function showResult(success, message) {
     result.className = 'find-result ' + (success ? 'success' : 'error');
     if (success) {
-      icon.textContent     = '✅';
-      label.textContent    = '임시 비밀번호';
-      tempBox.textContent  = tempPw;
-      tempBox.style.display = 'inline-block';
-      msg.textContent      = '임시 비밀번호로 로그인 후 즉시 변경해 주세요.';
-      warn.textContent     = '※ 보안을 위해 이 화면을 닫기 전에 반드시 메모해 두세요.';
+      icon.textContent      = '✅';
+      label.textContent     = '이메일 발송 완료';
+      tempBox.style.display = 'none';
+      msg.innerHTML         = '입력하신 이메일로 임시 비밀번호를 발송했습니다.<br>이메일을 확인해 주세요.';
+      warn.textContent      = '※ 임시 비밀번호로 로그인 후 반드시 새 비밀번호로 변경해 주세요.';
     } else {
       icon.textContent      = '❌';
       label.textContent     = '';
@@ -156,7 +155,7 @@
     if (!email.includes('@')) { alert('올바른 이메일 형식으로 입력해 주세요.'); return; }
 
     btn.disabled    = true;
-    btn.textContent = '조회 중...';
+    btn.textContent = '발송 중...';
     result.style.display = 'none';
 
     var params = new URLSearchParams();
@@ -168,14 +167,14 @@
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (data.success) {
-          showResult(true, data.tempPw, '');
+          showResult(true, '');
           form.style.display = 'none';
         } else {
-          showResult(false, '', data.message);
+          showResult(false, data.message);
         }
       })
       .catch(function () {
-        showResult(false, '', '조회 중 오류가 발생했습니다. 다시 시도해 주세요.');
+        showResult(false, '처리 중 오류가 발생했습니다. 다시 시도해 주세요.');
       })
       .finally(function () {
         btn.disabled    = false;

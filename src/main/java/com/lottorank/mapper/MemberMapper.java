@@ -51,4 +51,9 @@ public interface MemberMapper {
                                          @Param("userName")  String userName,
                                          @Param("emailId")   String emailId,
                                          @Param("emailAddr") String emailAddr);
+
+    /** 비밀번호 찾기: 임시 비밀번호 업데이트 + 계정상태 변경 */
+    void updateMemberPwAndAcctSts(@Param("memberNo")   long   memberNo,
+                                   @Param("userPw")    String userPw,
+                                   @Param("acctStsCd") String acctStsCd);
 }

@@ -32,7 +32,10 @@ public interface MemberService {
     String findUserId(String userName, String email);
 
     /** 비밀번호 찾기: userId + 이름 + 이메일 검증 후 임시 비밀번호 반환, 없으면 null */
-    String resetPasswordTemp(String userId, String userName, String email);
+    String resetPasswordTemp(String userId, String userName, String email, String chgIp);
+
+    /** 임시 비밀번호 상태(acct_sts_cd='02') 회원의 비밀번호 변경 → acct_sts_cd '01' 복구 */
+    void changeTempPassword(long memberNo, String newPw, String chgIp);
 
     /**
      * 로그인 결과를 트랜잭션으로 저장한다.

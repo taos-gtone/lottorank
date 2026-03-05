@@ -45,9 +45,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberVO login(String userId, String userPw) {
         MemberVO member = memberMapper.findByUserId(userId);
-        if (member == null)                              throw new LoginFailException("02"); // 없는 계정
-        if (!BCrypt.checkpw(userPw, member.getUserPw())) throw new LoginFailException("01"); // 비밀번호 불일치
-        if (!"01".equals(member.getAcctStsCd()))         throw new LoginFailException("03"); // 계정 비활성
+        if (member == null)                                            throw new LoginFailException("02"); // 없는 계정
+        if (!BCrypt.checkpw(userPw, member.getUserPw()))               throw new LoginFailException("01"); // 비밀번호 불일치
+        String sts = member.getAcctStsCd();
+        if (!"01".equals(sts) && !"02".equals(sts))                    throw new LoginFailException("03"); // 계정 비활성
         return member;
     }
 
@@ -123,22 +124,56 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public String resetPasswordTemp(String userId, String userName, String email) {
+    public String resetPasswordTemp(String userId, String userName, String email, String chgIp) {
         String[] parts = email != null ? email.split("@") : new String[]{};
         if (parts.length != 2) return null;
         MemberVO member = memberMapper.findByUserIdAndNameAndEmail(userId, userName, parts[0], parts[1]);
         if (member == null) return null;
+
         String tempPw = generateTempPassword();
         String hashed = BCrypt.hashpw(tempPw, BCrypt.gensalt());
-        memberMapper.updateMemberPw(member.getMemberNo(), hashed);
+
+        // 1) 변경이력 INSERT (mem_info_chg_fld_cd = '05': 임시비밀번호 발급)
+        MemberInfoChgHistVO hist = new MemberInfoChgHistVO();
+        hist.setMemberNo(member.getMemberNo());
+        hist.setMemInfoChgFldCd("05");
+        hist.setBeforeVal(member.getUserPw());
+        hist.setAfterVal(hashed);
+        hist.setChgIp(chgIp);
+        memberMapper.insertMemberInfoChgHist(hist);
+
+        // 2) user_pw UPDATE + acct_sts_cd = '02' (임시비밀번호 발급 상태)
+        memberMapper.updateMemberPwAndAcctSts(member.getMemberNo(), hashed, "02");
+
         return tempPw;
     }
 
+    @Override
+    @Transactional
+    public void changeTempPassword(long memberNo, String newPw, String chgIp) {
+        MemberVO member = memberMapper.findMemberDetailByNo(memberNo);
+        if (member == null) throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+
+        String newHashed = BCrypt.hashpw(newPw, BCrypt.gensalt());
+
+        // 1) 변경이력 INSERT (mem_info_chg_fld_cd = '01': 비밀번호 변경)
+        MemberInfoChgHistVO hist = new MemberInfoChgHistVO();
+        hist.setMemberNo(memberNo);
+        hist.setMemInfoChgFldCd("01");
+        hist.setBeforeVal(member.getUserPw());
+        hist.setAfterVal(newHashed);
+        hist.setChgIp(chgIp);
+        memberMapper.insertMemberInfoChgHist(hist);
+
+        // 2) user_pw UPDATE + acct_sts_cd = '01' (정상 상태 복구)
+        memberMapper.updateMemberPwAndAcctSts(memberNo, newHashed, "01");
+    }
+
     private String generateTempPassword() {
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-        StringBuilder sb = new StringBuilder("lotto");
-        java.util.Random rnd = new java.util.Random();
-        for (int i = 0; i < 5; i++) sb.append(chars.charAt(rnd.nextInt(chars.length())));
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        java.security.SecureRandom rnd = new java.security.SecureRandom();
+        StringBuilder sb = new StringBuilder(8);
+        for (int i = 0; i < 8; i++) sb.append(chars.charAt(rnd.nextInt(chars.length())));
         return sb.toString();
     }
 

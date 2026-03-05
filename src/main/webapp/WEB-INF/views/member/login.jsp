@@ -193,7 +193,7 @@
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.success) {
-          location.href = redirectUrl || '${pageContext.request.contextPath}/';
+          location.href = data.redirect || redirectUrl || '${pageContext.request.contextPath}/';
         } else {
           alert(data.message);
           submitBtn.disabled = false;

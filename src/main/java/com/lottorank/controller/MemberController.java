@@ -100,6 +100,10 @@ public class MemberController {
         result.put("message", "로그인 성공!");
         result.put("sessionExpiry", expiry);
         result.put("nickname", member.getNickname());
+        // 임시 비밀번호 발급 상태: 비밀번호 변경 페이지로 강제 이동
+        if ("02".equals(member.getAcctStsCd())) {
+            result.put("redirect", request.getContextPath() + "/member/change-pw");
+        }
         return ResponseEntity.ok(result);
     }
 
@@ -324,15 +328,65 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> findPw(
             @RequestParam String userId,
             @RequestParam String userName,
-            @RequestParam String email) {
+            @RequestParam String email,
+            HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
-        String tempPw = memberService.resetPasswordTemp(userId.trim(), userName.trim(), email.trim());
+        String trimmedEmail  = email.trim();
+        String trimmedUserId = userId.trim();
+        String trimmedName   = userName.trim();
+        String tempPw = memberService.resetPasswordTemp(trimmedUserId, trimmedName, trimmedEmail, resolveIpv4(request));
         if (tempPw == null) {
             result.put("success", false);
             result.put("message", "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
         } else {
+            String subject = "[로또랭크] " + trimmedName + " 님의 비밀번호 재발급 안내 메일입니다";
+            String html    = buildFindPwEmailHtml(trimmedName, tempPw);
+            emailService.sendHtml(trimmedEmail, subject, html);
             result.put("success", true);
-            result.put("tempPw", tempPw);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    // ──────────────────────────────────────────────────
+    //  임시 비밀번호 변경 (acct_sts_cd='02' 강제 변경)
+    // ──────────────────────────────────────────────────
+
+    @GetMapping("/change-pw")
+    public String changePwForm(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            return "redirect:/member/login";
+        }
+        return "member/change-pw";
+    }
+
+    @PostMapping("/change-pw")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> changePw(
+            @RequestParam String newPw,
+            @RequestParam String newPwConfirm,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        if (!newPw.equals(newPwConfirm)) {
+            result.put("success", false);
+            result.put("message", "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+            return ResponseEntity.ok(result);
+        }
+        try {
+            Long memberNo = (Long) session.getAttribute("loginMemberNo");
+            memberService.changeTempPassword(memberNo, newPw, resolveIpv4(request));
+            result.put("success", true);
+            result.put("message", "비밀번호가 변경되었습니다.");
+        } catch (IllegalArgumentException e) {
+            result.put("success", false);
+            result.put("message", e.getMessage());
         }
         return ResponseEntity.ok(result);
     }
@@ -741,6 +795,22 @@ public class MemberController {
         }
 
         return ResponseEntity.ok(result);
+    }
+
+    /** 비밀번호 찾기 HTML 이메일 생성 */
+    private String buildFindPwEmailHtml(String userName, String tempPw) {
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream("email/find-pw.html");
+            if (is == null) {
+                return "<p>" + userName + " 님의 임시 비밀번호: <strong>" + tempPw + "</strong></p>";
+            }
+            String html = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            html = html.replace("{{userName}}", userName);
+            html = html.replace("{{tempPw}}",   tempPw);
+            return html;
+        } catch (Exception e) {
+            return "<p>" + userName + " 님의 임시 비밀번호: <strong>" + tempPw + "</strong></p>";
+        }
     }
 
     /** 아이디 찾기 HTML 이메일 생성 */
