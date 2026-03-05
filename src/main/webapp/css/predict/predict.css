@@ -336,7 +336,7 @@
 }
 
 .predict-my-card .card-header-title {
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   font-weight: 800;
   color: #fff;
 }
@@ -361,7 +361,7 @@
 }
 
 .my-stat-num {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: var(--navy);
   line-height: 1;
@@ -369,12 +369,12 @@
 }
 
 .my-stat-label {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   color: var(--txt3);
 }
 
 .my-history-title {
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--txt2);
   margin-bottom: 10px;
@@ -394,7 +394,7 @@
   background: #F7F9FD;
   border-radius: 6px;
   border: 1px solid var(--line);
-  font-size: 0.76rem;
+  font-size: 0.86rem;
 }
 
 .my-history-round {
@@ -455,7 +455,7 @@
 }
 
 .predict-howto-card .card-header-title {
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   font-weight: 800;
   color: #fff;
 }
@@ -473,31 +473,31 @@
 .howto-step-item:last-child { border-bottom: none; }
 
 .howto-step-num {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--blue), var(--navy));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   font-weight: 900;
   color: #fff;
   flex-shrink: 0;
   margin-top: 1px;
 }
 
-.howto-step-icon { font-size: 1.05rem; flex-shrink: 0; }
+.howto-step-icon { font-size: 1.2rem; flex-shrink: 0; }
 
 .howto-step-title {
-  font-size: 0.83rem;
+  font-size: 0.95rem;
   font-weight: 700;
   margin-bottom: 2px;
   color: var(--txt);
 }
 
 .howto-step-desc {
-  font-size: 0.73rem;
+  font-size: 0.84rem;
   color: var(--txt2);
   line-height: 1.5;
 }
@@ -533,18 +533,18 @@
   border-radius: 3px;
   background: linear-gradient(135deg, var(--gold), #F57F17);
   color: #fff;
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 800;
 }
 
 .pgc-title {
-  font-size: 0.88rem;
+  font-size: 1.0rem;
   font-weight: 800;
   color: var(--gold-lt);
 }
 
 .pgc-desc {
-  font-size: 0.76rem;
+  font-size: 0.87rem;
   color: rgba(255,255,255,0.6);
   line-height: 1.6;
   margin-bottom: 12px;
@@ -552,11 +552,11 @@
 
 .pgc-btn {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border-radius: 6px;
   background: linear-gradient(135deg, var(--gold), #F57F17);
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 800;
   transition: all 0.2s;
 }
@@ -597,19 +597,19 @@
 
 /* ── 예측 내역 아이템 (간소화 클래스) ── */
 .mhi-round {
-  font-size: 0.74rem;
+  font-size: 0.84rem;
   color: var(--txt2);
   font-weight: 600;
 }
 
 .mhi-num {
-  font-size: 0.9rem;
+  font-size: 1.0rem;
   font-weight: 800;
   color: var(--navy);
 }
 
 .mhi-status {
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 50px;

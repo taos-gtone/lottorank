@@ -56,4 +56,7 @@ public interface MemberMapper {
     void updateMemberPwAndAcctSts(@Param("memberNo")   long   memberNo,
                                    @Param("userPw")    String userPw,
                                    @Param("acctStsCd") String acctStsCd);
+
+    /** 회원 등급명 조회 (COM_CODE_DTL C012 코드 JOIN) */
+    String findGradeNmByMemberNo(@Param("memberNo") long memberNo);
 }

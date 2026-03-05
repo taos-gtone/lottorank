@@ -203,9 +203,6 @@
                   <span class="<%=r.getRankChangeCss()%>"><%=r.getRankChangeLabel()%></span>
                 </td>
                 <td class="col-nickname">
-                  <span class="nick-avatar <%=avatarCss%>">
-                    <%=r.getNickname().substring(0, 1).toUpperCase()%>
-                  </span>
                   <%=r.getNickname()%>
                 </td>
                 <td>
@@ -324,9 +321,6 @@
                   <span class="<%=r.getRankChangeCss()%>"><%=r.getRankChangeLabel()%></span>
                 </td>
                 <td class="col-nickname">
-                  <span class="nick-avatar <%=avatarCss%>">
-                    <%=r.getNickname().substring(0, 1).toUpperCase()%>
-                  </span>
                   <%=r.getNickname()%>
                 </td>
                 <td>

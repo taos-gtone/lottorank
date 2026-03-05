@@ -174,18 +174,18 @@
       border-radius: 3px;
       background: linear-gradient(135deg, var(--gold), #F57F17);
       color: #fff;
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       font-weight: 800;
     }
 
     .gc-title {
-      font-size: 0.9rem;
+      font-size: 1rem;
       font-weight: 800;
       color: var(--gold-lt);
     }
 
     .gc-desc {
-      font-size: 0.78rem;
+      font-size: 0.88rem;
       color: rgba(255,255,255,0.6);
       line-height: 1.6;
       margin-bottom: 12px;
@@ -207,13 +207,13 @@
     }
 
     .gc-stat-num {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       font-weight: 900;
       color: var(--gold-lt);
     }
 
     .gc-stat-label {
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       color: rgba(255,255,255,0.45);
       margin-top: 2px;
     }
@@ -224,7 +224,7 @@
       border-radius: 5px;
       background: linear-gradient(135deg, var(--gold), #F57F17);
       color: #fff;
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       font-weight: 800;
       transition: all 0.2s;
     }
@@ -263,7 +263,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       font-weight: 900;
       color: #fff;
       flex-shrink: 0;
@@ -273,6 +273,6 @@
     .howto-icon { font-size: 1.1rem; flex-shrink: 0; }
 
     .howto-text {}
-    .howto-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 3px; }
-    .howto-desc { font-size: 0.75rem; color: var(--txt2); line-height: 1.5; }
+    .howto-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
+    .howto-desc { font-size: 0.85rem; color: var(--txt2); line-height: 1.5; }
 

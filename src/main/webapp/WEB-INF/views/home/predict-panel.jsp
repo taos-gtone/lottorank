@@ -38,7 +38,7 @@
                 <div class="howto-icon">🎰</div>
                 <div class="howto-text">
                   <div class="howto-title">매주 번호 예측</div>
-                  <div class="howto-desc">토요일 오후 8시 30분 전까지 1~45 중 1개를 선택해 제출하세요.</div>
+                  <div class="howto-desc">토요일 오후 7시까지 1~45 중 1개의 번호를 선택해 제출하세요.</div>
                 </div>
               </div>
               <div class="howto-step">
@@ -46,15 +46,15 @@
                 <div class="howto-icon">📊</div>
                 <div class="howto-text">
                   <div class="howto-title">적중률 & 랭킹 집계</div>
-                  <div class="howto-desc">실제 당첨번호와 비교해 자동으로 적중률을 산출합니다.</div>
+                  <div class="howto-desc">실제 당첨번호와 비교해서 자동으로 등급기준에 따라 회원 랭킹을 산출합니다.</div>
                 </div>
               </div>
               <div class="howto-step">
                 <div class="howto-num">3</div>
                 <div class="howto-icon">🔓</div>
                 <div class="howto-text">
-                  <div class="howto-title">TOP 번호 유료 열람</div>
-                  <div class="howto-desc">포인트로 랭킹 상위 예측자의 번호를 확인할 수 있습니다.</div>
+                  <div class="howto-title">랭킹 상위자 번호 열람</div>
+                  <div class="howto-desc">랭킹 상위 예측자의 이번 회차 예측 번호를 확인할 수 있습니다.</div>
                 </div>
               </div>
             </div>

@@ -76,7 +76,7 @@
 }
 
 .login-card-title {
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: #fff;
   display: flex;
@@ -89,7 +89,7 @@
   border-radius: 50px;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.25);
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   color: rgba(255,255,255,0.92);
   font-weight: 600;
 }
@@ -102,7 +102,7 @@
 .sns-section { margin-bottom: 24px; }
 
 .sns-label {
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: var(--txt2);
   text-align: center;
@@ -119,9 +119,9 @@
   align-items: center;
   justify-content: center;
   gap: 9px;
-  padding: 13px;
+  padding: 14px;
   border-radius: 10px;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   font-weight: 800;
   letter-spacing: 0.2px;
   transition: all 0.2s;
@@ -166,7 +166,7 @@
   position: relative;
   background: #fff;
   padding: 0 16px;
-  font-size: 0.8rem;
+  font-size: 0.92rem;
   color: var(--txt2);
   font-weight: 700;
 }
@@ -176,7 +176,7 @@
 
 .form-label {
   display: block;
-  font-size: 0.84rem;
+  font-size: 0.96rem;
   font-weight: 700;
   color: var(--txt);
   margin-bottom: 8px;
@@ -187,7 +187,7 @@
   padding: 12px 14px;
   border: 1.5px solid var(--line);
   border-radius: 8px;
-  font-size: 0.92rem;
+  font-size: 1rem;
   color: var(--txt);
   background: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -241,7 +241,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 0.83rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: var(--txt2);
   cursor: pointer;
@@ -262,7 +262,7 @@
 }
 
 .login-util-links a {
-  font-size: 0.8rem;
+  font-size: 1.0rem;
   font-weight: 600;
   color: var(--txt2);
   transition: color 0.2s;
@@ -281,7 +281,7 @@
   padding: 15px;
   background: var(--blue);
   color: #fff;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 800;
   border-radius: 10px;
   letter-spacing: 0.4px;
@@ -302,7 +302,7 @@
   padding-top: 22px;
   border-top: 1px solid var(--line);
   text-align: center;
-  font-size: 0.88rem;
+  font-size: 1.0rem;
   color: var(--txt2);
   font-weight: 500;
 }
@@ -334,7 +334,7 @@
 }
 
 .login-benefit-text {
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   color: var(--txt2);
   font-weight: 500;
   line-height: 1.6;
@@ -344,7 +344,7 @@
   display: block;
   color: var(--navy);
   font-weight: 800;
-  font-size: 0.88rem;
+  font-size: 0.96rem;
   margin-bottom: 2px;
 }
 

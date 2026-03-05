@@ -110,6 +110,15 @@
         WHERE member_no = #{memberNo}
     </update>
 
+    <!-- 회원 등급명 조회 -->
+    <select id="findGradeNmByMemberNo" resultType="String">
+        SELECT c.code_nm
+        FROM MEM_JOIN_INFO m
+        JOIN COM_CODE_DTL c ON c.code_grp_id = 'C012' AND c.code_id = m.mem_grade_cd
+        WHERE m.member_no = #{memberNo}
+        LIMIT 1
+    </select>
+
     <!-- 로그인 이력 저장 (성공/실패 공통) -->
     <insert id="insertLoginHist" parameterType="LoginHistVO">
         INSERT INTO MEM_LOGIN_HIST (

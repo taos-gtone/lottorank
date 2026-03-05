@@ -12,9 +12,9 @@
           </h2>
           <p class="cta-desc">
             무료로 가입하고 번호를 예측하세요. 상위 예측자의 번호는<br>
-            포인트로 열람 가능합니다.
+            결제후에 열람 가능합니다.
           </p>
-          <p class="cta-note">✅ 무료 회원가입 · 기본 기능 무료 · 열람 시에만 포인트 사용</p>
+          <p class="cta-note">✅ 무료 회원가입 · 기본 기능 무료 · 결제 후 예측번호 열람</p>
         </div>
         <div class="cta-actions">
           <a href="${pageContext.request.contextPath}/member/join" class="btn-cta-gold">🎰 무료로 시작하기</a>

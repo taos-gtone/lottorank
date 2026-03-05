@@ -12,7 +12,7 @@
           </div>
           <p class="footer-desc">
             로또 번호 예측 랭킹 플랫폼 로또랭크.<br>
-            매주 적중률 기반으로 신뢰할 수 있는 예측자를 발견하세요.
+            매주 적중률, 회원 순위를 기반으로 신뢰할 수 있는 예측자를 발견하세요.
           </p>
           <div class="footer-socials">
             <div class="fsoc" title="카카오톡">💬</div>

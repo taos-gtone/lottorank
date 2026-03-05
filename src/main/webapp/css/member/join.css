@@ -80,7 +80,7 @@
   border-radius: 50%;
   background: #E4E9F3;
   color: var(--txt3);
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -89,7 +89,7 @@
 }
 
 .step-item > span {
-  font-size: 0.76rem;
+  font-size: 0.86rem;
   color: var(--txt3);
   font-weight: 500;
   transition: color 0.3s;
@@ -141,7 +141,7 @@
 .join-card-header--success { background: #16a34a; }
 
 .join-card-title {
-  font-size: 0.92rem;
+  font-size: 1.02rem;
   font-weight: 800;
   color: #fff;
   display: flex;
@@ -154,7 +154,7 @@
   border-radius: 50px;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.25);
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   color: rgba(255,255,255,0.9);
   font-weight: 600;
 }
@@ -168,7 +168,7 @@
 .sns-section { margin-bottom: 24px; }
 
 .sns-label {
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: var(--txt2);
   text-align: center;
@@ -187,7 +187,7 @@
   gap: 9px;
   padding: 13px;
   border-radius: 10px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.2px;
   transition: all 0.2s;
@@ -235,7 +235,7 @@
   position: relative;
   background: #fff;
   padding: 0 16px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--txt2);
   font-weight: 700;
 }
@@ -255,13 +255,13 @@
 }
 
 .check-all-row strong {
-  font-size: 0.98rem;
+  font-size: 1.08rem;
   font-weight: 800;
   color: var(--txt);
 }
 
 .check-all-desc {
-  font-size: 0.77rem;
+  font-size: 0.87rem;
   color: var(--txt2);
   font-weight: 500;
   margin: 5px 0 16px 36px;
@@ -279,7 +279,7 @@
   gap: 10px;
   padding: 11px 4px;
   cursor: pointer;
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   font-weight: 500;
   color: var(--txt);
   border-bottom: 1px solid #F0F2F8;
@@ -293,7 +293,7 @@
 
 /* 약관 토글 버튼 */
 .terms-toggle {
-  font-size: 0.73rem;
+  font-size: 0.83rem;
   font-weight: 600;
   color: var(--txt2);
   background: transparent;
@@ -314,7 +314,7 @@
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 14px 16px;
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   color: var(--txt2);
   line-height: 1.85;
   margin: 6px 0 10px;
@@ -358,7 +358,7 @@
   padding: 15px;
   background: #fff;
   color: var(--txt);
-  font-size: 0.92rem;
+  font-size: 1.02rem;
   font-weight: 700;
   border-radius: 10px;
   border: 1.5px solid var(--line);
@@ -374,7 +374,7 @@
 
 .form-label {
   display: block;
-  font-size: 0.84rem;
+  font-size: 0.94rem;
   font-weight: 700;
   color: var(--txt);
   margin-bottom: 8px;
@@ -397,7 +397,7 @@
   padding: 12px 14px;
   border: 1.5px solid var(--line);
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--txt);
   background: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -416,7 +416,7 @@
 .form-input.is-error { border-color: var(--red); }
 
 .form-hint {
-  font-size: 0.76rem;
+  font-size: 0.86rem;
   color: var(--txt2);
   font-weight: 500;
   margin-top: 6px;
@@ -435,7 +435,7 @@
   background: #F5F7FC;
   border: 1.5px solid var(--line);
   border-radius: 8px;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 800;
   color: var(--txt);
   cursor: pointer;
@@ -487,7 +487,7 @@
   padding: 12px 14px;
   border: 1.5px solid var(--line);
   border-radius: 8px;
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   color: var(--txt);
   background: #fff;
   font-family: inherit;
@@ -515,7 +515,7 @@
   padding: 11px;
   border: 1.5px solid var(--line);
   border-radius: 8px;
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--txt);
   background: #fff;
@@ -716,7 +716,7 @@
 }
 
 .terms-modal-title {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--navy);
   display: flex;
@@ -759,13 +759,13 @@
   overflow-y: auto;
   padding: 24px;
   flex: 1;
-  font-size: 0.84rem;
+  font-size: 0.94rem;
   line-height: 1.9;
   color: var(--txt);
 }
 
 .terms-modal-body h4 {
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--navy);
   margin: 20px 0 8px;
@@ -792,7 +792,7 @@
   border-left: 3px solid var(--blue);
   border-radius: 0 8px 8px 0;
   margin: 14px 0;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: var(--txt2);
 }
 
@@ -812,7 +812,7 @@
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.3px;
   cursor: pointer;

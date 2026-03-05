@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-05T00:26:25.532Z",
+  "lastUpdated": "2026-03-05T06:12:39.804Z",
   "activeFeatures": [
     "mapper",
     "service",
@@ -23,7 +23,7 @@
       },
       "timestamps": {
         "started": "2026-02-19T15:10:07.894Z",
-        "lastUpdated": "2026-03-05T00:02:07.633Z"
+        "lastUpdated": "2026-03-05T06:12:14.436Z"
       },
       "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/mapper/MemberMapper.java"
     },
@@ -49,9 +49,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:26.070Z",
-        "lastUpdated": "2026-03-05T00:26:25.532Z"
+        "lastUpdated": "2026-03-05T06:12:39.804Z"
       },
-      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/controller/MemberController.java"
+      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/controller/HomeController.java"
     },
     "lottorank": {
       "phase": "do",
@@ -115,7 +115,7 @@
   "session": {
     "startedAt": "2026-02-19T14:55:10.648Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-05T00:26:25.532Z"
+    "lastActivity": "2026-03-05T06:12:39.804Z"
   },
   "history": [
     {
@@ -1566,6 +1566,30 @@
     },
     {
       "timestamp": "2026-03-05T00:26:25.532Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-05T06:12:14.436Z",
+      "feature": "mapper",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-05T06:12:28.239Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-05T06:12:32.661Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-05T06:12:39.804Z",
       "feature": "controller",
       "phase": "do",
       "action": "updated"

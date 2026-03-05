@@ -1,5 +1,6 @@
 package com.lottorank.controller;
 
+import com.lottorank.mapper.MemberMapper;
 import com.lottorank.service.LottoService;
 import com.lottorank.service.RankingService;
 import com.lottorank.service.SampleService;
@@ -23,6 +24,9 @@ public class HomeController {
     @Autowired
     private RankingService rankingService;
 
+    @Autowired
+    private MemberMapper memberMapper;
+
     @GetMapping("/")
     public String index(Model model, HttpServletRequest request) {
         LottoRoundResult latestResult = lottoService.getLatestResult();
@@ -40,6 +44,7 @@ public class HomeController {
             Long memberNo = (Long) session.getAttribute("loginMemberNo");
             if (memberNo != null) {
                 model.addAttribute("myHeroRanking", rankingService.getMyLatestAllRanking(memberNo));
+                model.addAttribute("myGradeNm", memberMapper.findGradeNmByMemberNo(memberNo));
             }
         }
         return "index";

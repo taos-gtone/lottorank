@@ -9,7 +9,7 @@
 }
 
 .page-breadcrumb {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: rgba(255,255,255,0.5);
   margin-bottom: 10px;
   display: flex;
@@ -42,13 +42,13 @@
 }
 
 .page-round-info {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: rgba(255,255,255,0.5);
   font-weight: 400;
 }
 
 .page-desc {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: rgba(255,255,255,0.65);
 }
 
@@ -73,7 +73,7 @@
 }
 
 .filter-label {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--txt2);
   white-space: nowrap;
@@ -83,7 +83,7 @@
   padding: 7px 30px 7px 12px;
   border: 1px solid var(--line);
   border-radius: 5px;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: var(--txt);
   background: var(--bg);
   font-family: inherit;
@@ -102,7 +102,7 @@
   padding: 7px 12px;
   border: 1px solid var(--line);
   border-radius: 5px;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: var(--txt);
   background: var(--bg);
   width: 110px;
@@ -122,7 +122,7 @@
   border-radius: 5px;
   background: var(--blue);
   color: #fff;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 700;
   transition: all 0.2s;
 }
@@ -138,7 +138,7 @@
 
 .filter-total {
   margin-left: auto;
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   color: var(--txt3);
   white-space: nowrap;
 }
@@ -167,7 +167,7 @@
 }
 
 .rounds-card-title {
-  font-size: 0.92rem;
+  font-size: 1.02rem;
   font-weight: 900;
   color: #fff;
   letter-spacing: -0.01em;
@@ -182,7 +182,7 @@
   border-radius: 50px;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.25);
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   color: rgba(255,255,255,0.9);
 }
 
@@ -193,7 +193,7 @@
 }
 
 .page-size-label {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: rgba(255,255,255,0.8);
   white-space: nowrap;
@@ -213,7 +213,7 @@
   color: var(--blue);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 0;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: border-color 0.2s;
@@ -256,7 +256,7 @@
 
 .csel-item {
   padding: 7px 12px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #0047CC;
   cursor: pointer;
@@ -285,7 +285,7 @@
 
 .rounds-table th {
   background: #EEF2FA;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: var(--txt2);
   font-weight: 800;
   padding: 10px 14px;
@@ -331,14 +331,14 @@
 .rounds-table tr:hover td { background: #F7F9FD; }
 
 .round-num {
-  font-size: 0.92rem;
+  font-size: 1.02rem;
   font-weight: 900;
   color: var(--blue);
   line-height: 1.2;
 }
 
 .round-num-label {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--txt3);
   font-weight: 400;
 }
@@ -350,7 +350,7 @@
 }
 
 .round-date {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--txt2);
   white-space: nowrap;
 }
@@ -368,7 +368,7 @@
 .rounds-table .ball {
   width: 32px;
   height: 32px;
-  font-size: 0.73rem;
+  font-size: 0.82rem;
 }
 
 .ball-row .plus-sign {
@@ -379,14 +379,14 @@
 }
 
 .prize-1st {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 800;
   color: var(--red);
   white-space: nowrap;
 }
 
 .winner-count {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: var(--txt2);
 }
 
@@ -412,7 +412,7 @@
   background: var(--white);
   border: 1px solid var(--line);
   color: var(--txt2);
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 600;
   transition: all 0.2s;
   display: inline-flex;
@@ -443,7 +443,7 @@
 .pg-ellipsis {
   padding: 0 4px;
   color: var(--txt3);
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   height: 36px;
   display: inline-flex;
   align-items: center;

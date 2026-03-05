@@ -15,7 +15,10 @@
 
           <div class="hero-round-badge">
             <div class="live-dot"></div>
-            LIVE · 제 ${empty latestResult ? 1 : latestResult.roundNo + 1}회 예측 진행 중 · 마감까지 <strong id="countdown" style="margin-left:4px;">-</strong>
+            <div class="hbadge-lines">
+              <span>LIVE · 제 ${empty latestResult ? 1 : latestResult.roundNo + 1}회 예측 진행 중..</span>
+              <span class="hbadge-timer">마감까지 <strong id="countdown">-</strong></span>
+            </div>
           </div>
 
           <h1 class="hero-title">
@@ -25,7 +28,7 @@
 
           <p class="hero-desc">
             1~45 중 번호 1개를 예측하고 실제 당첨번호와 비교합니다.<br>
-            누적 적중률 TOP 예측자의 번호를 참고해 당첨 확률을 높여보세요.
+            순위가 높은 예측자의 번호를 참고해 당첨 확률을 높여보세요.
           </p>
 
           <div class="hero-btns">
@@ -39,17 +42,17 @@
               <div class="hstat-label">진행 회차</div>
             </div>
             <div>
-              <div class="hstat-num">23,847</div>
-              <div class="hstat-label">누적 예측자</div>
+              <div class="hstat-num">3,120</div>
+              <div class="hstat-label">이번 회차 예측</div>
             </div>
             <div>
               <div class="hstat-num">72.4%</div>
               <div class="hstat-label">TOP1 적중률</div>
             </div>
             <div>
-              <div class="hstat-num">3,120</div>
-              <div class="hstat-label">이번 주 예측</div>
-            </div>
+              <div class="hstat-num">4,120</div>
+              <div class="hstat-label">지난 회차 예측</div>
+            </div>            
           </div>
         </div>
 
@@ -68,7 +71,7 @@
             com.lottorank.vo.MemRankAllVO _heroRank =
                 (com.lottorank.vo.MemRankAllVO) request.getAttribute("myHeroRanking");
             String _heroSelCnt  = (_heroRank != null) ? _heroRank.getSelNumCnt() + "회" : "0회";
-            String _heroRanking = (_heroRank != null) ? _heroRank.getRanking() + "위"   : "—";
+            String _heroRanking = (_heroRank != null) ? _heroRank.getRankingStr() + "위" : "—";
             String _heroHitRate = (_heroRank != null) ? _heroRank.getHitRateStr()       : "0%";
           %>
           <% if (_isLoggedIn) { %>
@@ -78,9 +81,9 @@
             <div class="up-header">
               <div class="up-avatar"><%=_avatarLetter%></div>
               <div class="up-info">
-                <div class="up-name"><%=_loginNickname%>님</div>
-                <div class="up-tags">
-                  <span class="up-tag up-tag-rank">일반회원</span>
+                <div class="up-name-row">
+                  <span class="up-name"><%=_loginNickname%>님</span>
+                  <span class="up-tag up-tag-rank">${empty myGradeNm ? '일반회원' : myGradeNm}</span>
                 </div>
               </div>
             </div>
