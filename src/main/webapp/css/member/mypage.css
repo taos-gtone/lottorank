@@ -123,7 +123,7 @@
 }
 
 .info-section-title {
-  font-size: 0.88rem;
+  font-size: 1rem;
   font-weight: 800;
   color: var(--navy);
   letter-spacing: 0.5px;
@@ -169,7 +169,7 @@
   width: 100px;
   flex-shrink: 0;
   padding: 10px 14px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--txt2);
   background: #f8f9fc;
@@ -181,7 +181,7 @@
 
 .info-value {
   padding: 10px 14px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--txt);
   font-weight: 500;
   flex: 1;
@@ -218,7 +218,7 @@
 
 .form-label {
   display: block;
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--txt2);
   margin-bottom: 7px;
@@ -229,7 +229,7 @@
   padding: 11px 13px;
   border: 1.5px solid var(--line);
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--txt);
   background: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -253,7 +253,7 @@
 /* 이메일 미리보기 */
 .email-preview {
   margin-top: 8px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--blue);
   min-height: 1.2em;
@@ -315,7 +315,7 @@
   padding: 11px 28px;
   background: var(--blue);
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 800;
   border-radius: 8px;
   border: none;
@@ -346,7 +346,7 @@
 /* ── 결과 메시지 ── */
 .form-msg {
   margin-top: 10px;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 600;
   display: none;
 }
@@ -360,7 +360,7 @@
   background: rgba(40,81,163,0.05);
   border: 1px solid rgba(40,81,163,0.15);
   border-radius: 8px;
-  font-size: 0.83rem;
+  font-size: 0.95rem;
   color: var(--txt2);
   font-weight: 500;
   line-height: 1.6;
@@ -540,7 +540,7 @@
 
 .rank-hist-label {
   padding: 10px 14px 8px;
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--blue);
   border-bottom: 1px solid var(--line);
@@ -550,7 +550,7 @@
   gap: 6px;
 }
 
-.rank-hist-label span { color: var(--txt2); font-size: 0.72rem; font-weight: 500; }
+.rank-hist-label span { color: var(--txt2); font-size: 0.8rem; font-weight: 500; }
 
 .rank-hist-wrap { overflow-x: auto; }
 
@@ -562,10 +562,10 @@
 
 .rank-hist-table th {
   background: #FAFBFD;
-  font-size: 0.72rem;
-  color: var(--txt3);
-  font-weight: 600;
-  padding: 8px 10px;
+  font-size: 0.9rem;
+  color: var(--navy);
+  font-weight: 800;
+  padding: 10px 10px;
   border-bottom: 1px solid var(--line);
   border-left: 1px solid var(--line);
   text-align: center;
@@ -575,7 +575,7 @@
   padding: 9px 10px;
   border-bottom: 1px solid var(--line);
   border-left: 1px solid var(--line);
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   color: var(--txt);
   text-align: center;
 }
@@ -711,7 +711,7 @@
 }
 
 .my-pred-stat-label {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: rgba(255,255,255,0.75);
 }
@@ -829,9 +829,9 @@
 .pred-hit-badge.hit-none { background: rgba(0,0,0,0.04);      color: var(--txt3); border: 1px solid var(--line);       }
 
 /* 예측 테이블 셀 */
-.pred-hist-table .pred-round { font-weight: 700; font-size: 0.8rem; }
-.pred-hist-table .pred-date  { color: var(--txt2); font-size: 0.75rem; }
-.pred-hist-table .pred-submit-at { color: var(--txt3); font-size: 0.72rem; }
+.pred-hist-table .pred-round { font-weight: 700; font-size: 0.9rem; }
+.pred-hist-table .pred-date  { color: var(--txt2); font-size: 0.85rem; }
+.pred-hist-table .pred-submit-at { color: var(--txt3); font-size: 0.82rem; }
 .pred-hist-table .pred-my-num { padding: 7px 6px; }
 .pred-hist-table .pred-winning-nums { /* padding: 6px 8px; */ }
 
@@ -840,7 +840,7 @@
   text-align: center;
   padding: 30px;
   color: var(--txt3);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 /* ══════════════════════════════════════════

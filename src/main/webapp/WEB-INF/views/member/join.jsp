@@ -520,9 +520,9 @@ function openTermsModal(key) {
   if (!data) return;
   modalTitle.textContent = data.title;
   modalBody.innerHTML = data.html;
-  modalBody.scrollTop = 0;
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
+  requestAnimationFrame(function() { modalBody.scrollTop = 0; });
 }
 
 function closeTermsModal() {

@@ -405,3 +405,46 @@
     .mobile-find-links a:hover { color: #fff; }
     .mobile-find-links span { opacity: 0.4; font-size: 0.65rem; }
 
+    /* =============================================
+       모바일 퀵 네비 바
+    ============================================= */
+    .mobile-quick-nav {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-quick-nav {
+        display: flex;
+        background: rgba(27,49,117,0.97);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        position: sticky;
+        top: 58px;
+        z-index: 99;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      }
+
+      .mq-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 11px 0;
+        color: #fff;
+        text-decoration: none;
+        font-size: clamp(0.85rem, 4.2vw, 1.05rem);
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        white-space: nowrap;
+        transition: background 0.18s, color 0.18s;
+        border-right: 1px solid rgba(255,255,255,0.07);
+      }
+
+      .mq-item:last-child { border-right: none; }
+
+      .mq-item:hover,
+      .mq-item.active {
+        background: rgba(255,255,255,0.10);
+        color: #fff;
+      }
+    }
+

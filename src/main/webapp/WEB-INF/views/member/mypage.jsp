@@ -100,7 +100,7 @@
     <div class="mypage-tabs" role="tablist">
       <button class="mypage-tab-btn active" role="tab"
               aria-selected="true" aria-controls="tab-info"
-              onclick="switchTab('info', this)">내 정보 조회/수정</button>
+              onclick="switchTab('info', this)">내 정보 조회/변경</button>
       <button class="mypage-tab-btn" role="tab"
               aria-selected="false" aria-controls="tab-predict"
               onclick="switchTab('predict', this)">내 예측번호</button>

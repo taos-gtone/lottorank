@@ -35,9 +35,9 @@
   letter-spacing: -0.5px;
 }
 .page-desc {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: rgba(255,255,255,0.88);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* ── 본문 ── */
@@ -66,7 +66,7 @@
   padding: 14px 20px;
   border: none;
   background: transparent;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--txt2);
   cursor: pointer;
@@ -112,14 +112,14 @@
   color: #fff;
   padding: 6px 14px;
   border-radius: 50px;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 800;
   letter-spacing: -0.2px;
 }
 .rank-list-count {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: var(--txt2);
-  font-weight: 600;
+  font-weight: 700;
 }
 .rank-list-count strong {
   color: var(--blue);
@@ -131,14 +131,14 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--txt2);
 }
 .rank-list-size-select {
   padding: 5px 10px;
   border: 1.5px solid var(--line);
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--txt);
   background: #fff;
   cursor: pointer;
@@ -164,16 +164,16 @@
   justify-content: center;
   width: 100%;
   padding: 11px 10px;
-  color: var(--txt3);
-  font-weight: 700;
-  font-size: 0.75rem;
+  color: var(--navy);
+  font-weight: 800;
+  font-size: 0.92rem;
   text-decoration: none;
   transition: color 0.15s, background 0.15s;
   white-space: nowrap;
 }
 .sort-link:hover { color: var(--blue); background: #F0F3FA; }
 .sort-link.sort-active { color: var(--blue); }
-.sort-icon { font-size: 0.68rem; margin-left: 2px; opacity: 0.75; }
+.sort-icon { font-size: 0.72rem; margin-left: 2px; opacity: 0.75; }
 
 /* ── 테이블 ── */
 .rank-list-table {
@@ -183,9 +183,9 @@
 }
 .rank-list-table th {
   background: #FAFBFD;
-  font-size: 0.75rem;
-  color: var(--txt3);
-  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--navy);
+  font-weight: 800;
   padding: 0;
   border-bottom: 2px solid var(--line);
   border-left: 1px solid var(--line);
@@ -202,7 +202,7 @@
   padding: 11px 14px;
   border-bottom: 1px solid var(--line);
   border-left: 1px solid var(--line);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--txt);
   text-align: center;
   vertical-align: middle;
@@ -290,8 +290,8 @@
   background: rgba(22, 163, 74, 0.10);
   border: 1px solid rgba(22, 163, 74, 0.2);
   color: #16A34A;
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.88rem;
+  font-weight: 800;
   white-space: nowrap;
 }
 
@@ -302,7 +302,7 @@
   justify-content: center;
   padding: 3px 10px;
   border-radius: 4px;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 700;
 }
 .grade-1 { background: rgba(255,215,0,0.15); color: #B7791F; border: 1px solid rgba(255,215,0,0.4); }
@@ -343,8 +343,8 @@
   border-radius: 6px;
   background: #fff;
   color: var(--txt2);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.15s;
   text-decoration: none;

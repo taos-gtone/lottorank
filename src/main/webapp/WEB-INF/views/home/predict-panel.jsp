@@ -46,7 +46,7 @@
                 <div class="howto-icon">📊</div>
                 <div class="howto-text">
                   <div class="howto-title">적중률 & 랭킹 집계</div>
-                  <div class="howto-desc">실제 당첨번호와 비교해서 자동으로 등급기준에 따라 회원 랭킹을 산출합니다.</div>
+                  <div class="howto-desc">실제 당첨번호와 비교해서 등급기준에 따라 자동으로 회원 랭킹을 산출합니다.</div>
                 </div>
               </div>
               <div class="howto-step">

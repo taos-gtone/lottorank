@@ -172,12 +172,28 @@
     </div>
   </header>
 
+  <!-- 모바일 퀵 네비 바 -->
+  <nav class="mobile-quick-nav">
+    <a href="${pageContext.request.contextPath}/lotto/results" class="mq-item">당첨번호</a>
+    <a href="${pageContext.request.contextPath}/ranking/no" class="mq-item">회원번호</a>
+    <a href="${pageContext.request.contextPath}/predict" class="mq-item">번호예측</a>
+    <a href="${pageContext.request.contextPath}/board/list" class="mq-item">커뮤니티</a>
+    <a href="${pageContext.request.contextPath}/member/mypage" class="mq-item">마이페이지</a>
+  </nav>
+
   <script>
     (function() {
       var path = window.location.pathname;
       document.querySelectorAll('.main-nav .nav-item[data-path]').forEach(function(el) {
         if (path.indexOf(el.dataset.path) === 0) {
           el.classList.add('active');
+        }
+      });
+      // 모바일 퀵 네비 활성화
+      document.querySelectorAll('.mq-item').forEach(function(a) {
+        var href = a.getAttribute('href');
+        if (href && path.indexOf(new URL(href, location.href).pathname) === 0) {
+          a.classList.add('active');
         }
       });
     })();

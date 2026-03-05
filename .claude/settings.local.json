@@ -5,7 +5,8 @@
       "Bash(where:*)",
       "Bash(powershell -ExecutionPolicy Bypass -File:*)",
       "Bash(xargs grep -l \"SecurityConfig\\\\|HttpSecurity\\\\|filterChain\\\\|WebSecurityConfigurerAdapter\")",
-      "Bash(xargs grep -l \"LottoRankDB\\\\|lottorank\")"
+      "Bash(xargs grep -l \"LottoRankDB\\\\|lottorank\")",
+      "Bash(grep -l \"modal\\\\|popup\\\\|dialog\" /c/projects/lottorank/src/main/webapp/css/**/*.css)"
     ]
   }
 }

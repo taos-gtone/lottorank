@@ -20,23 +20,25 @@
             <div class="fsoc" title="유튜브">▶️</div>
           </div>
         </div>
-        <div>
-          <div class="footer-col-title">서비스</div>
-          <ul class="footer-links">
-            <li><a href="${pageContext.request.contextPath}/lotto/results">회차별 당첨번호</a></li>
-            <li><a href="${pageContext.request.contextPath}/ranking/no">회원번호 조회</a></li>
-            <li><a href="${pageContext.request.contextPath}/ranking/list">회원 랭킹</a></li>
-            <li><a href="${pageContext.request.contextPath}/predict">번호 예측하기</a></li>
-          </ul>
-        </div>
-        <div>
-          <div class="footer-col-title">고객지원</div>
-          <ul class="footer-links">
-            <li><a href="${pageContext.request.contextPath}/policy/terms">이용약관</a></li>
-            <li><a href="${pageContext.request.contextPath}/policy/privacy">개인정보처리방침</a></li>
-            <li><a href="#">공지사항</a></li>
-            <li><a href="#">고객센터</a></li>
-          </ul>
+        <div class="footer-cols-wrap">
+          <div>
+            <div class="footer-col-title">서비스</div>
+            <ul class="footer-links">
+              <li><a href="${pageContext.request.contextPath}/lotto/results">회차별 당첨번호</a></li>
+              <li><a href="${pageContext.request.contextPath}/ranking/no">회원번호 조회</a></li>
+              <li><a href="${pageContext.request.contextPath}/ranking/list">회원 랭킹</a></li>
+              <li><a href="${pageContext.request.contextPath}/predict">번호 예측하기</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="footer-col-title">고객지원</div>
+            <ul class="footer-links">
+              <li><a href="${pageContext.request.contextPath}/policy/terms">이용약관</a></li>
+              <li><a href="${pageContext.request.contextPath}/policy/privacy">개인정보처리방침</a></li>
+              <li><a href="#">공지사항</a></li>
+              <li><a href="#">고객센터</a></li>
+            </ul>
+          </div>
         </div>
       </div>
       <div class="footer-bottom">

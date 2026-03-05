@@ -8,11 +8,21 @@
 
     .footer-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-columns: 2fr 1fr;
       gap: 32px;
       margin-bottom: 28px;
       padding-bottom: 28px;
       border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    /* 서비스 + 고객지원 래퍼: 항상 flex 2열 */
+    .footer-cols-wrap {
+      display: flex;
+      gap: 32px;
+    }
+
+    .footer-cols-wrap > div {
+      flex: 1;
     }
 
     .footer-logo {
@@ -40,7 +50,7 @@
     }
 
     .footer-desc {
-      font-size: 0.88rem;
+      font-size: 1rem;
       color: rgba(255,255,255,0.35);
       line-height: 1.8;
       margin-bottom: 14px;
@@ -65,7 +75,7 @@
     .fsoc:hover { background: rgba(40,81,163,0.4); border-color: rgba(40,81,163,0.5); }
 
     .footer-col-title {
-      font-size: 0.92rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: rgba(255,255,255,0.55);
       margin-bottom: 14px;
@@ -76,7 +86,7 @@
     .footer-links { display: flex; flex-direction: column; gap: 9px; }
 
     .footer-links a {
-      font-size: 0.88rem;
+      font-size: 1rem;
       color: rgba(255,255,255,0.35);
       transition: color 0.2s;
     }
@@ -92,14 +102,27 @@
     }
 
     .footer-copy {
-      font-size: 0.82rem;
+      font-size: 0.95rem;
       color: rgba(255,255,255,0.25);
     }
 
     .footer-disclaimer {
-      font-size: 0.78rem;
+      font-size: 0.9rem;
       color: rgba(255,255,255,0.22);
       max-width: 480px;
       text-align: right;
+    }
+
+    /* ── 반응형 ── */
+    @media (max-width: 768px) {
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .footer-disclaimer {
+        text-align: left;
+      }
     }
 
