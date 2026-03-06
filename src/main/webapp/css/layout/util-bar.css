@@ -89,6 +89,11 @@
   .util-gold { display: none; }
 }
 
+/* ── 모바일 헤더에 로그인/가입 버튼이 있으므로 util-bar에선 숨김 ── */
+@media (max-width: 900px) {
+  .util-auth-link { display: none; }
+}
+
 /* ── 모바일 (480px 이하) ── */
 @media (max-width: 480px) {
   .util-notice { display: none; }

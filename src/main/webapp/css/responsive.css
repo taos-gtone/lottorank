@@ -9,8 +9,21 @@
     @media (max-width: 900px) {
       .util-bar { display: none; }
       .main-nav { display: none; }
-      .header-actions { display: none; }
-      .hamburger { display: flex; }
+      .header-actions { display: flex; }
+      .header-session-wrap { display: none; }
+      .btn-login, .btn-join {
+        background: none;
+        border: none;
+        padding: 0 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #fff;
+        border-right: 1px solid rgba(255,255,255,0.2);
+        border-radius: 0;
+      }
+      .btn-join { border-right: none; }
+      .btn-login:hover, .btn-join:hover { color: #fff; background: none; }
+      .hamburger { display: flex; margin-left: 8px; }
 
       .hero-grid { grid-template-columns: 1fr; }
       .hero-sidebar { display: none; }

@@ -17,8 +17,8 @@
         </div>
         <div class="util-links">
           <% if (!_uLoggedIn) { %>
-          <a href="/member/login">로그인</a>
-          <a href="/member/join">회원가입</a>
+          <a href="/member/login" class="util-auth-link">로그인</a>
+          <a href="/member/join" class="util-auth-link">회원가입</a>
           <% } %>
           <% if (_uLoggedIn) { %>
           <a href="/member/mypage">마이페이지</a>

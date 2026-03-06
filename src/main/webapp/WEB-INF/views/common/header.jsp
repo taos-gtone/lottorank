@@ -161,7 +161,7 @@
         <% } else { %>
         <div class="header-actions">
           <button class="btn-login" onclick="Progress.start();location.href='/member/login'">로그인</button>
-          <button class="btn-join" onclick="Progress.start();location.href='/member/join'">무료 회원가입</button>
+          <button class="btn-join" onclick="Progress.start();location.href='/member/join'">회원가입</button>
         </div>
         <% } %>
 
