@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+    <!-- SQL 줄 바꿈 Converter 등록 -->
+    <conversionRule conversionWord="sqlMsg"
+                    converterClass="com.lottorank.logging.SqlPrettyConverter"/>
+
+    <!-- 콘솔 appender: %sqlMsg 로 SQL Preparing 메시지만 줄 바꿈 적용 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %sqlMsg%n</pattern>
         </encoder>
     </appender>
 
     <logger name="com.lottorank" level="DEBUG"/>
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.mybatis" level="DEBUG"/>
+    <logger name="org.apache.ibatis" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

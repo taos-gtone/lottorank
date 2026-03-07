@@ -63,8 +63,8 @@
     <div class="board-title-wrap">
       <h1>💬 랭크 커뮤니티</h1>
       <span class="board-count-badge">총 <%= totalCount %>개 게시글</span>
+      <p>로또 정보와 꿀팁을 자유롭게 나눠보세요!</p>
     </div>
-    <p>로또 정보와 꿀팁을 자유롭게 나눠보세요!</p>
   </div>
 </div>
 

@@ -31,8 +31,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">🔍 아이디 찾기</h1>
+      <p class="page-desc">가입 시 등록한 이름과 이메일로 아이디를 확인하세요.</p>
     </div>
-    <p class="page-desc">가입 시 등록한 이름과 이메일로 아이디를 확인하세요.</p>
   </div>
 </div>
 

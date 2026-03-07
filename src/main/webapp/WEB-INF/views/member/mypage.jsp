@@ -85,8 +85,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">👤 마이페이지</h1>
+      <p class="page-desc">내 정보를 조회하고 수정할 수 있습니다.</p>
     </div>
-    <p class="page-desc">내 정보를 조회하고 수정할 수 있습니다.</p>
   </div>
 </div>
 

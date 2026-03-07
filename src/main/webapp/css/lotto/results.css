@@ -5,12 +5,13 @@
 /* 페이지 배너 */
 .page-banner {
   background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
-  padding: 32px 0;
+  padding: 0;
 }
 
 .page-breadcrumb {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.5);
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -18,7 +19,7 @@
 }
 
 .page-breadcrumb a {
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.75);
   transition: color 0.2s;
 }
 
@@ -30,7 +31,6 @@
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin-bottom: 6px;
   flex-wrap: wrap;
 }
 
@@ -48,8 +48,9 @@
 }
 
 .page-desc {
-  font-size: 0.95rem;
-  color: rgba(255,255,255,0.65);
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.88);
+  font-weight: 500;
 }
 
 /* =============================================
@@ -454,7 +455,6 @@
 ============================================= */
 @media (max-width: 900px) {
   .filter-bar { top: 0; }
-  .page-banner { padding: 22px 0; }
   .page-title { font-size: 1.3rem; }
   .page-title-wrap { gap: 8px; }
 
@@ -529,7 +529,7 @@
 
   .rounds-table td::before {
     content: "";
-    font-size: 0.72rem;
+    font-size: 0.85rem;
     color: var(--txt3);
     font-weight: 700;
     line-height: 1.4;
@@ -550,20 +550,19 @@
   }
 
   .rounds-table .ball {
-    width: 27px;
-    height: 27px;
-    font-size: 0.66rem;
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
   }
 
   .round-date,
   .prize-1st,
-  .winner-count { font-size: 0.8rem; }
+  .winner-count { font-size: 1.1rem; }
 
-  .round-num { font-size: 0.88rem; }
+  .round-num { font-size: 1.15rem; }
 }
 
 @media (max-width: 600px) {
-  .page-banner { padding: 18px 0; }
   .page-breadcrumb { font-size: 0.7rem; }
   .page-title-wrap {
     flex-direction: column;
@@ -576,19 +575,19 @@
   .lotto-content { padding: 12px 0 28px; }
   .rounds-card { border-radius: 6px; }
   .rounds-card-title {
-    font-size: 0.86rem;
+    font-size: 1rem;
     gap: 6px;
   }
   .rounds-count-badge {
-    font-size: 0.68rem;
+    font-size: 0.8rem;
     padding: 2px 8px;
   }
 
   .ball-row { gap: 3px; }
   .rounds-table .ball {
-    width: 24px;
-    height: 24px;
-    font-size: 0.62rem;
+    width: 31px;
+    height: 31px;
+    font-size: 0.84rem;
   }
 
   .pagination-wrap {
@@ -596,10 +595,10 @@
     gap: 3px;
   }
   .pg-btn {
-    min-width: 32px;
-    height: 32px;
-    font-size: 0.78rem;
+    min-width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
     padding: 0 8px;
   }
-  .pg-ellipsis { height: 32px; }
+  .pg-ellipsis { height: 34px; }
 }

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 72" width="320" height="72" role="img" aria-label="LOTTO RANK logo">
+  <defs>
+    <linearGradient id="lr-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#214DAA"/>
+      <stop offset="100%" stop-color="#10244E"/>
+    </linearGradient>
+    <linearGradient id="lr-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7EC2FF"/>
+      <stop offset="100%" stop-color="#A9D8FF"/>
+    </linearGradient>
+    <linearGradient id="lr-gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFE17A"/>
+      <stop offset="100%" stop-color="#E99A00"/>
+    </linearGradient>
+    <radialGradient id="ball-yellow" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFF3A8"/>
+      <stop offset="100%" stop-color="#E9A411"/>
+    </radialGradient>
+    <radialGradient id="ball-blue" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#A6D7FF"/>
+      <stop offset="100%" stop-color="#2E62D6"/>
+    </radialGradient>
+    <radialGradient id="ball-red" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFADAD"/>
+      <stop offset="100%" stop-color="#C93333"/>
+    </radialGradient>
+    <filter id="lr-shadow" x="-10%" y="-20%" width="130%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#07152F" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#lr-shadow)">
+    <rect x="4" y="6" width="312" height="60" rx="30" fill="url(#lr-bg)"/>
+    <rect x="4" y="6" width="312" height="60" rx="30" fill="none" stroke="url(#lr-stroke)" stroke-width="1.5"/>
+    <rect x="13" y="13" width="294" height="22" rx="11" fill="#FFFFFF" opacity="0.08"/>
+  </g>
+
+  <g transform="translate(18 14)">
+    <circle cx="22" cy="22" r="21" fill="#0D285F" stroke="#8BCEFF" stroke-width="1.5"/>
+    <circle cx="14" cy="15" r="5.1" fill="url(#ball-yellow)"/>
+    <circle cx="28" cy="15" r="5.1" fill="url(#ball-blue)"/>
+    <circle cx="21" cy="28" r="5.1" fill="url(#ball-red)"/>
+    <text x="14" y="17.3" text-anchor="middle" font-family="Arial, sans-serif" font-size="4.2" font-weight="700" fill="#FFFFFF">7</text>
+    <text x="28" y="17.3" text-anchor="middle" font-family="Arial, sans-serif" font-size="4.2" font-weight="700" fill="#FFFFFF">14</text>
+    <text x="21" y="30.2" text-anchor="middle" font-family="Arial, sans-serif" font-size="4.2" font-weight="700" fill="#FFFFFF">23</text>
+
+    <rect x="8.5" y="31" width="4.4" height="7" rx="1.2" fill="#88C7FF"/>
+    <rect x="15.5" y="28" width="4.4" height="10" rx="1.2" fill="#A8D9FF"/>
+    <rect x="22.5" y="24.5" width="4.4" height="13.5" rx="1.2" fill="#C4E7FF"/>
+    <rect x="29.5" y="20" width="4.4" height="18" rx="1.2" fill="#D8F0FF"/>
+    <path d="M10.8 30.2 L17.7 24.6 L24.7 26.7 L31.7 16.8" fill="none" stroke="url(#lr-gold)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M29.9 16.5 L33.7 16.9 L31.7 20.1" fill="none" stroke="url(#lr-gold)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g transform="translate(68 0)">
+    <text x="0" y="33" font-family="Arial, 'Helvetica Neue', sans-serif" font-size="10" font-weight="700" letter-spacing="2.3" fill="#B7D9FF">LOTTERY PREDICTION PLATFORM</text>
+    <text x="0" y="54" font-family="Arial, 'Helvetica Neue', sans-serif" font-size="28" font-weight="900" letter-spacing="0.6" fill="#FFFFFF">LOTTO</text>
+    <text x="102" y="54" font-family="Arial, 'Helvetica Neue', sans-serif" font-size="28" font-weight="900" letter-spacing="0.6" fill="url(#lr-gold)">RANK</text>
+    <circle cx="216" cy="48" r="3" fill="#FFD85F"/>
+    <circle cx="227" cy="48" r="3" fill="#65B5FF"/>
+    <circle cx="238" cy="48" r="3" fill="#F86A6A"/>
+  </g>
+</svg>

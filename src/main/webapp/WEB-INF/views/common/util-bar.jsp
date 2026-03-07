@@ -26,7 +26,7 @@
           <a href="/member/login?redirect=/member/mypage">마이페이지</a>
           <% } %>
           <a href="#" class="util-gold">🏆 골드회원 간편결제</a>
-          <a href="#" style="margin-left:8px;">≡ 전체메뉴</a>
+          <a href="${pageContext.request.contextPath}/sitemap" style="margin-left:8px;">≡ 전체메뉴</a>
         </div>
       </div>
     </div>

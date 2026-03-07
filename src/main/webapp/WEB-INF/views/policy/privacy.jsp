@@ -29,8 +29,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">🔒 개인정보처리방침</h1>
+      <p class="page-desc">로또랭크가 수집·이용하는 개인정보에 대해 안내합니다.</p>
     </div>
-    <p class="page-desc">로또랭크가 수집·이용하는 개인정보에 대해 안내합니다.</p>
   </div>
 </div>
 

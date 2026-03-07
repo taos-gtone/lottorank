@@ -74,8 +74,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">✍ 네이버 간편 가입</h1>
+      <p class="page-desc">네이버 계정 정보로 빠르게 가입하세요!</p>
     </div>
-    <p class="page-desc">네이버 계정 정보로 빠르게 가입하세요!</p>
   </div>
 </div>
 

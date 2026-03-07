@@ -46,8 +46,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">✍ 회원가입</h1>
+      <p class="page-desc">로또랭크와 함께 예측 랭킹을 쌓아보세요!</p>
     </div>
-    <p class="page-desc">로또랭크와 함께 예측 랭킹을 쌓아보세요!</p>
   </div>
 </div>
 
@@ -81,23 +81,6 @@
         <span class="join-card-badge">STEP 1 / 3</span>
       </div>
       <div class="join-card-body">
-
-      <!-- SNS 간편 가입 -->
-      <div class="sns-section">
-        <p class="sns-label">SNS 간편 가입</p>
-        <div class="sns-btns">
-          <button type="button" class="sns-btn sns-naver"
-                  onclick="window.location.href='${pageContext.request.contextPath}/member/naver/join'">
-            <span class="sns-icon">N</span>네이버 계정으로 가입
-          </button>
-          <button type="button" class="sns-btn sns-kakao"
-                  onclick="window.location.href='${pageContext.request.contextPath}/member/kakao/join'">
-            <span class="sns-icon">💬</span>카카오 계정으로 가입
-          </button>
-        </div>
-      </div>
-
-      <div class="divider-or"><span>또는 이메일로 가입</span></div>
 
       <!-- 약관 동의 영역 -->
       <div class="terms-section">
@@ -137,6 +120,22 @@
       </div><!-- /terms-section -->
 
       <button type="button" class="btn-step-next" id="btn1Next">다음 단계</button>
+
+      <div class="divider-or"><span>SNS 간편 가입</span></div>
+
+      <!-- SNS 간편 가입 -->
+      <div class="sns-section">
+        <div class="sns-btns">
+          <button type="button" class="sns-btn sns-naver"
+                  onclick="window.location.href='${pageContext.request.contextPath}/member/naver/join'">
+            <span class="sns-icon">N</span>네이버 계정으로 가입
+          </button>
+          <button type="button" class="sns-btn sns-kakao"
+                  onclick="window.location.href='${pageContext.request.contextPath}/member/kakao/join'">
+            <span class="sns-icon">💬</span>카카오 계정으로 가입
+          </button>
+        </div>
+      </div>
 
       </div><!-- /join-card-body -->
     </div><!-- /step1 -->

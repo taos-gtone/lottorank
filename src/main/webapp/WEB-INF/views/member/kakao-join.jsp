@@ -54,8 +54,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">✍ 카카오 간편 가입</h1>
+      <p class="page-desc">카카오 계정으로 빠르게 가입하세요!</p>
     </div>
-    <p class="page-desc">카카오 계정으로 빠르게 가입하세요!</p>
   </div>
 </div>
 

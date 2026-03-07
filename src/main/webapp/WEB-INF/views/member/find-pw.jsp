@@ -31,8 +31,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">🔑 비밀번호 찾기</h1>
+      <p class="page-desc">아이디, 이름, 이메일로 본인 확인 후 임시 비밀번호를 발급받으세요.</p>
     </div>
-    <p class="page-desc">아이디, 이름, 이메일로 본인 확인 후 임시 비밀번호를 발급받으세요.</p>
   </div>
 </div>
 

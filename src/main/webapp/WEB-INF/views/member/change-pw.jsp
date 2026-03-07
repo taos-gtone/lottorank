@@ -29,8 +29,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">🔒 비밀번호 변경</h1>
+      <p class="page-desc">임시 비밀번호를 사용 중입니다. 안전한 새 비밀번호로 변경해 주세요.</p>
     </div>
-    <p class="page-desc">임시 비밀번호를 사용 중입니다. 안전한 새 비밀번호로 변경해 주세요.</p>
   </div>
 </div>
 

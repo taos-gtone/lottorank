@@ -5,7 +5,7 @@
 /* ── 페이지 배너 ── */
 .page-banner {
   background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
-  padding: 32px 0;
+  padding: 0;
 }
 
 .page-breadcrumb {
@@ -26,7 +26,6 @@
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin-bottom: 6px;
   flex-wrap: wrap;
 }
 
@@ -354,13 +353,11 @@
 
 @media (max-width: 768px) {
   .login-wrap { padding: 24px 12px 60px; }
-  .page-banner { padding: 22px 0; }
   .page-title  { font-size: 1.3rem; }
 }
 
 @media (max-width: 480px) {
   .login-wrap { padding: 16px 10px 52px; align-items: flex-start; }
-  .page-banner { padding: 18px 0; }
   .page-title  { font-size: 1.15rem; }
   .page-desc   { font-size: 0.78rem; }
 
@@ -372,6 +369,7 @@
   .btn-login-submit { padding: 14px; font-size: 0.95rem; }
 
   .login-option-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .login-util-links { width: 100%; justify-content: center; }
 
   .login-benefit { flex-direction: column; text-align: center; gap: 8px; }
 }

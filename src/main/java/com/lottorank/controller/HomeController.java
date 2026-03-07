@@ -49,4 +49,9 @@ public class HomeController {
         }
         return "index";
     }
+
+    @GetMapping("/sitemap")
+    public String sitemap() {
+        return "common/sitemap";
+    }
 }

@@ -71,8 +71,8 @@
     <div class="page-title-wrap">
       <h1 class="page-title">🎱 회차별 당첨번호</h1>
       <span class="page-round-info">총 ${totalCount}회차</span>
+      <p class="page-desc">역대 로또 6/45 당첨번호를 회차별로 확인하세요.</p>
     </div>
-    <p class="page-desc">역대 로또 6/45 당첨번호를 회차별로 확인하세요.</p>
   </div>
 </div>
 

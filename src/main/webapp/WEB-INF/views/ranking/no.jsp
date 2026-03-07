@@ -76,8 +76,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">🎯 회원 예측번호 조회</h1>
+      <p class="page-desc"><%=nextRoundNo%>회 추첨을 위해 제출된 회원들의 예측번호를 확인하세요.</p>
     </div>
-    <p class="page-desc"><%=nextRoundNo%>회 추첨을 위해 제출된 회원들의 예측번호를 확인하세요.</p>
   </div>
 </div>
 

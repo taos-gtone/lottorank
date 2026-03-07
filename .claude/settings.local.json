@@ -6,7 +6,18 @@
       "Bash(powershell -ExecutionPolicy Bypass -File:*)",
       "Bash(xargs grep -l \"SecurityConfig\\\\|HttpSecurity\\\\|filterChain\\\\|WebSecurityConfigurerAdapter\")",
       "Bash(xargs grep -l \"LottoRankDB\\\\|lottorank\")",
-      "Bash(grep -l \"modal\\\\|popup\\\\|dialog\" /c/projects/lottorank/src/main/webapp/css/**/*.css)"
+      "Bash(grep -l \"modal\\\\|popup\\\\|dialog\" /c/projects/lottorank/src/main/webapp/css/**/*.css)",
+      "Bash(for f in src/main/webapp/css/policy/policy.css src/main/webapp/css/common/sitemap.css src/main/webapp/css/ranking/list.css src/main/webapp/css/lotto/results.css src/main/webapp/css/member/find.css src/main/webapp/css/member/join.css src/main/webapp/css/member/mypage.css src/main/webapp/css/member/login.css src/main/webapp/css/ranking/no.css)",
+      "Bash(do sed -i 's/padding: 32px 0;/padding: 18px 0;/g' \"$f\")",
+      "Bash(echo \"Updated: $f\")",
+      "Bash(done)",
+      "Bash(do sed -i 's/padding: 18px 0;/padding: 16px 0;/g' \"$f\")",
+      "Bash(for f in src/main/webapp/WEB-INF/views/common/sitemap.jsp src/main/webapp/WEB-INF/views/lotto/results.jsp src/main/webapp/WEB-INF/views/member/join.jsp src/main/webapp/WEB-INF/views/member/login.jsp src/main/webapp/WEB-INF/views/member/mypage.jsp src/main/webapp/WEB-INF/views/ranking/list.jsp src/main/webapp/WEB-INF/views/member/find-pw.jsp src/main/webapp/WEB-INF/views/member/change-pw.jsp src/main/webapp/WEB-INF/views/member/find-id.jsp src/main/webapp/WEB-INF/views/member/kakao-join.jsp src/main/webapp/WEB-INF/views/member/naver-join.jsp src/main/webapp/WEB-INF/views/policy/terms.jsp src/main/webapp/WEB-INF/views/policy/privacy.jsp src/main/webapp/WEB-INF/views/ranking/no.jsp src/main/webapp/WEB-INF/views/predict/predict.jsp)",
+      "Bash(do)",
+      "Bash(perl -0777 -i -pe 's|    </div>\\\\n    \\(<p class=\"\"page-desc\"\">.*?</p>\\)|      $1\\\\n    </div>|gs' \"$f\")",
+      "Bash(echo \"OK: $f\")",
+      "Bash(xxd src/main/webapp/WEB-INF/views/member/login.jsp)",
+      "Bash(perl -0777 -i -pe 's|    </div>\\\\r\\\\n    \\(<p class=\"\"page-desc\"\">.*?</p>\\)|      $1\\\\r\\\\n    </div>|gs' \"$f\")"
     ]
   }
 }

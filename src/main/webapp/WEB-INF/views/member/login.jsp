@@ -29,8 +29,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">🔑 로그인</h1>
+      <p class="page-desc">로또랭크에 오신 것을 환영합니다!</p>
     </div>
-    <p class="page-desc">로또랭크에 오신 것을 환영합니다!</p>
   </div>
 </div>
 
@@ -46,21 +46,6 @@
         <span class="login-card-badge">MEMBERS ONLY</span>
       </div>
       <div class="login-card-body">
-
-        <!-- SNS 간편 로그인 -->
-        <div class="sns-section">
-          <p class="sns-label">SNS 간편 로그인</p>
-          <div class="sns-btns">
-            <button type="button" class="sns-btn sns-naver" id="btnNaverLogin">
-              <span class="sns-icon">N</span>네이버 로그인
-            </button>
-            <button type="button" class="sns-btn sns-kakao" id="btnKakaoLogin">
-              <span class="sns-icon">💬</span>카카오 로그인
-            </button>
-          </div>
-        </div>
-
-        <div class="divider-or"><span>또는 아이디로 로그인</span></div>
 
         <!-- 로그인 폼 -->
         <form id="loginForm" autocomplete="off" novalidate>
@@ -106,6 +91,20 @@
         <div class="login-join-row">
           아직 회원이 아니신가요?
           <a href="${pageContext.request.contextPath}/member/join">무료 회원가입</a>
+        </div>
+
+        <div class="divider-or"><span>SNS 간편 로그인</span></div>
+
+        <!-- SNS 간편 로그인 -->
+        <div class="sns-section">
+          <div class="sns-btns">
+            <button type="button" class="sns-btn sns-naver" id="btnNaverLogin">
+              <span class="sns-icon">N</span>네이버 로그인
+            </button>
+            <button type="button" class="sns-btn sns-kakao" id="btnKakaoLogin">
+              <span class="sns-icon">💬</span>카카오 로그인
+            </button>
+          </div>
         </div>
 
       </div><!-- /login-card-body -->

@@ -5,10 +5,10 @@
 /* ── 페이지 배너 ── */
 .page-banner {
   background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
-  padding: 32px 0;
+  padding: 0;
 }
 .page-breadcrumb {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: rgba(255,255,255,0.75);
   font-weight: 500;
   margin-bottom: 10px;
@@ -19,11 +19,6 @@
 .page-breadcrumb a { color: rgba(255,255,255,0.75); transition: color 0.2s; }
 .page-breadcrumb a:hover { color: #fff; }
 .breadcrumb-sep { margin: 0 5px; }
-.page-title-wrap {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 6px;
   flex-wrap: wrap;
 }
 .page-title {
@@ -33,9 +28,9 @@
   letter-spacing: -0.5px;
 }
 .page-desc {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: rgba(255,255,255,0.88);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* ── 페이지 래퍼 ── */
@@ -264,12 +259,10 @@
 ══════════════════════════════════════════ */
 @media (max-width: 768px) {
   .find-wrap  { padding: 24px 12px 60px; }
-  .page-banner { padding: 22px 0; }
   .page-title  { font-size: 1.3rem; }
 }
 @media (max-width: 480px) {
   .find-wrap  { padding: 16px 10px 52px; }
-  .page-banner { padding: 18px 0; }
   .page-title  { font-size: 1.15rem; }
   .page-desc   { font-size: 0.78rem; }
   .find-card-body { padding: 24px 20px; }

@@ -29,8 +29,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">📋 이용약관</h1>
+      <p class="page-desc">로또랭크 서비스 이용에 관한 조건 및 절차를 안내합니다.</p>
     </div>
-    <p class="page-desc">로또랭크 서비스 이용에 관한 조건 및 절차를 안내합니다.</p>
   </div>
 </div>
 

@@ -5,7 +5,7 @@
 /* ── 페이지 배너 ── */
 .page-banner {
   background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
-  padding: 32px 0;
+  padding: 0;
 }
 
 .page-breadcrumb {
@@ -25,7 +25,6 @@
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin-bottom: 6px;
   flex-wrap: wrap;
 }
 .page-title {
@@ -35,9 +34,9 @@
   letter-spacing: -0.5px;
 }
 .page-desc {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: rgba(255,255,255,0.88);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* ── 본문 ── */
@@ -367,7 +366,6 @@
 /* ── 반응형 ── */
 @media (max-width: 768px) {
   .rank-list-wrap { padding: 24px 12px 60px; }
-  .page-banner    { padding: 22px 0; }
   .page-title     { font-size: 1.3rem; }
   .rank-list-tab-btn { font-size: 0.82rem; padding: 12px 12px; }
 }

@@ -1,6 +1,25 @@
 ﻿    /* =============================================
        반응형
     ============================================= */
+
+    /* ── 페이지 배너 높이 공통 관리 (모든 페이지 일관 적용) ── */
+    .page-banner,
+    .predict-page-banner,
+    .board-banner { padding: 0; height: 76px; }
+    .page-banner .wrap,
+    .predict-page-banner .wrap,
+    .board-banner .wrap { height: 100%; display: flex; flex-direction: column; justify-content: center; }
+    @media (max-width: 900px) {
+      .page-banner,
+      .predict-page-banner,
+      .board-banner { height: 68px; }
+    }
+    @media (max-width: 600px) {
+      .page-banner,
+      .predict-page-banner,
+      .board-banner { height: 60px; }
+    }
+
     @media (max-width: 1100px) {
       .hero-grid { grid-template-columns: 1fr 280px; }
       .content-grid { grid-template-columns: 1fr 300px; }

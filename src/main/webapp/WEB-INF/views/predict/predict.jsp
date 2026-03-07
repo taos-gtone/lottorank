@@ -51,8 +51,8 @@
     <div class="page-title-wrap">
       <div class="page-title">🎰 번호 예측하기</div>
       <span class="page-round-badge">제 <%= roundNo %>회</span>
+      <p class="page-desc">1~45 중 1개의 번호를 선택하고 예측 번호를 제출하세요. 매주 토요일 오후 7시 마감.</p>
     </div>
-    <p class="page-desc">1~45 중 1개의 번호를 선택하고 예측 번호를 제출하세요. 매주 토요일 오후 7시 마감.</p>
   </div>
 </div>
 

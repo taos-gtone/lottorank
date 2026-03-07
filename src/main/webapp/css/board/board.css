@@ -5,19 +5,19 @@
 /* 페이지 배너 - 보라+골드 그라데이션으로 커뮤니티 분위기 */
 .board-banner {
   background: linear-gradient(135deg, #3A2080 0%, #6A45C2 50%, #9B3DB8 100%);
-  padding: 32px 0;
 }
 
 .board-banner .page-breadcrumb {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.5);
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 2px;
 }
-.board-banner .page-breadcrumb a { color: rgba(255,255,255,0.5); transition: color 0.2s; }
-.board-banner .page-breadcrumb a:hover { color: rgba(255,255,255,0.85); }
+.board-banner .page-breadcrumb a { color: rgba(255,255,255,0.75); transition: color 0.2s; }
+.board-banner .page-breadcrumb a:hover { color: #fff; }
 
 .board-banner .breadcrumb-sep { margin: 0 5px; }
 
@@ -25,7 +25,6 @@
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin-bottom: 6px;
   flex-wrap: wrap;
 }
 
@@ -43,11 +42,13 @@
   border: 1px solid rgba(255,255,255,0.25);
   font-size: 0.82rem;
   color: rgba(255,255,255,0.9);
+  line-height: 1;
 }
 
 .board-banner p {
-  font-size: 0.95rem;
-  color: rgba(255,255,255,0.65);
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.88);
+  font-weight: 500;
 }
 
 /* =============================================
@@ -892,7 +893,6 @@
 ============================================= */
 @media (max-width: 900px) {
   .board-search-bar { top: 0; }
-  .board-banner { padding: 22px 0; }
   .board-banner h1 { font-size: 1.3rem; }
   .board-title-wrap { gap: 8px; }
 
@@ -956,7 +956,6 @@
 }
 
 @media (max-width: 600px) {
-  .board-banner { padding: 18px 0; }
   .board-banner .page-breadcrumb { font-size: 0.7rem; }
   .board-title-wrap { flex-direction: column; align-items: flex-start; gap: 4px; }
   .board-banner h1 { font-size: 1.15rem; }

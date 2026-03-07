@@ -5,7 +5,7 @@
 /* ── 페이지 배너 ── */
 .page-banner {
   background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
-  padding: 32px 0;
+  padding: 0;
 }
 
 .page-breadcrumb {
@@ -26,7 +26,6 @@
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin-bottom: 6px;
   flex-wrap: wrap;
 }
 
@@ -513,10 +512,10 @@
 }
 
 /* 순위 변동 색상 — 테이블 td 특이도(0,1,1) 이상으로 스코프 지정 */
-.rank-hist-table .change-up   { color: #EF4444 !important;     font-size: 0.72rem; font-weight: 700; }
-.rank-hist-table .change-down { color: var(--blue) !important; font-size: 0.72rem; font-weight: 700; }
-.rank-hist-table .change-same { color: var(--txt3);            font-size: 0.72rem; }
-.rank-hist-table .change-new  { color: #f59e0b !important;     font-size: 0.68rem; font-weight: 700; }
+.rank-hist-table .change-up   { color: #EF4444 !important;     font-size: 0.9rem; font-weight: 700; }
+.rank-hist-table .change-down { color: var(--blue) !important; font-size: 0.9rem; font-weight: 700; }
+.rank-hist-table .change-same { color: var(--txt3);            font-size: 0.9rem; }
+.rank-hist-table .change-new  { color: #f59e0b !important;     font-size: 0.85rem; font-weight: 700; }
 
 /* 적중률 태그 (ranking.css 미로드 대비) */
 .mypage-wrap .accuracy-tag {
@@ -526,7 +525,7 @@
   background: rgba(22,163,74,0.10);
   border: 1px solid rgba(22,163,74,0.2);
   color: #16A34A;
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -849,14 +848,12 @@
 
 @media (max-width: 768px) {
   .mypage-wrap { padding: 24px 12px 60px; }
-  .page-banner { padding: 22px 0; }
   .page-title  { font-size: 1.3rem; }
   .mypage-tab-content { padding: 24px 20px; }
 }
 
 @media (max-width: 480px) {
   .mypage-wrap   { padding: 16px 10px 52px; }
-  .page-banner   { padding: 18px 0; }
   .page-title    { font-size: 1.15rem; }
   .page-desc     { font-size: 0.78rem; }
 

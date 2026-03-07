@@ -90,8 +90,8 @@
     </div>
     <div class="page-title-wrap">
       <h1 class="page-title">🏆 회원 랭킹</h1>
+      <p class="page-desc"><%=latestRoundNo%>회 기준 회원들의 랭킹을 확인하세요.</p>
     </div>
-    <p class="page-desc"><%=latestRoundNo%>회 기준 회원들의 랭킹을 확인하세요.</p>
   </div>
 </div>
 
