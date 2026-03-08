@@ -40,9 +40,9 @@
             p.del_yn,
             p.create_ts,
             p.update_ts,
-            m.nickname
+            COALESCE(m.nickname, IF(p.member_no = 0, (SELECT admin_id FROM ADM_LOGIN_INFO LIMIT 1), NULL)) AS nickname
         FROM BRD_POST_MST p
-        JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+        LEFT JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
         WHERE 1=1
         <include refid="searchWhere"/>
         ORDER BY p.post_no DESC
@@ -72,9 +72,9 @@
             p.del_yn,
             p.create_ts,
             p.update_ts,
-            m.nickname
+            COALESCE(m.nickname, IF(p.member_no = 0, (SELECT admin_id FROM ADM_LOGIN_INFO LIMIT 1), NULL)) AS nickname
         FROM BRD_POST_MST p
-        JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+        LEFT JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
         WHERE p.post_no = #{postNo}
           AND p.del_yn = 'N'
     </select>

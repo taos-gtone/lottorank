@@ -889,6 +889,82 @@
 .btn-cancel-write:hover { border-color: #6A45C2; color: #6A45C2; }
 
 /* =============================================
+   에디터 툴바 (이미지 첨부 버튼)
+============================================= */
+.editor-toolbar {
+  display: flex; /* PC/모바일 공통 표시 */
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+/* 카메라·갤러리·동영상 버튼은 모바일에서만 */
+.editor-toolbar .btn-img-attach { display: none; }
+@media (max-width: 768px) {
+  .editor-toolbar .btn-img-attach { display: inline-flex; }
+}
+/* 정렬 버튼은 항상 표시 */
+.editor-toolbar .btn-align,
+.editor-toolbar .editor-toolbar-sep { display: inline-flex; }
+
+.btn-img-attach {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 5px;
+  background: var(--bg, #f5f7fb);
+  border: 1px solid var(--line, #d8dee8);
+  color: var(--txt2, #444);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.btn-img-attach:hover { border-color: #6A45C2; color: #6A45C2; background: rgba(106,69,194,0.06); }
+.btn-img-attach input[type="file"] { display: none; }
+
+/* 정렬 버튼 */
+.btn-align {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 32px;
+  border-radius: 5px;
+  background: var(--bg, #f5f7fb);
+  border: 1px solid var(--line, #d8dee8);
+  color: var(--txt2, #555);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+  font-style: normal;
+}
+.btn-align::before { font-family: sans-serif; }
+/* 아이콘 대체: 유니코드 private 영역 대신 CSS content로 텍스트 삽입 */
+#btnAlignLeft::before   { content: '≡'; letter-spacing:-1px; }
+#btnAlignCenter::before { content: '≡'; letter-spacing:-1px; }
+#btnAlignRight::before  { content: '≡'; letter-spacing:-1px; }
+#btnAlignLeft           { position: relative; }
+#btnAlignLeft::after    { content: 'L'; font-size:0.6rem; position:absolute; bottom:2px; right:3px; }
+#btnAlignCenter::after  { content: 'C'; font-size:0.6rem; position:absolute; bottom:2px; right:3px; }
+#btnAlignRight::after   { content: 'R'; font-size:0.6rem; position:absolute; bottom:2px; right:3px; }
+.btn-align:hover        { border-color: #6A45C2; color: #6A45C2; background: rgba(106,69,194,0.06); }
+.btn-align.active       { background: #6A45C2; color: #fff; border-color: #6A45C2; }
+.btn-align.active:hover { background: #5535a8; }
+
+/* 툴바 구분선 */
+.editor-toolbar-sep {
+  display: inline-block;
+  width: 1px; height: 22px;
+  background: var(--line, #d8dee8);
+  margin: 0 2px;
+  vertical-align: middle;
+}
+
+/* =============================================
    반응형
 ============================================= */
 @media (max-width: 900px) {
@@ -962,4 +1038,35 @@
   .board-banner p { font-size: 0.78rem; }
   .board-content { padding: 12px 0 28px; }
   .write-card-header, .board-card-header, .comment-header { padding: 12px 16px; }
+
+  /* 모바일: float 동영상을 블록으로 전환하고 전체 너비로 표시 */
+  .board-video-view {
+    float: none !important;
+    margin: 10px 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  /* YouTube - 16:9 비율 유지 */
+  .bvw-youtube iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9;
+  }
+  /* TikTok - 세로 비율 유지, 최대 높이 제한 */
+  .bvw-tiktok iframe {
+    width: 100% !important;
+    max-width: 325px !important;
+    height: 560px !important;
+    display: block;
+    margin: 0 auto;
+  }
+  /* Instagram - 너비 100%, 높이 적당히 */
+  .bvw-instagram iframe {
+    width: 100% !important;
+    max-width: 480px !important;
+    height: 560px !important;
+    display: block;
+    margin: 0 auto;
+  }
 }

@@ -1,4 +1,5 @@
 <%@ page pageEncoding="UTF-8" %>
+<%@ page import="java.text.NumberFormat, java.util.Locale" %>
   <!-- ===========================
        히어로 영역
   =========================== -->
@@ -42,15 +43,24 @@
               <div class="hstat-label">진행 회차</div>
             </div>
             <div>
-              <div class="hstat-num">3,120</div>
+              <%
+                Integer _curPred = (Integer) request.getAttribute("currentRoundPredCount");
+                Integer _lstPred = (Integer) request.getAttribute("lastRoundPredCount");
+                NumberFormat _nf = NumberFormat.getNumberInstance(Locale.KOREA);
+              %>
+              <div class="hstat-num"><%= _nf.format(_curPred != null ? _curPred : 0) %></div>
               <div class="hstat-label">이번 회차 예측</div>
             </div>
             <div>
-              <div class="hstat-num">72.4%</div>
-              <div class="hstat-label">TOP1 적중률</div>
+              <%
+                Double _hitRate = (Double) request.getAttribute("lastRoundHitRate");
+                String _hitRateStr = (_hitRate != null) ? _hitRate + "%" : "0.0%";
+              %>
+              <div class="hstat-num"><%=_hitRateStr%></div>
+              <div class="hstat-label">전체 적중률</div>
             </div>
             <div>
-              <div class="hstat-num">4,120</div>
+              <div class="hstat-num"><%= _nf.format(_lstPred != null ? _lstPred : 0) %></div>
               <div class="hstat-label">지난 회차 예측</div>
             </div>            
           </div>

@@ -169,6 +169,8 @@
                   </a>
                 </th>
                 <th>닉네임</th>
+                <th style="width:80px;">예측번호</th>
+                <th style="width:80px;">적중여부</th>
                 <th style="width:90px;">
                   <a class="sort-link <%="hitRate".equals(currentSort)?"sort-active":""%>"
                      href="<%=ctx%>/ranking/list?tab=all&page=1&size=<%=pageSize%>&sort=hitRate&dir=<%=hitRateDir%>">
@@ -204,6 +206,16 @@
                 </td>
                 <td class="col-nickname">
                   <%=r.getNickname()%>
+                </td>
+                <td class="col-pred-num">
+                  <% if (r.getPredNum() != null) { %>
+                  <span class="rank-pred-ball <%=r.getPredBallClass()%>"><%=r.getPredNum()%></span>
+                  <% } else { %>
+                  <span class="pred-none-dash">—</span>
+                  <% } %>
+                </td>
+                <td>
+                  <span class="pred-hit-badge <%=r.getHitCss()%>"><%=r.getHitLabel()%></span>
                 </td>
                 <td>
                   <span class="accuracy-tag"><%=r.getHitRateStr()%></span>
@@ -301,6 +313,8 @@
                 <th style="width:70px;">순위</th>
                 <th style="width:80px;">변동</th>
                 <th>닉네임</th>
+                <th style="width:80px;">예측번호</th>
+                <th style="width:80px;">적중여부</th>
                 <th style="width:90px;">적중률</th>
                 <th style="width:80px;">선택수</th>
                 <th style="width:80px;">정답수</th>
@@ -322,6 +336,16 @@
                 </td>
                 <td class="col-nickname">
                   <%=r.getNickname()%>
+                </td>
+                <td class="col-pred-num">
+                  <% if (r.getPredNum() != null) { %>
+                  <span class="rank-pred-ball <%=r.getPredBallClass()%>"><%=r.getPredNum()%></span>
+                  <% } else { %>
+                  <span class="pred-none-dash">—</span>
+                  <% } %>
+                </td>
+                <td>
+                  <span class="pred-hit-badge <%=r.getHitCss()%>"><%=r.getHitLabel()%></span>
                 </td>
                 <td>
                   <span class="accuracy-tag"><%=r.getHitRateStr()%></span>

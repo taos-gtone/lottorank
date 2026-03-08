@@ -1,0 +1,43 @@
+/* =============================================
+   공지사항 - 로그인 화면 색상 재정의
+   board.css의 보라(#6A45C2) 계열을 var(--blue)/var(--navy)로 교체
+============================================= */
+
+/* 검색 버튼 */
+.btn-board-search {
+  background: var(--blue);
+}
+.btn-board-search:hover {
+  background: var(--navy);
+}
+
+/* 검색어 입력창 포커스 테두리 */
+.search-keyword-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(40,81,163,0.12);
+}
+
+/* 검색 결과 수 강조 텍스트 */
+.search-total strong {
+  color: var(--blue);
+}
+
+/* 글목록 카드 헤더 (board-card-title 포함) */
+.board-card-header {
+  background: linear-gradient(90deg, var(--blue), var(--navy));
+}
+
+/* 글쓰기 헤더 버튼 (카드 헤더 안) 텍스트 색 */
+.btn-write-header {
+  color: var(--blue);
+}
+
+/* 본문 내 글쓰기 버튼 (view 화면 하단) */
+.btn-write {
+  background: var(--blue);
+  box-shadow: 0 2px 8px rgba(40,81,163,0.25);
+}
+.btn-write:hover {
+  background: var(--navy);
+  box-shadow: 0 4px 12px rgba(27,49,117,0.3);
+}

@@ -1,19 +1,33 @@
 package com.lottorank.controller;
 
-import com.lottorank.service.BoardService;
-import com.lottorank.vo.BoardCommentVO;
-import com.lottorank.vo.BoardPostVO;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.lottorank.config.UploadPathConfig;
+import com.lottorank.service.BoardService;
+import com.lottorank.vo.BoardCommentVO;
+import com.lottorank.vo.BoardPostVO;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/board")
@@ -25,6 +39,9 @@ public class BoardController {
 
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private ServletContext servletContext;
 
     /** 공통: 현재 로그인 회원번호 (비로그인 시 0) */
     private long getLoginMemberNo(HttpSession session) {
@@ -354,6 +371,67 @@ public class BoardController {
 
         boardService.deleteComment(commentNo, memberNo, postNo);
         result.put("success", true);
+        return ResponseEntity.ok(result);
+    }
+
+    /* ─────────────────────────────────────────
+       이미지 업로드 (AJAX, 클립보드 붙여넣기)
+       저장 경로: uploadDir (로컬/서버 자동 감지)
+       URL 경로:  /uploads/board/{파일명}
+    ───────────────────────────────────────── */
+    private static final String UPLOAD_URL   = "/uploads/board/";
+    private static final long   MAX_IMG_SIZE = 5 * 1024 * 1024; // 5MB
+
+    @PostMapping("/upload/image")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> uploadImage(
+            @RequestParam("image") MultipartFile file,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session  = request.getSession(false);
+        long        memberNo = getLoginMemberNo(session);
+
+        if (memberNo == 0) {
+            result.put("success", false);
+            result.put("msg", "로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            result.put("success", false);
+            result.put("msg", "이미지 파일만 업로드 가능합니다.");
+            return ResponseEntity.ok(result);
+        }
+
+        if (file.getSize() > MAX_IMG_SIZE) {
+            result.put("success", false);
+            result.put("msg", "이미지 크기는 5MB 이하만 가능합니다.");
+            return ResponseEntity.ok(result);
+        }
+
+        try {
+            String ext = "png";
+            if (contentType.contains("jpeg")) ext = "jpg";
+            else if (contentType.contains("gif")) ext = "gif";
+            else if (contentType.contains("webp")) ext = "webp";
+
+            String dateStr  = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            String uid      = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+            String filename = dateStr + "_" + uid + "." + ext;
+
+            File uploadDirFile = new File(UploadPathConfig.resolveBoardDir(servletContext));
+            if (!uploadDirFile.exists()) uploadDirFile.mkdirs();
+
+            file.transferTo(new File(uploadDirFile, filename));
+
+            result.put("success", true);
+            result.put("url", UPLOAD_URL + filename);
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("msg", "업로드 실패: " + e.getMessage());
+        }
         return ResponseEntity.ok(result);
     }
 

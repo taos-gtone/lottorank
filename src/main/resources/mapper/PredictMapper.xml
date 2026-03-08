@@ -16,6 +16,20 @@
         VALUES (#{roundNo}, #{memberNo}, #{predNum}, NOW())
     </insert>
 
+    <select id="countByRound" resultType="int">
+        SELECT COUNT(*) FROM MEM_PRED_NUM WHERE round_no = #{roundNo}
+    </select>
+
+    <!-- 최신 회차(max round) 전체 적중률: 적중수 / 전체예측수 * 100, 소수점 1자리 -->
+    <select id="getLastRoundHitRate" resultType="java.lang.Double">
+        SELECT ROUND(
+                   SUM(CASE WHEN hit_yn = 'Y' THEN 1 ELSE 0 END) * 100.0
+                   / NULLIF(COUNT(*), 0),
+                   1)
+        FROM MEM_PRED_NUM
+        WHERE round_no = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)
+    </select>
+
     <!--
         회원의 전체 예측 이력 조회
         - LTT_ROUND_RESULT 전 회차 기준으로 LEFT JOIN

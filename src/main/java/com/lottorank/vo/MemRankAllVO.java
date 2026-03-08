@@ -16,6 +16,8 @@ public class MemRankAllVO {
     private double  hitRate;       // ROUND(win_cnt * 100.0 / sel_num_cnt, 1)
     private Integer rankChange;    // prev_ranking - ranking (null이면 신규)
     private boolean hasPred;       // 다음 예측 회차 예측번호 제출 여부
+    private String  predNum;       // 해당 회차 예측번호 (null=미제출)
+    private String  hitYn;         // 적중여부 (Y/N/null=대기중)
 
     private static final String[] EMOJIS = {"🦁", "🎯", "🔮", "🌊", "🌙", "🍀"};
 
@@ -97,4 +99,37 @@ public class MemRankAllVO {
 
     public boolean isHasPred()            { return hasPred; }
     public void setHasPred(boolean v)     { this.hasPred = v; }
+
+    public String getPredNum()            { return predNum; }
+    public void setPredNum(String v)      { this.predNum = v; }
+
+    public String getHitYn()              { return hitYn; }
+    public void setHitYn(String v)        { this.hitYn = v; }
+
+    /** 예측번호 볼 색상 CSS 클래스 */
+    public String getPredBallClass() {
+        if (predNum == null) return "";
+        int n = Integer.parseInt(predNum);
+        if (n <= 10) return "ball-y";
+        if (n <= 20) return "ball-b";
+        if (n <= 30) return "ball-r";
+        if (n <= 40) return "ball-g";
+        return "ball-gr";
+    }
+
+    /** 적중여부 라벨 */
+    public String getHitLabel() {
+        if (predNum == null) return "미제출";
+        if ("Y".equals(hitYn)) return "적중";
+        if ("N".equals(hitYn)) return "미적중";
+        return "대기중";
+    }
+
+    /** 적중여부 CSS 클래스 */
+    public String getHitCss() {
+        if (predNum == null) return "hit-none";
+        if ("Y".equals(hitYn)) return "hit-yes";
+        if ("N".equals(hitYn)) return "hit-no";
+        return "hit-wait";
+    }
 }

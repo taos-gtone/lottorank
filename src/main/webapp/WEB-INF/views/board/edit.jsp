@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.lottorank.vo.BoardPostVO" %>
+<%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -57,8 +58,8 @@
     </div>
     <div class="board-title-wrap">
       <h1>✏️ 글수정</h1>
+      <p>작성하신 글을 수정합니다.</p>
     </div>
-    <p>작성하신 글을 수정합니다.</p>
   </div>
 </div>
 
@@ -79,10 +80,30 @@
                  required>
         </div>
         <div class="form-group">
-          <label class="form-label" for="content">내용 <span style="color:var(--red)">*</span></label>
-          <textarea id="content" name="content"
-                    class="form-textarea"
-                    required><%= org.springframework.web.util.HtmlUtils.htmlEscape(post.getContent()) %></textarea>
+          <label class="form-label">내용 <span style="color:var(--red)">*</span></label>
+          <!-- 실제 폼 전송용 hidden textarea -->
+          <textarea id="content" name="content" style="display:none"></textarea>
+          <!-- 시각적 에디터 (이미지 붙여넣기 지원) -->
+          <div id="contentEditor" contenteditable="true" class="form-editor"
+               data-placeholder="내용을 입력하세요. 이미지는 Ctrl+V로 바로 붙여넣을 수 있습니다."></div>
+          <div class="editor-toolbar">
+            <label class="btn-img-attach" title="카메라로 직접 촬영">
+              📷 <span>카메라</span>
+              <input type="file" id="imgCameraInput" accept="image/*" capture="camera">
+            </label>
+            <label class="btn-img-attach" title="갤러리에서 이미지 선택">
+              🖼️ <span>갤러리</span>
+              <input type="file" id="imgGalleryInput" accept="image/*" multiple>
+            </label>
+            <button type="button" class="btn-img-attach" id="btnVideoLink" title="유튜브·틱톡·인스타그램 동영상 링크 삽입">
+              🎬 <span>동영상 링크</span>
+            </button>
+            <span class="editor-toolbar-sep"></span>
+            <button type="button" class="btn-align" id="btnAlignLeft"   onclick="setAlign('left')"   title="좌측 정렬"></button>
+            <button type="button" class="btn-align" id="btnAlignCenter" onclick="setAlign('center')" title="가운데 정렬"></button>
+            <button type="button" class="btn-align" id="btnAlignRight"  onclick="setAlign('right')"  title="우측 정렬"></button>
+          </div>
+          <p class="img-paste-hint">💡 PC: 이미지 Ctrl+V · 모바일: 📷 카메라 / 🖼️ 갤러리 / 🎬 동영상 링크 · 유튜브 Shorts 지원</p>
         </div>
         <div class="write-form-actions">
           <a href="<%= contextPath %>/board/view/<%= post.getPostNo() %>" class="btn-cancel-write">취소</a>
@@ -190,6 +211,26 @@
 
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
+<script src="${pageContext.request.contextPath}/resources/js/board-image-editor.js"></script>
+
+<style>
+  .form-editor {
+    min-height: 250px; padding: 12px 14px;
+    border: 1px solid var(--border, #d8dee8); border-radius: 8px;
+    outline: none; font-size: 0.95rem; line-height: 1.7;
+    word-break: break-word; cursor: text; background: #fff;
+    box-sizing: border-box; width: 100%;
+  }
+  .form-editor:focus { border-color: var(--primary, #3b82f6); box-shadow: 0 0 0 2px rgba(59,130,246,.15); }
+  .form-editor[data-placeholder]:empty::before {
+    content: attr(data-placeholder); color: #aaa; pointer-events: none; display: block;
+  }
+  .form-editor img { max-width: 100%; border-radius: 6px; margin: 4px 0; display: inline-block; vertical-align: middle; cursor: pointer; }
+  .form-editor .board-video-embed { user-select: none; }
+  .img-paste-hint { font-size: 0.78rem; color: var(--txt3, #888); margin-top: 6px; }
+  .img-uploading-placeholder { color: #999; font-style: italic; }
+</style>
+
 <script>
   const menuBtn    = document.getElementById('menuBtn');
   const mobileMenu = document.getElementById('mobileMenu');
@@ -200,11 +241,304 @@
     mobileMenu.addEventListener('click', (e) => { if (e.target === mobileMenu) mobileMenu.classList.remove('open'); });
   }
 
+  const ctx    = '<%= contextPath %>';
+  const editor = document.getElementById('contentEditor');
+
+  // ── 기존 내용을 에디터에 로드 (수정 시) ─────────────────
+  (function loadExistingContent() {
+    const raw = <%= new ObjectMapper().writeValueAsString(post != null ? post.getContent() : "") %>;
+    if (!raw) return;
+    /* 마커(img, video, 정렬)를 구분자로 분리 */
+    const parts = raw.split(/(\[img:\/uploads\/board\/[^\]]+\]|\[video:[^\]]+\]|\n?\[(?:center|right)\][^\n]*\n?)/);
+    parts.forEach(function(part) {
+      if (!part) return;
+      const mImg   = part.match(/^\[img:(\/uploads\/board\/[^|\]]+)(?:\|(\d+))?(?:\|(\d+))?\]$/);
+      const mVid   = part.match(/^\[video:(youtube|tiktok|instagram)\|([A-Za-z0-9_\-]{5,25})(?:\|(\d+))?(?:\|(\d+))?(?:\|(R|C))?\]$/);
+      const mAlign = part.match(/^\n?\[(center|right)\](.*?)\n?$/s);
+      if (mImg) {
+        const img = document.createElement('img');
+        img.src = mImg[1];
+        if (mImg[2]) img.style.width  = mImg[2] + 'px';
+        if (mImg[3]) img.style.height = mImg[3] + 'px';
+        img.alt = '첨부 이미지';
+        editor.appendChild(img);
+      } else if (mVid) {
+        editor.appendChild(createVideoElement(
+          mVid[1], mVid[2],
+          mVid[3] ? parseInt(mVid[3]) : null,
+          mVid[4] ? parseInt(mVid[4]) : null,
+          mVid[5] === 'R',
+          mVid[5] === 'C'
+        ));
+      } else if (mAlign) {
+        /* 정렬 마커 → styled div 복원 */
+        const alignType    = mAlign[1];
+        const alignContent = mAlign[2] || '';
+        const div = document.createElement('div');
+        div.style.textAlign = alignType;
+        const mInnerImg = alignContent.match(/^\[img:(\/uploads\/board\/[^|\]]+)(?:\|(\d+))?(?:\|(\d+))?\]$/);
+        if (mInnerImg) {
+          const img = document.createElement('img');
+          img.src = mInnerImg[1];
+          if (mInnerImg[2]) img.style.width  = mInnerImg[2] + 'px';
+          if (mInnerImg[3]) img.style.height = mInnerImg[3] + 'px';
+          img.alt = '첨부 이미지';
+          div.appendChild(img);
+        } else if (alignContent) {
+          div.appendChild(document.createTextNode(alignContent));
+        }
+        editor.appendChild(div);
+        editor.appendChild(document.createElement('br'));
+      } else {
+        const lines = part.split('\n');
+        lines.forEach(function(line, i) {
+          if (i > 0) editor.appendChild(document.createElement('br'));
+          if (line) editor.appendChild(document.createTextNode(line));
+        });
+      }
+    });
+
+    /* 첫 번째 요소가 동영상이면 앞에 BR 삽입 → 동영상 위에서 Enter 입력 가능 */
+    if (editor.firstChild &&
+        editor.firstChild.nodeName === 'DIV' &&
+        editor.firstChild.classList &&
+        editor.firstChild.classList.contains('board-video-embed')) {
+      editor.insertBefore(document.createElement('br'), editor.firstChild);
+    }
+  })();
+
+  // ── 에디터 → 저장 텍스트 직렬화 ─────────────────────────
+  function serializeNode(node) {
+    if (node.nodeType === 3) return node.nodeValue;
+    if (node.nodeName === 'IMG') {
+      const src = node.getAttribute('src') || '';
+      if (!src.startsWith('/uploads/board/')) return '';
+      const w = node.style.width  ? parseInt(node.style.width)  : 0;
+      const h = node.style.height ? parseInt(node.style.height) : 0;
+      if (w > 0 && h > 0) return '[img:' + src + '|' + w + '|' + h + ']';
+      if (w > 0)           return '[img:' + src + '|' + w + ']';
+      return '[img:' + src + ']';
+    }
+    if (node.nodeName === 'DIV' && node.classList && node.classList.contains('board-video-embed')) {
+      const type     = node.getAttribute('data-type');
+      const id       = node.getAttribute('data-id');
+      if (!type || !id) return '';
+      const isFloat  = node.getAttribute('data-float') === 'right';
+      const isCenter = node.getAttribute('data-align') === 'center';
+      const iframe   = node.querySelector('iframe');
+      const wStr = iframe ? iframe.style.width  : '';
+      const hStr = iframe ? iframe.style.height : '';
+      const w = wStr && !wStr.includes('%') ? parseInt(wStr) : 0;
+      const h = hStr && !hStr.includes('%') ? parseInt(hStr) : 0;
+      const flag = isFloat ? '|R' : (isCenter ? '|C' : '');
+      if (w > 0 && h > 0) return '[video:' + type + '|' + id + '|' + w + '|' + h + flag + ']';
+      if (w > 0)           return '[video:' + type + '|' + id + '|' + w + flag + ']';
+      if (isFloat)         return '[video:' + type + '|' + id + '|0|0|R]';
+      if (isCenter)        return '[video:' + type + '|' + id + '|0|0|C]';
+      return '[video:' + type + '|' + id + ']';
+    }
+    if (node.nodeName === 'BR') return '\n';
+    let inner = '';
+    node.childNodes.forEach(function(c) { inner += serializeNode(c); });
+    if (node.nodeName === 'DIV' || node.nodeName === 'P') {
+      const align = node.style.textAlign;
+      if (align === 'center' || align === 'right') {
+        if (node.childNodes.length === 1 && node.childNodes[0].nodeName === 'IMG') {
+          return '[' + align + ']' + serializeNode(node.childNodes[0]);
+        }
+        return '[' + align + ']' + inner.replace(/\n/g, ' ');
+      }
+      return inner + '\n';
+    }
+    return inner;
+  }
+
+  function getEditorText() {
+    let text = '';
+    editor.childNodes.forEach(function(n) {
+      const isBlock = n.nodeName === 'DIV' || n.nodeName === 'P';
+      if (isBlock && text.length > 0 && !text.endsWith('\n')) text += '\n';
+      text += serializeNode(n);
+    });
+    return text.replace(/\n{3,}/g, '\n\n').replace(/\n+$/, '').replace(/^\n+/, '');
+  }
+
+  // ── 커서 위치에 노드 삽입 ────────────────────────────────
+  function insertAtCursor(node) {
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+      const range = sel.getRangeAt(0);
+      let el = range.commonAncestorContainer;
+      if (el.nodeType === 3) el = el.parentNode;
+      while (el && el !== editor) el = el.parentNode;
+      if (el === editor) {
+        range.deleteContents();
+        range.insertNode(node);
+        const r2 = document.createRange();
+        r2.setStartAfter(node);
+        r2.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r2);
+        return;
+      }
+    }
+    editor.appendChild(node);
+  }
+
+  // ── 이미지 업로드 후 에디터에 삽입 ──────────────────────
+  function uploadAndInsert(file) {
+    const placeholder = document.createElement('span');
+    placeholder.className = 'img-uploading-placeholder';
+    placeholder.textContent = '[이미지 업로드 중...]';
+    insertAtCursor(placeholder);
+    editor.focus();
+
+    const fd = new FormData();
+    fd.append('image', file);
+    fetch(ctx + '/board/upload/image', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) { placeholder.remove(); alert(data.msg || '업로드 실패'); return; }
+        const img = document.createElement('img');
+        img.src = data.url;
+        img.alt = '첨부 이미지';
+        placeholder.replaceWith(img);
+      })
+      .catch(() => { placeholder.remove(); alert('이미지 업로드에 실패했습니다.'); });
+  }
+
+  // ── 붙여넣기 이벤트 ─────────────────────────────────────
+  editor.addEventListener('paste', function(e) {
+    const items = e.clipboardData && e.clipboardData.items;
+    if (items) {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.startsWith('image/')) {
+          e.preventDefault();
+          uploadAndInsert(items[i].getAsFile());
+          return;
+        }
+      }
+    }
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    if (text) {
+      const video = parseVideoUrl(text.trim());
+      if (video) { insertVideoAtCursor(video.type, video.id, editor); return; }
+      document.execCommand('insertText', false, text);
+    }
+  });
+
+  // ── 이미지 편집 기능 초기화 (클릭 선택·리사이즈·삭제) ───
+  // ── 모바일/PC 이미지 첨부 버튼 (카메라·갤러리 공통 핸들러) ──
+  function handleImgFiles(input) {
+    var files = input.files;
+    if (!files || files.length === 0) return;
+    for (var i = 0; i < files.length; i++) {
+      uploadAndInsert(files[i]);
+    }
+    input.value = '';
+    editor.focus();
+  }
+  document.getElementById('imgCameraInput').addEventListener('change', function () { handleImgFiles(this); });
+  document.getElementById('imgGalleryInput').addEventListener('change', function () { handleImgFiles(this); });
+
+  // ── 동영상 링크 버튼 (모바일에서 YouTube·Shorts·TikTok·Instagram URL 삽입) ──
+  document.getElementById('btnVideoLink').addEventListener('click', function () {
+    var url = prompt('동영상 URL을 입력하세요\n(유튜브, 유튜브 Shorts, 틱톡, 인스타그램)');
+    if (!url) return;
+    var video = parseVideoUrl(url.trim());
+    if (video) {
+      insertVideoAtCursor(video.type, video.id, editor);
+    } else {
+      alert('지원되지 않는 URL입니다.\n유튜브·유튜브 Shorts·틱톡·인스타그램 URL을 입력해 주세요.');
+    }
+  });
+
+  // ── 텍스트·이미지·동영상 정렬 ──────────────────────────────
+  function setAlign(align) {
+    var selEl = window.getBoardEditorSelectedEl ? window.getBoardEditorSelectedEl() : null;
+    if (selEl && editor.contains(selEl)) {
+      if (selEl.classList && selEl.classList.contains('board-video-embed')) {
+        selEl.removeAttribute('data-float');
+        selEl.removeAttribute('data-align');
+        if (align === 'right') {
+          selEl.setAttribute('data-float', 'right');
+          selEl.style.cssText = 'float:right;margin:0 0 12px 16px;';
+          var iframe = selEl.querySelector('iframe');
+          if (iframe && (!iframe.style.width || iframe.style.width.includes('%'))) {
+            var vtype = selEl.getAttribute('data-type');
+            iframe.style.width  = vtype === 'youtube' ? '320px' : (vtype === 'tiktok' ? '200px' : '280px');
+            iframe.style.height = vtype === 'youtube' ? '180px' : (vtype === 'tiktok' ? '360px' : '320px');
+            iframe.style.maxWidth = 'none'; iframe.style.aspectRatio = '';
+          }
+        } else if (align === 'center') {
+          selEl.setAttribute('data-align', 'center');
+          selEl.style.cssText = 'display:block;margin:12px auto;';
+        } else {
+          selEl.style.cssText = 'display:block;margin:12px 0;';
+        }
+        updateAlignButtons(); return;
+      }
+      if (selEl.nodeName === 'IMG') {
+        var parent = selEl.parentNode;
+        if (align === 'left') {
+          if (parent && parent !== editor && parent.childNodes.length === 1) parent.style.textAlign = '';
+        } else {
+          if (parent && parent !== editor && parent.childNodes.length === 1) {
+            parent.style.textAlign = align;
+          } else {
+            var wrapper = document.createElement('div');
+            wrapper.style.textAlign = align;
+            (parent || editor).insertBefore(wrapper, selEl);
+            wrapper.appendChild(selEl);
+          }
+        }
+        updateAlignButtons(); return;
+      }
+    }
+    editor.focus();
+    document.execCommand('justify' + align.charAt(0).toUpperCase() + align.slice(1));
+    updateAlignButtons();
+  }
+  function updateAlignButtons() {
+    var curAlign = 'left';
+    var selEl = window.getBoardEditorSelectedEl ? window.getBoardEditorSelectedEl() : null;
+    if (selEl && editor.contains(selEl)) {
+      if (selEl.classList && selEl.classList.contains('board-video-embed')) {
+        curAlign = selEl.getAttribute('data-float') === 'right' ? 'right'
+                 : selEl.getAttribute('data-align') === 'center' ? 'center' : 'left';
+      } else if (selEl.nodeName === 'IMG') {
+        var p = selEl.parentNode;
+        curAlign = (p && p !== editor && p.style.textAlign) ? p.style.textAlign : 'left';
+      }
+    } else {
+      var sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        var el = sel.getRangeAt(0).commonAncestorContainer;
+        if (el.nodeType === 3) el = el.parentNode;
+        while (el && el !== editor) {
+          if (el.style && el.style.textAlign) { curAlign = el.style.textAlign; break; }
+          el = el.parentNode;
+        }
+      }
+    }
+    ['left','center','right'].forEach(function(a) {
+      var btn = document.getElementById('btnAlign' + a.charAt(0).toUpperCase() + a.slice(1));
+      if (btn) btn.classList.toggle('active', a === curAlign);
+    });
+  }
+  editor.addEventListener('keyup',  updateAlignButtons);
+  editor.addEventListener('mouseup', updateAlignButtons);
+
+  initBoardImageEditor(editor);
+
+  // ── 폼 제출 ──────────────────────────────────────────────
   function validateForm() {
-    const title   = document.getElementById('title').value.trim();
-    const content = document.getElementById('content').value.trim();
-    if (!title)   { alert('제목을 입력해주세요.'); return false; }
-    if (!content) { alert('내용을 입력해주세요.'); return false; }
+    const title = document.getElementById('title').value.trim();
+    if (!title) { alert('제목을 입력해주세요.'); return false; }
+    const text = convertRawVideoUrls(getEditorText());
+    if (!text.trim()) { alert('내용을 입력해주세요.'); editor.focus(); return false; }
+    document.getElementById('content').value = text;
     return true;
   }
 </script>

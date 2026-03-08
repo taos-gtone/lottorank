@@ -17,7 +17,9 @@
       "Bash(perl -0777 -i -pe 's|    </div>\\\\n    \\(<p class=\"\"page-desc\"\">.*?</p>\\)|      $1\\\\n    </div>|gs' \"$f\")",
       "Bash(echo \"OK: $f\")",
       "Bash(xxd src/main/webapp/WEB-INF/views/member/login.jsp)",
-      "Bash(perl -0777 -i -pe 's|    </div>\\\\r\\\\n    \\(<p class=\"\"page-desc\"\">.*?</p>\\)|      $1\\\\r\\\\n    </div>|gs' \"$f\")"
+      "Bash(perl -0777 -i -pe 's|    </div>\\\\r\\\\n    \\(<p class=\"\"page-desc\"\">.*?</p>\\)|      $1\\\\r\\\\n    </div>|gs' \"$f\")",
+      "Bash(grep -r \"datasource\\\\|url\\\\|username\\\\|password\" src/main/resources/application*.properties src/main/resources/application*.yml)",
+      "Bash(xargs cat)"
     ]
   }
 }

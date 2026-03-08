@@ -4,21 +4,21 @@
 
 /* ── 페이지 배너 ── */
 .page-banner {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--hero-to) 100%);
+  background: linear-gradient(135deg, #0B3D2E 0%, #1A7A55 100%);
   padding: 0;
 }
 
 .page-breadcrumb {
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.75);
+  color: rgba(255,255,255,0.5);
   font-weight: 500;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 2px;
 }
-.page-breadcrumb a { color: rgba(255,255,255,0.75); transition: color 0.2s; }
-.page-breadcrumb a:hover { color: #fff; }
+.page-breadcrumb a { color: rgba(255,255,255,0.5); transition: color 0.2s; }
+.page-breadcrumb a:hover { color: rgba(255,255,255,0.85); }
 .breadcrumb-sep { margin: 0 5px; }
 
 .page-title-wrap {
@@ -35,7 +35,7 @@
 }
 .page-desc {
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.88);
+  color: rgba(255,255,255,0.65);
   font-weight: 500;
 }
 
@@ -310,6 +310,44 @@
 .grade-4 { background: rgba(99,179,237,0.15); color: #2B6CB0; border: 1px solid rgba(99,179,237,0.4); }
 .grade-5 { background: rgba(154,230,180,0.15); color: #276749; border: 1px solid rgba(154,230,180,0.4); }
 
+/* ── 예측번호 셀 ── */
+.col-pred-num { white-space: nowrap; }
+
+/* 예측번호 볼 (마이페이지 내번호와 동일 디자인) */
+.rank-pred-ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+.rank-pred-ball.ball-y  { background: linear-gradient(135deg, #FDD835, #F9A825); color: #333; }
+.rank-pred-ball.ball-b  { background: linear-gradient(135deg, #42A5F5, #1565C0); }
+.rank-pred-ball.ball-r  { background: linear-gradient(135deg, #EF5350, #C62828); }
+.rank-pred-ball.ball-g  { background: linear-gradient(135deg, #66BB6A, #2E7D32); }
+.rank-pred-ball.ball-gr { background: linear-gradient(135deg, #BDBDBD, #757575); }
+
+/* 미제출 대시 */
+.pred-none-dash { color: var(--txt3); font-size: 1rem; }
+
+/* 적중여부 뱃지 (마이페이지 결과 뱃지와 동일 디자인) */
+.pred-hit-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.pred-hit-badge.hit-yes  { background: rgba(22,163,74,0.12);  color: #16A34A;  border: 1px solid rgba(22,163,74,0.25); }
+.pred-hit-badge.hit-no   { background: rgba(239,68,68,0.10);  color: #EF4444;  border: 1px solid rgba(239,68,68,0.2);  }
+.pred-hit-badge.hit-wait { background: rgba(245,158,11,0.12); color: #D97706;  border: 1px solid rgba(245,158,11,0.25); }
+.pred-hit-badge.hit-none { background: rgba(0,0,0,0.04);      color: var(--txt3); border: 1px solid var(--line); }
+
 /* ── 빈 결과 ── */
 .rank-list-empty {
   padding: 60px 20px;
@@ -376,11 +414,11 @@
   .rank-list-table th,
   .rank-list-table td { padding: 9px 10px; }
 
-  /* 선택수, 정답수, 오답수 컬럼 숨김 */
-  .rank-list-table th:nth-child(5),
-  .rank-list-table th:nth-child(6),
+  /* 선택수, 정답수, 오답수 컬럼 숨김 (예측번호·적중여부 추가로 5→7번째부터) */
   .rank-list-table th:nth-child(7),
-  .rank-list-table td:nth-child(5),
-  .rank-list-table td:nth-child(6),
-  .rank-list-table td:nth-child(7) { display: none; }
+  .rank-list-table th:nth-child(8),
+  .rank-list-table th:nth-child(9),
+  .rank-list-table td:nth-child(7),
+  .rank-list-table td:nth-child(8),
+  .rank-list-table td:nth-child(9) { display: none; }
 }

@@ -180,9 +180,14 @@
             END                                             AS hitRate,
             CASE WHEN r.prev_ranking IS NULL THEN NULL
                  ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
-            END                                             AS rankChange
+            END                                             AS rankChange,
+            p.pred_num                                      AS predNum,
+            p.hit_yn                                        AS hitYn
         FROM MEM_RANK_ALL r
         JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        LEFT JOIN MEM_PRED_NUM p
+               ON p.member_no = r.member_no
+              AND p.round_no  = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)
         WHERE r.round_no = (SELECT MAX(ROUND_NO) FROM LTT_ROUND_RESULT)
         ORDER BY ${sortCol} ${sortDir}
         LIMIT #{size} OFFSET #{offset}
@@ -212,9 +217,14 @@
             END                                             AS hitRate,
             CASE WHEN r.prev_ranking IS NULL THEN NULL
                  ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
-            END                                             AS rankChange
+            END                                             AS rankChange,
+            p.pred_num                                      AS predNum,
+            p.hit_yn                                        AS hitYn
         FROM MEM_RANK_5ROUND r
         JOIN MEM_JOIN_INFO m ON r.member_no = m.member_no
+        LEFT JOIN MEM_PRED_NUM p
+               ON p.member_no = r.member_no
+              AND p.round_no  = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)
         WHERE r.round_no = (SELECT MAX(ROUND_NO) FROM LTT_ROUND_RESULT)
         ORDER BY r.ranking
         LIMIT #{size} OFFSET #{offset}

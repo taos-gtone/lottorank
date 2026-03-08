@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lottorank.mapper.AdminMapper">
+
+    <!-- 관리자 정보 조회 -->
+    <select id="selectAdminById" resultType="AdminLoginInfoVO">
+        SELECT admin_id, admin_pw, adm_email_id, adm_email_addr, last_login_at
+        FROM   ADM_LOGIN_INFO
+        WHERE  admin_id = #{adminId}
+    </select>
+
+    <!-- 로그인 이력 등록 -->
+    <insert id="insertLoginHist" parameterType="AdminLoginHistVO">
+        INSERT INTO ADM_LOGIN_HIST (
+            admin_id, login_rslt_cd, fail_rsn_cd,
+            login_ip, user_agent, login_at
+        ) VALUES (
+            #{adminId}, #{loginRsltCd}, #{failRsnCd, jdbcType=VARCHAR},
+            #{loginIp}, #{userAgent, jdbcType=VARCHAR}, NOW()
+        )
+    </insert>
+
+    <!-- 최종 로그인 시각 갱신 -->
+    <update id="updateLastLoginAt">
+        UPDATE ADM_LOGIN_INFO
+        SET    last_login_at = NOW()
+        WHERE  admin_id = #{adminId}
+    </update>
+
+    <!-- 관리자 전용 댓글 삭제 (member_no 무관) -->
+    <update id="deleteCommentByAdmin">
+        UPDATE BRD_POST_COMMENT
+           SET del_yn = 'Y'
+         WHERE comment_no = #{commentNo}
+           AND del_yn     = 'N'
+    </update>
+
+    <!-- 댓글 수 동기화 -->
+    <update id="syncCommentCnt">
+        UPDATE BRD_POST_MST
+           SET comment_cnt = (
+                   SELECT COUNT(*)
+                     FROM BRD_POST_COMMENT
+                    WHERE post_no = #{postNo}
+                      AND del_yn  = 'N'
+               )
+         WHERE post_no = #{postNo}
+    </update>
+
+</mapper>

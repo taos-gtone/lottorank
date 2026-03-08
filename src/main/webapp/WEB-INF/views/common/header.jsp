@@ -132,10 +132,11 @@
               <a href="/board/list" class="nav-dropdown-item">자유게시판</a>
             </div>
           </div>
-          <div class="nav-item has-dropdown">
-            <a href="#how">고객센터</a>
+          <div class="nav-item has-dropdown" data-path="/notice">
+            <a href="/notice/list">고객센터</a>
             <div class="nav-dropdown">
               <a href="#how" class="nav-dropdown-item">이용방법</a>
+              <a href="/notice/list" class="nav-dropdown-item">공지사항</a>
             </div>
           </div>
           <div class="nav-item nav-gold">
@@ -217,8 +218,9 @@
         <a href="/predict/analysis" class="mobile-nav-sub">분석실</a>
         <a href="/board/list" class="mobile-nav-parent">랭크 커뮤니티 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
         <a href="/board/list" class="mobile-nav-sub">자유게시판</a>
-        <a href="#how" class="mobile-nav-parent">고객센터 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
+        <a href="/notice/list" class="mobile-nav-parent">고객센터 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
         <a href="#how" class="mobile-nav-sub">이용방법</a>
+        <a href="/notice/list" class="mobile-nav-sub">공지사항</a>
         <a href="#" style="color: #FFD54F;">🏆 골드 멤버십</a>
       </nav>
       <% if (_hLoggedIn) { %>
