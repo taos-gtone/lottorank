@@ -10,12 +10,14 @@
     java.util.regex.Pattern p =
         java.util.regex.Pattern.compile(
             "\\[img:(/uploads/board/[^|\\]\\s]{1,200})(?:\\|(\\d{1,5}))?(?:\\|(\\d{1,5}))?\\]" +
+            "|\\[video:(youtube|tiktok|instagram)\\|([A-Za-z0-9_\\-]{5,25})(?:\\|(\\d{1,5}))?(?:\\|(\\d{1,5}))?(?:\\|(R|C))?\\]" +
             "|https?://(?:(?:www\\.|m\\.)?youtube\\.com/(?:watch\\?(?:[^#\\s\\]]*&)?v=|shorts/|embed/)|youtu\\.be/)([A-Za-z0-9_\\-]{11})(?:[?#][^\\s<>\"\\[\\]]*)?" +
             "|\\n?\\[(center|right)\\]([^\\n]*)\\n?");
     java.util.regex.Matcher m = p.matcher(raw);
     while (m.find()) {
       sb.append(org.springframework.web.util.HtmlUtils.htmlEscape(raw.substring(start, m.start())));
       if (m.group(1) != null) {
+        /* ── 이미지 ── */
         String url = m.group(1), w = m.group(2), h = m.group(3);
         sb.append("<img src=\"").append(url).append("\"");
         if (w != null || h != null) {
@@ -25,19 +27,79 @@
           sb.append("max-width:100%\"");
         }
         sb.append(" class=\"post-inline-img\" alt=\"첨부 이미지\">");
-      } else if (m.group(4) != null) {
-        String vId = m.group(4);
-        sb.append("<div style=\"margin:12px 0;\">")
+      } else if (m.group(9) != null) {
+        /* ── 날것의 YouTube URL ── */
+        String vId = m.group(9);
+        sb.append("<div class=\"board-video-view bvw-youtube\" style=\"margin:12px 0;\">")
           .append("<iframe src=\"https://www.youtube.com/embed/").append(vId).append("?rel=0\"")
           .append(" frameborder=\"0\" allowfullscreen loading=\"lazy\"")
-          .append(" allow=\"accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture\"")
+          .append(" allow=\"accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share\"")
+          .append(" referrerpolicy=\"strict-origin-when-cross-origin\"")
           .append(" style=\"border-radius:8px;display:block;border:none;width:100%;max-width:640px;aspect-ratio:16/9;\">")
           .append("</iframe></div>");
-      } else if (m.group(5) != null) {
-        String align = m.group(5), content = m.group(6) != null ? m.group(6) : "";
-        sb.append("<div style=\"text-align:").append(align).append(";\">")
-          .append(org.springframework.web.util.HtmlUtils.htmlEscape(content))
-          .append("</div>");
+      } else if (m.group(10) != null) {
+        /* ── 텍스트·이미지 정렬 ([center] / [right]) ── */
+        String alignType = m.group(10), alignContent = m.group(11) != null ? m.group(11) : "";
+        java.util.regex.Pattern imgP = java.util.regex.Pattern.compile(
+            "\\[img:(/uploads/board/[^|\\]\\s]{1,200})(?:\\|(\\d{1,5}))?(?:\\|(\\d{1,5}))?\\]");
+        java.util.regex.Matcher imgM = imgP.matcher(alignContent);
+        StringBuilder alignSb = new StringBuilder();
+        int aSt = 0;
+        while (imgM.find()) {
+          alignSb.append(org.springframework.web.util.HtmlUtils.htmlEscape(alignContent.substring(aSt, imgM.start())));
+          String iUrl = imgM.group(1), iW = imgM.group(2), iH = imgM.group(3);
+          alignSb.append("<img src=\"").append(iUrl).append("\"");
+          if (iW != null || iH != null) {
+            alignSb.append(" style=\"");
+            if (iW != null) alignSb.append("width:").append(iW).append("px;");
+            if (iH != null) alignSb.append("height:").append(iH).append("px;");
+            alignSb.append("max-width:100%\"");
+          }
+          alignSb.append(" class=\"post-inline-img\" alt=\"첨부 이미지\">");
+          aSt = imgM.end();
+        }
+        alignSb.append(org.springframework.web.util.HtmlUtils.htmlEscape(alignContent.substring(aSt)));
+        sb.append("<div style=\"text-align:").append(alignType).append(";\">")
+          .append(alignSb).append("</div>");
+      } else {
+        /* ── 동영상 임베드 ([video:...] 마커) ── */
+        String vType = m.group(4), vId = m.group(5);
+        String vW = m.group(6), vH = m.group(7), vFloat = m.group(8);
+        if (vType != null && vId != null) {
+          String divStyle = "R".equals(vFloat) ? "float:right;margin:0 0 12px 16px;"
+                          : "C".equals(vFloat) ? "margin:12px auto;"
+                          : "margin:12px 0;";
+          sb.append("<div class=\"board-video-view bvw-").append(vType).append("\" style=\"").append(divStyle).append("\">");
+          boolean isFloatVideo = "R".equals(vFloat);
+          boolean hasExplicitW = vW != null && !"0".equals(vW);
+          StringBuilder vs = new StringBuilder("border-radius:8px;display:block;border:none;");
+          if (hasExplicitW) vs.append("width:").append(vW).append("px;max-width:100%;");
+          if ("youtube".equals(vType)) {
+            if (!hasExplicitW) vs.append(isFloatVideo ? "width:320px;" : "width:100%;max-width:640px;");
+            vs.append(vH != null && !"0".equals(vH) ? "height:" + vH + "px;"
+                      : (isFloatVideo && !hasExplicitW ? "height:180px;" : "aspect-ratio:16/9;"));
+            sb.append("<iframe src=\"https://www.youtube.com/embed/").append(vId).append("?rel=0\"")
+              .append(" frameborder=\"0\" allowfullscreen loading=\"lazy\"")
+              .append(" allow=\"accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share\"")
+              .append(" referrerpolicy=\"strict-origin-when-cross-origin\"")
+              .append(" style=\"").append(vs).append("\">").append("</iframe>");
+          } else if ("tiktok".equals(vType)) {
+            if (!hasExplicitW) vs.append(isFloatVideo ? "width:200px;" : "width:100%;max-width:325px;");
+            vs.append(vH != null && !"0".equals(vH) ? "height:" + vH + "px;"
+                      : (isFloatVideo && !hasExplicitW ? "height:360px;" : "height:740px;"));
+            sb.append("<iframe src=\"https://www.tiktok.com/embed/v2/").append(vId).append("\"")
+              .append(" frameborder=\"0\" allowfullscreen loading=\"lazy\"")
+              .append(" style=\"").append(vs).append("\">").append("</iframe>");
+          } else if ("instagram".equals(vType)) {
+            if (!hasExplicitW) vs.append(isFloatVideo ? "width:280px;" : "width:100%;max-width:540px;");
+            vs.append(vH != null && !"0".equals(vH) ? "height:" + vH + "px;"
+                      : (isFloatVideo && !hasExplicitW ? "height:320px;" : "height:680px;"));
+            sb.append("<iframe src=\"https://www.instagram.com/p/").append(vId).append("/embed/\"")
+              .append(" frameborder=\"0\" allowfullscreen loading=\"lazy\" scrolling=\"no\"")
+              .append(" style=\"").append(vs).append("\">").append("</iframe>");
+          }
+          sb.append("</div>");
+        }
       }
       start = m.end();
     }
@@ -52,65 +114,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>게시글 관리 - 로또랭크 ADMIN</title>
   <meta name="robots" content="noindex, nofollow">
+  <%@ include file="/WEB-INF/views/admin/layout/admin-head.jsp" %>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --g1: #ffffff;
-      --g2: #d8dbe0;
-      --g3: #e4e7ec;
-      --g4: #d1d5db;
-      --g5: #9ca3af;
-      --g6: #6b7280;
-      --g7: #374151;
-      --g8: #111827;
-      --line: #e5e7eb;
-      --primary: #3b82f6;
-      --primary-h: #2563eb;
-      --danger: #ef4444;
-    }
-
-    body {
-      font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background: #f8f9fb;
-      color: var(--g7);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; text-decoration: none; }
-
-    /* ═══ util-bar ═══ */
-    .util-bar { background: #b0b5be; border-bottom: 1px solid var(--line); height: 36px; display: flex; align-items: center; }
-    .util-wrap { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
-    .util-notice { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #fff; font-weight: 700; }
-    .util-links { display: flex; align-items: center; gap: 14px; font-size: 0.75rem; color: var(--g5); }
-    .util-admin-badge { padding: 2px 8px; background: var(--g3); border: 1px solid var(--g4); border-radius: 4px; font-size: 0.7rem; color: var(--g6); font-weight: 700; letter-spacing: 0.5px; }
-
-    /* ═══ header ═══ */
-    .main-header { background: var(--g2); border-bottom: 1px solid var(--line); height: 64px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .header-inner { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 24px; height: 100%; display: flex; align-items: center; gap: 24px; }
-    .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .logo-img { width: 40px; height: 40px; border-radius: 10px; background: var(--g3); border: 1px solid var(--g4); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
-    .logo-text-wrap { line-height: 1.25; }
-    .logo-sub { font-size: 0.62rem; color: var(--g5); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
-    .logo-main { font-size: 1.05rem; font-weight: 900; color: var(--g7); letter-spacing: -0.3px; }
-
-    /* nav */
-    .main-nav { flex: 1; display: flex; align-items: center; height: 100%; padding-left: 8px; }
-    .nav-item { position: relative; height: 100%; display: flex; align-items: center; }
-    .nav-item > a, .nav-item > span { display: flex; align-items: center; height: 100%; padding: 0 16px; font-size: 0.9rem; font-weight: 600; color: var(--g7); transition: background 0.18s, color 0.18s; white-space: nowrap; cursor: pointer; }
-    .nav-item > a:hover, .nav-item > span:hover, .nav-item.active > span { background: rgba(0,0,0,0.08); color: var(--g8); }
-    .nav-item.has-dropdown > span::after { content: '▾'; font-size: 0.68rem; margin-left: 4px; opacity: 0.55; }
-    .dropdown-menu { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; border-top: 2px solid rgba(100,116,139,0.25); box-shadow: 0 8px 20px rgba(0,0,0,0.12); z-index: 200; }
-    .nav-item.has-dropdown:hover .dropdown-menu { display: block; }
-    .dropdown-item { display: flex; align-items: center; padding: 9px 16px; font-size: 0.9rem; font-weight: 500; color: var(--g7); transition: background 0.15s, color 0.15s; white-space: nowrap; border-bottom: 1px solid rgba(100,116,139,0.15); }
-    .dropdown-item:last-child { border-bottom: none; }
-    .dropdown-item:hover { background: rgba(100,116,139,0.1); color: var(--g8); }
-    .header-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-    .header-admin-label { font-size: 0.84rem; color: var(--g6); }
-    .header-admin-label strong { color: var(--g8); font-weight: 700; }
-    .btn-logout { padding: 7px 16px; background: transparent; border: 1px solid var(--g4); border-radius: 6px; color: var(--g6); font-size: 0.83rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: border-color 0.18s, color 0.18s; }
-    .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+    body { background: #f8f9fb; }
 
     /* ═══ 콘텐츠 ═══ */
     .adm-content { max-width: 960px; margin: 0 auto; padding: 28px 24px; }
@@ -192,6 +198,31 @@
       transition: all 0.15s;
     }
     .btn-delete:hover { background: rgba(239,68,68,0.08); border-color: var(--danger); }
+    .btn-approval {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .btn-approval.y { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #059669; }
+    .btn-approval.n { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.3);  color: #dc2626; }
+    .btn-approval:hover { opacity: 0.75; }
+
+    .comment-appr-btn {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      margin-left: 6px;
+    }
+    .comment-appr-btn.y { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #059669; }
+    .comment-appr-btn.n { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.3);  color: #dc2626; }
 
     /* 게시글 본문 */
     .post-body { padding: 24px; }
@@ -203,6 +234,8 @@
       word-break: break-word;
     }
     .post-inline-img { max-width: 100%; border-radius: 6px; margin: 6px 0; display: block; }
+    .board-video-view { margin: 12px 0; }
+    .board-video-view::after { content: ''; display: table; clear: both; }
 
     /* 반응 (읽기 전용 표시) */
     .post-reaction {
@@ -341,6 +374,7 @@
       word-break: break-word;
       margin-bottom: 8px;
     }
+    .comment-text .board-video-view { white-space: normal; }
     .comment-reaction-wrap {
       display: flex;
       align-items: center;
@@ -404,24 +438,14 @@
     .pg-ellipsis { color: var(--g5); font-size: 0.82rem; padding: 0 3px; }
 
     @media (max-width: 768px) {
-      .util-notice { display: none; }
-      .header-admin-label { display: none; }
-      .logo-sub { display: none; }
-      .nav-item > a, .nav-item > span { padding: 0 10px; font-size: 0.82rem; }
       .col-author, .col-views, .col-likes { display: none; }
       .adm-content { padding: 16px 12px; }
-    }
-    @media (max-width: 480px) {
-      .main-nav { display: none; }
     }
   </style>
 </head>
 <body>
 
 <%
-  String _adminUser = (String) session.getAttribute("adminUser");
-  if (_adminUser == null) _adminUser = (String) request.getAttribute("adminUser");
-
   BoardPostVO post = (BoardPostVO) request.getAttribute("post");
 
   @SuppressWarnings("unchecked")
@@ -444,11 +468,14 @@
 
   String st = (String) request.getAttribute("searchType");
   String sk = (String) request.getAttribute("searchKeyword");
+  String fm = (String) request.getAttribute("filterMode");
   if (st == null) st = "all";
   if (sk == null) sk = "";
+  if (fm == null) fm = "all";
 
   String filterParams = (!"all".equals(st) ? "&searchType=" + st : "")
-      + (!sk.isEmpty() ? "&searchKeyword=" + java.net.URLEncoder.encode(sk, "UTF-8") : "");
+      + (!sk.isEmpty() ? "&searchKeyword=" + java.net.URLEncoder.encode(sk, "UTF-8") : "")
+      + (!"all".equals(fm) ? "&filterMode=" + fm : "");
   String backUrl = "/lottorank/admin/board/list?page=" + cp + filterParams;
 
   String authorName = "";
@@ -458,55 +485,8 @@
   }
 %>
 
-<!-- util-bar -->
-<div class="util-bar">
-  <div class="util-wrap">
-    <div class="util-notice"><span>🔒</span><span>관리자 전용 구역</span></div>
-    <div class="util-links"><span class="util-admin-badge">ADMIN</span></div>
-  </div>
-</div>
-
-<!-- header -->
-<header class="main-header">
-  <div class="header-inner">
-    <a href="/lottorank/admin/dashboard" class="logo">
-      <div class="logo-img">🎰</div>
-      <div class="logo-text-wrap">
-        <div class="logo-sub">LOTTO RANK</div>
-        <div class="logo-main">로또랭크</div>
-      </div>
-    </a>
-    <nav class="main-nav">
-      <div class="nav-item has-dropdown active">
-        <span>랭크 커뮤니티</span>
-        <div class="dropdown-menu">
-          <a href="/lottorank/admin/board/list" class="dropdown-item">게시판 관리</a>
-          <a href="/lottorank/board/list" class="dropdown-item">게시판 보기</a>
-        </div>
-      </div>
-      <div class="nav-item has-dropdown">
-        <span>고객센터</span>
-        <div class="dropdown-menu">
-          <a href="/lottorank/admin/notice/list" class="dropdown-item">공지사항</a>
-        </div>
-      </div>
-      <div class="nav-item">
-        <a href="/lottorank/admin/myinfo">관리자 정보 변경</a>
-      </div>
-    </nav>
-    <div class="header-actions">
-      <% if (_adminUser != null) { %>
-      <span class="header-admin-label">
-        <strong><%= org.springframework.web.util.HtmlUtils.htmlEscape(_adminUser) %></strong>님
-      </span>
-      <% } %>
-      <button class="btn-logout"
-              onclick="if(confirm('로그아웃 하시겠습니까?')) location.href='/lottorank/admin/logout'">
-        로그아웃
-      </button>
-    </div>
-  </div>
-</header>
+<% String _activeNavSection = "board"; %>
+<%@ include file="/WEB-INF/views/admin/layout/admin-banner.jsp" %>
 
 <div class="adm-content">
 <% if (post != null) { %>
@@ -527,6 +507,11 @@
         <span>댓글 <%= post.getCommentCnt() %></span>
       </div>
       <div class="post-actions">
+        <% boolean postApproved = "Y".equals(post.getApprovalYn()); %>
+        <button id="postApprBtn" class="btn-approval <%= postApproved ? "y" : "n" %>"
+                onclick="togglePostApproval(<%= post.getPostNo() %>)">
+          <%= postApproved ? "✅ 승인됨" : "⛔ 미승인" %>
+        </button>
         <a href="/lottorank/admin/board/edit/<%= post.getPostNo() %>" class="btn-edit">✏️ 수정</a>
         <form method="post" action="/lottorank/admin/board/delete/<%= post.getPostNo() %>"
               onsubmit="return confirm('정말 삭제하시겠습니까?')" style="display:inline;">
@@ -548,7 +533,6 @@
 
     <div class="post-nav">
       <a href="<%= backUrl %>" class="btn-back">← 목록으로</a>
-      <a href="/lottorank/admin/board/write" class="btn-new-post">✏️ 새 글 작성</a>
     </div>
   </div>
 
@@ -566,17 +550,22 @@
                              ? comment.getNickname().substring(0,1).toUpperCase() : "U";
     %>
     <div class="comment-item<%= depthClass %>">
-      <% if (comment.getDepth() == 1) { %>
-      <span style="color:var(--g5);font-size:0.85rem;margin-right:4px;">↳</span>
-      <% } %>
+      <% boolean cmtApproved = "Y".equals(comment.getApprovalYn()); %>
       <div class="comment-item-top">
+        <% if (comment.getDepth() == 1) { %>
+        <span style="color:var(--g5);font-size:0.85rem;flex-shrink:0;">↳</span>
+        <% } %>
         <span class="comment-author-icon"><%= firstChar %></span>
         <span class="comment-author"><%= org.springframework.web.util.HtmlUtils.htmlEscape(comment.getNickname() != null ? comment.getNickname() : "익명") %></span>
         <span class="comment-date"><%= comment.getFormattedDate() %></span>
+        <button class="comment-appr-btn <%= cmtApproved ? "y" : "n" %>"
+                onclick="toggleCommentApproval(<%= comment.getCommentNo() %>, this)">
+          <%= cmtApproved ? "승인" : "미승인" %>
+        </button>
         <button class="comment-del-btn"
                 onclick="deleteComment(<%= comment.getCommentNo() %>)">삭제</button>
       </div>
-      <div class="comment-text"><%= org.springframework.web.util.HtmlUtils.htmlEscape(comment.getContent() != null ? comment.getContent() : "") %></div>
+      <div class="comment-text"><%= renderContent(comment.getContent() != null ? comment.getContent() : "") %></div>
       <div class="comment-reaction-wrap">
         <span class="comment-react-badge<%= comment.getLikeCnt() > 0 ? " has-like" : "" %>">
           ❤️ <%= comment.getLikeCnt() %>
@@ -677,6 +666,43 @@
 
 <script>
   const postNo = <%= post != null ? post.getPostNo() : 0 %>;
+
+  function togglePostApproval(pNo) {
+    fetch('/lottorank/admin/board/post/approval', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'postNo=' + pNo
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const btn = document.getElementById('postApprBtn');
+        const isApproved = data.approvalYn === 'Y';
+        btn.textContent = isApproved ? '✅ 승인됨' : '⛔ 미승인';
+        btn.className = 'btn-approval ' + (isApproved ? 'y' : 'n');
+      } else {
+        alert(data.msg || '처리에 실패했습니다.');
+      }
+    });
+  }
+
+  function toggleCommentApproval(commentNo, btn) {
+    fetch('/lottorank/admin/board/comment/approval', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'commentNo=' + commentNo
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const isApproved = data.approvalYn === 'Y';
+        btn.textContent = isApproved ? '승인' : '미승인';
+        btn.className = 'comment-appr-btn ' + (isApproved ? 'y' : 'n');
+      } else {
+        alert(data.msg || '처리에 실패했습니다.');
+      }
+    });
+  }
 
   function deleteComment(commentNo) {
     if (!confirm('댓글을 삭제하시겠습니까?')) return;

@@ -12,4 +12,10 @@ public interface AdminService {
      */
     AdminLoginInfoVO login(String adminId, String adminPw,
                            String loginIp, String userAgent) throws AdminLoginFailException;
+
+    /**
+     * 관리자 비밀번호 변경.
+     * 현재 비밀번호가 일치하지 않으면 IllegalArgumentException 발생.
+     */
+    void changePassword(String adminId, String currentPw, String newPw);
 }

@@ -8,9 +8,9 @@ import java.util.Map;
 
 public interface BoardService {
 
-    List<BoardPostVO> getPostList(String boardGbnCd, String searchType, String searchKeyword, int page, int pageSize);
+    List<BoardPostVO> getPostList(String boardGbnCd, String searchType, String searchKeyword, long loginMemberNo, int page, int pageSize);
 
-    int getPostCount(String boardGbnCd, String searchType, String searchKeyword);
+    int getPostCount(String boardGbnCd, String searchType, String searchKeyword, long loginMemberNo);
 
     BoardPostVO getPost(long postNo);
 
@@ -22,7 +22,7 @@ public interface BoardService {
 
     void deletePost(long postNo, long memberNo);
 
-    List<BoardCommentVO> getCommentList(long postNo);
+    List<BoardCommentVO> getCommentList(long postNo, long loginMemberNo);
 
     void writeComment(BoardCommentVO comment);
 

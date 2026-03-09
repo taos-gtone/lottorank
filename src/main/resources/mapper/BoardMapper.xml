@@ -7,6 +7,7 @@
     <!-- 공통 검색 WHERE -->
     <sql id="searchWhere">
         AND p.del_yn = 'N'
+        AND (#{loginMemberNo} &lt; 0 OR p.approval_yn = 'Y' OR (#{loginMemberNo} > 0 AND p.member_no = #{loginMemberNo}))
         <if test="boardGbnCd != null and boardGbnCd != ''">
             AND p.board_gbn_cd = #{boardGbnCd}
         </if>
@@ -36,7 +37,21 @@
             p.view_cnt,
             p.like_cnt,
             p.dislike_cnt,
-            p.comment_cnt,
+            (SELECT COUNT(*)
+               FROM BRD_POST_COMMENT c2
+              WHERE c2.post_no = p.post_no
+                AND c2.del_yn  = 'N'
+                AND (#{loginMemberNo} &lt; 0
+                     OR c2.approval_yn = 'Y'
+                     OR (#{loginMemberNo} > 0 AND c2.member_no = #{loginMemberNo}))
+            ) AS comment_cnt,
+            (SELECT COUNT(*)
+               FROM BRD_POST_COMMENT c3
+              WHERE c3.post_no    = p.post_no
+                AND c3.del_yn     = 'N'
+                AND c3.approval_yn = 'N'
+            ) AS unapproved_comment_cnt,
+            p.approval_yn,
             p.del_yn,
             p.create_ts,
             p.update_ts,
@@ -69,6 +84,7 @@
             p.like_cnt,
             p.dislike_cnt,
             p.comment_cnt,
+            p.approval_yn,
             p.del_yn,
             p.create_ts,
             p.update_ts,
@@ -90,10 +106,13 @@
     <insert id="insertPost" useGeneratedKeys="true" keyProperty="postNo">
         INSERT INTO BRD_POST_MST
             (board_gbn_cd, member_no, title, content, view_cnt, like_cnt,
-             dislike_cnt, comment_cnt, reg_ip, approval_yn, del_yn)
+             dislike_cnt, comment_cnt, reg_ip, approval_yn, approval_at, del_yn)
         VALUES
             (#{boardGbnCd}, #{memberNo}, #{title}, #{content}, 0, 0,
-             0, 0, #{regIp}, 'N', 'N')
+             0, 0, #{regIp},
+             COALESCE(#{approvalYn, jdbcType=VARCHAR}, 'N'),
+             IF(#{approvalYn, jdbcType=VARCHAR} = 'Y', NOW(), NULL),
+             'N')
     </insert>
 
     <!-- 게시글 수정 -->
@@ -128,6 +147,7 @@
             c.content,
             c.like_cnt,
             c.dislike_cnt,
+            c.approval_yn,
             c.del_yn,
             c.create_ts,
             c.update_ts,
@@ -136,6 +156,7 @@
         JOIN MEM_JOIN_INFO m ON m.member_no = c.member_no
         WHERE c.post_no = #{postNo}
           AND c.del_yn  = 'N'
+          AND (#{loginMemberNo} &lt; 0 OR c.approval_yn = 'Y' OR (#{loginMemberNo} > 0 AND c.member_no = #{loginMemberNo}))
         ORDER BY COALESCE(c.parent_comment_no, c.comment_no), c.comment_no
     </select>
 
@@ -283,5 +304,16 @@
                )
          WHERE comment_no = #{commentNo}
     </update>
+
+    <!-- 공지사항 최신 N건 (util-ticker 용) -->
+    <select id="selectRecentNotices" resultType="BoardPostVO">
+        SELECT post_no, title
+          FROM BRD_POST_MST
+         WHERE board_gbn_cd = '02'
+           AND del_yn       = 'N'
+           AND approval_yn  = 'Y'
+         ORDER BY post_no DESC
+         LIMIT #{limit}
+    </select>
 
 </mapper>

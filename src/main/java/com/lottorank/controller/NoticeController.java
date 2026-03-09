@@ -64,7 +64,10 @@ public class NoticeController {
             @RequestParam(required = false)    String searchKeyword,
             HttpServletRequest request, Model model) {
 
-        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword);
+        HttpSession session     = request.getSession(false);
+        long        sessionMNo  = getLoginMemberNo(session);
+
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword, sessionMNo);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
 
         if (page < 1)          page = 1;
@@ -78,9 +81,7 @@ public class NoticeController {
         }
 
         List<BoardPostVO> postList = boardService.getPostList(
-                BOARD_GBN_CD, searchType, searchKeyword, page, PAGE_SIZE);
-
-        HttpSession session = request.getSession(false);
+                BOARD_GBN_CD, searchType, searchKeyword, sessionMNo, page, PAGE_SIZE);
 
         model.addAttribute("postList",       postList);
         model.addAttribute("currentPage",    page);
@@ -113,14 +114,14 @@ public class NoticeController {
         boardService.increaseViewCnt(postNo);
         post.setViewCnt(post.getViewCnt() + 1);
 
-        List<BoardCommentVO> commentList = boardService.getCommentList(postNo);
+        List<BoardCommentVO> commentList = boardService.getCommentList(postNo, loginMemberNo);
         String myReaction = loginMemberNo > 0 ? boardService.getMyReaction(postNo, loginMemberNo) : null;
         Map<Long, String> commentReactions = loginMemberNo > 0
                 ? boardService.getMyCommentReactions(postNo, loginMemberNo)
                 : new java.util.HashMap<>();
 
         // 하단 목록용 페이지 계산
-        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword);
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword, loginMemberNo);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
         if (page < 1)          page = 1;
         if (page > totalPages) page = totalPages;
@@ -131,7 +132,7 @@ public class NoticeController {
             startPage = Math.max(1, endPage - PAGE_BUTTON_COUNT + 1);
         }
         List<BoardPostVO> postList = boardService.getPostList(
-                BOARD_GBN_CD, searchType, searchKeyword, page, PAGE_SIZE);
+                BOARD_GBN_CD, searchType, searchKeyword, loginMemberNo, page, PAGE_SIZE);
 
         model.addAttribute("post",              post);
         model.addAttribute("commentList",       commentList);
@@ -158,9 +159,9 @@ public class NoticeController {
         HttpSession session = request.getSession(false);
         if (!isAdmin(session)) return "redirect:/notice/list";
 
-        int totalCount = boardService.getPostCount(BOARD_GBN_CD, null, null);
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, null, null, -1L);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
-        List<BoardPostVO> postList = boardService.getPostList(BOARD_GBN_CD, null, null, 1, PAGE_SIZE);
+        List<BoardPostVO> postList = boardService.getPostList(BOARD_GBN_CD, null, null, -1L, 1, PAGE_SIZE);
 
         model.addAttribute("postList",      postList);
         model.addAttribute("totalCount",    totalCount);
@@ -187,6 +188,7 @@ public class NoticeController {
         post.setTitle(title.trim());
         post.setContent(content.trim());
         post.setRegIp(resolveIp(request));
+        post.setApprovalYn("Y");
 
         long postNo = boardService.writePost(post);
         return "redirect:/notice/view/" + postNo;
@@ -204,9 +206,9 @@ public class NoticeController {
         BoardPostVO post = boardService.getPost(postNo);
         if (post == null) return "redirect:/notice/list";
 
-        int totalCount = boardService.getPostCount(BOARD_GBN_CD, null, null);
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, null, null, -1L);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
-        List<BoardPostVO> postList = boardService.getPostList(BOARD_GBN_CD, null, null, 1, PAGE_SIZE);
+        List<BoardPostVO> postList = boardService.getPostList(BOARD_GBN_CD, null, null, -1L, 1, PAGE_SIZE);
 
         model.addAttribute("post",          post);
         model.addAttribute("postList",      postList);

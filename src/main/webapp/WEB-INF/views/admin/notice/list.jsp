@@ -6,190 +6,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>공지사항 관리 - 로또랭크 ADMIN</title>
+  <title>공지사항 - 로또랭크 ADMIN</title>
   <meta name="robots" content="noindex, nofollow">
+  <%@ include file="/WEB-INF/views/admin/layout/admin-head.jsp" %>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --g1: #ffffff;
-      --g2: #d8dbe0;
-      --g3: #e4e7ec;
-      --g4: #d1d5db;
-      --g5: #9ca3af;
-      --g6: #6b7280;
-      --g7: #374151;
-      --g8: #111827;
-      --line: #e5e7eb;
-      --primary: #3b82f6;
-      --primary-h: #2563eb;
-      --danger: #ef4444;
-    }
-
-    body {
-      font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background: var(--g1);
-      color: var(--g7);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; text-decoration: none; }
-
-    /* ═══ util-bar ═══ */
-    .util-bar {
-      background: #b0b5be;
-      border-bottom: 1px solid var(--line);
-      height: 36px;
-      display: flex;
-      align-items: center;
-    }
-    .util-wrap {
-      width: 100%;
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .util-notice {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.75rem;
-      color: #ffffff;
-      font-weight: 700;
-    }
-    .util-links {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 0.75rem;
-      color: var(--g5);
-    }
-    .util-admin-badge {
-      padding: 2px 8px;
-      background: var(--g3);
-      border: 1px solid var(--g4);
-      border-radius: 4px;
-      font-size: 0.7rem;
-      color: var(--g6);
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    /* ═══ header ═══ */
-    .main-header {
-      background: var(--g2);
-      border-bottom: 1px solid var(--line);
-      height: 64px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .header-inner {
-      width: 100%;
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 24px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      gap: 24px;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-    .logo-img {
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      background: var(--g3);
-      border: 1px solid var(--g4);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.25rem;
-    }
-    .logo-text-wrap { line-height: 1.25; }
-    .logo-sub { font-size: 0.62rem; color: var(--g5); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
-    .logo-main { font-size: 1.05rem; font-weight: 900; color: var(--g7); letter-spacing: -0.3px; }
-
-    /* nav */
-    .main-nav {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      height: 100%;
-      padding-left: 8px;
-    }
-    .nav-item {
-      position: relative;
-      height: 100%;
-      display: flex;
-      align-items: center;
-    }
-    .nav-item > a,
-    .nav-item > span {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      padding: 0 16px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--g7);
-      transition: background 0.18s, color 0.18s;
-      white-space: nowrap;
-      cursor: pointer;
-    }
-    .nav-item > a:hover,
-    .nav-item > span:hover,
-    .nav-item.active > a {
-      background: rgba(0,0,0,0.08);
-      color: var(--g8);
-    }
-    .nav-item.has-dropdown > span::after { content: '▾'; font-size: 0.68rem; margin-left: 4px; opacity: 0.55; }
-    .nav-item.has-dropdown { position: relative; }
-    .dropdown-menu {
-      display: none;
-      position: absolute;
-      top: 100%; left: 0; right: 0;
-      background: #ffffff;
-      border-top: 2px solid rgba(100,116,139,0.25);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-      z-index: 200;
-    }
-    .nav-item.has-dropdown:hover .dropdown-menu { display: block; }
-    .dropdown-item {
-      display: flex;
-      align-items: center;
-      padding: 9px 16px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--g7);
-      transition: background 0.15s, color 0.15s;
-      white-space: nowrap;
-      border-bottom: 1px solid rgba(100,116,139,0.15);
-    }
-    .dropdown-item:last-child { border-bottom: none; }
-    .dropdown-item:hover { background: rgba(100,116,139,0.1); color: var(--g8); }
-
-    /* 헤더 우측 */
-    .header-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-    .header-admin-label { font-size: 0.84rem; color: var(--g6); }
-    .header-admin-label strong { color: var(--g8); font-weight: 700; }
-    .btn-logout {
-      padding: 7px 16px;
-      background: transparent;
-      border: 1px solid var(--g4);
-      border-radius: 6px;
-      color: var(--g6);
-      font-size: 0.83rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: border-color 0.18s, color 0.18s;
-    }
-    .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
-
     /* ═══ 콘텐츠 ═══ */
     .adm-content {
       max-width: 1280px;
@@ -326,9 +146,20 @@
     .col-no    { width: 60px;  text-align: center; color: var(--g5); font-size: 0.82rem; }
     .col-title { }
     .col-author{ width: 90px;  text-align: center; }
+    .col-del   { width: 80px;  text-align: center; }
     .col-date  { width: 100px; text-align: center; color: var(--g5); font-size: 0.82rem; }
     .col-views { width: 60px;  text-align: center; color: var(--g5); font-size: 0.82rem; }
     .col-likes { width: 120px; text-align: center; }
+    .del-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+      cursor: pointer; border: none; font-family: inherit; transition: all 0.15s;
+    }
+    .del-badge.live { background: rgba(16,185,129,0.12); color: #059669; border: 1px solid rgba(16,185,129,0.3); }
+    .del-badge.del  { background: rgba(239,68,68,0.12);  color: #dc2626; border: 1px solid rgba(239,68,68,0.3); }
+    .del-badge:hover { opacity: 0.75; }
+    tr.row-deleted td { opacity: 0.55; }
+    tr.row-deleted .post-title-link { text-decoration: line-through; }
 
     .post-title-link {
       display: flex;
@@ -384,16 +215,40 @@
     .pg-btn:disabled{ opacity: 0.4; cursor: default; }
     .pg-ellipsis    { color: var(--g5); font-size: 0.85rem; padding: 0 4px; }
 
+    /* 필터 라디오 그룹 */
+    .filter-radio-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .filter-radio-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--g6);
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .filter-radio-label:has(input:checked) {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .filter-radio-label input[type="radio"] { display: none; }
+
+    .col-unappr-cmt { width: 90px; text-align: center; }
+
     @media (max-width: 768px) {
-      .util-notice { display: none; }
-      .header-admin-label { display: none; }
-      .logo-sub { display: none; }
-      .main-nav { padding-left: 4px; }
-      .nav-item > a, .nav-item > span { padding: 0 10px; font-size: 0.82rem; }
-      .col-author, .col-views, .col-likes { display: none; }
+      .col-author, .col-views, .col-likes, .col-del, .col-unappr-cmt { display: none; }
     }
     @media (max-width: 480px) {
-      .main-nav { display: none; }
       .adm-content { padding: 16px 12px; }
     }
   </style>
@@ -401,9 +256,6 @@
 <body>
 
 <%
-  String _adminUser = (String) session.getAttribute("adminUser");
-  if (_adminUser == null) _adminUser = (String) request.getAttribute("adminUser");
-
   Integer currentPageObj = (Integer) request.getAttribute("currentPage");
   Integer totalPagesObj  = (Integer) request.getAttribute("totalPages");
   Integer startPageObj   = (Integer) request.getAttribute("startPage");
@@ -418,73 +270,22 @@
 
   String searchType    = (String) request.getAttribute("searchType");
   String searchKeyword = (String) request.getAttribute("searchKeyword");
+  String filterMode    = (String) request.getAttribute("filterMode");
   if (searchType    == null) searchType    = "all";
   if (searchKeyword == null) searchKeyword = "";
+  if (filterMode    == null) filterMode    = "all";
 
   String contextPath  = request.getContextPath();
   String filterParams = (!"all".equals(searchType) ? "&searchType=" + searchType : "")
-      + (!searchKeyword.isEmpty() ? "&searchKeyword=" + java.net.URLEncoder.encode(searchKeyword, "UTF-8") : "");
+      + (!searchKeyword.isEmpty() ? "&searchKeyword=" + java.net.URLEncoder.encode(searchKeyword, "UTF-8") : "")
+      + (!"all".equals(filterMode) ? "&filterMode=" + filterMode : "");
 
   @SuppressWarnings("unchecked")
   List<BoardPostVO> postList = (List<BoardPostVO>) request.getAttribute("postList");
 %>
 
-<!-- util-bar -->
-<div class="util-bar">
-  <div class="util-wrap">
-    <div class="util-notice">
-      <span>🔒</span>
-      <span>관리자 전용 구역</span>
-    </div>
-    <div class="util-links">
-      <span class="util-admin-badge">ADMIN</span>
-    </div>
-  </div>
-</div>
-
-<!-- header -->
-<header class="main-header">
-  <div class="header-inner">
-    <a href="/lottorank/admin/dashboard" class="logo">
-      <div class="logo-img">🎰</div>
-      <div class="logo-text-wrap">
-        <div class="logo-sub">LOTTO RANK</div>
-        <div class="logo-main">로또랭크</div>
-      </div>
-    </a>
-
-    <nav class="main-nav">
-      <div class="nav-item has-dropdown">
-        <span>랭크 커뮤니티</span>
-        <div class="dropdown-menu">
-          <a href="/lottorank/admin/board/list" class="dropdown-item">게시판 관리</a>
-          <a href="/lottorank/board/list" class="dropdown-item">게시판 보기</a>
-        </div>
-      </div>
-      <div class="nav-item has-dropdown active">
-        <span>고객센터</span>
-        <div class="dropdown-menu">
-          <a href="/lottorank/admin/notice/list" class="dropdown-item">공지사항</a>
-        </div>
-      </div>
-      <div class="nav-item">
-        <a href="/lottorank/admin/myinfo">관리자 정보 변경</a>
-      </div>
-    </nav>
-
-    <div class="header-actions">
-      <% if (_adminUser != null) { %>
-      <span class="header-admin-label">
-        <strong><%= org.springframework.web.util.HtmlUtils.htmlEscape(_adminUser) %></strong>님
-      </span>
-      <% } %>
-      <button class="btn-logout"
-              onclick="if(confirm('로그아웃 하시겠습니까?')) location.href='/lottorank/admin/logout'">
-        로그아웃
-      </button>
-    </div>
-  </div>
-</header>
+<% String _activeNavSection = "notice"; %>
+<%@ include file="/WEB-INF/views/admin/layout/admin-banner.jsp" %>
 
 <!-- 콘텐츠 -->
 <div class="adm-content">
@@ -492,7 +293,7 @@
   <!-- 페이지 헤더 -->
   <div class="page-hd">
     <div>
-      <div class="page-hd-title">📢 공지사항 관리</div>
+      <div class="page-hd-title">📢 공지사항</div>
       <div class="page-hd-sub">총 <%= totalCount %>개 게시글</div>
     </div>
     <a href="/lottorank/admin/notice/write" class="btn-write">✏️ 글쓰기</a>
@@ -500,6 +301,7 @@
 
   <!-- 검색 바 -->
   <form class="search-bar" action="/lottorank/admin/notice/list" method="get">
+    <input type="hidden" name="filterMode" value="<%= filterMode %>">
     <select name="searchType" class="search-select">
       <option value="all"     <%= "all".equals(searchType)     ? "selected" : "" %>>제목+내용</option>
       <option value="title"   <%= "title".equals(searchType)   ? "selected" : "" %>>제목</option>
@@ -518,6 +320,26 @@
         공지사항 목록
         <span class="table-badge"><%= currentPage %> / <%= totalPages %> 페이지</span>
       </span>
+      <div class="filter-radio-group">
+        <label class="filter-radio-label">
+          <input type="radio" name="filterMode" value="all"
+                 <%= "all".equals(filterMode) ? "checked" : "" %>
+                 onchange="applyFilter(this)">
+          전체
+        </label>
+        <label class="filter-radio-label">
+          <input type="radio" name="filterMode" value="normal"
+                 <%= "normal".equals(filterMode) ? "checked" : "" %>
+                 onchange="applyFilter(this)">
+          정상 게시글
+        </label>
+        <label class="filter-radio-label">
+          <input type="radio" name="filterMode" value="unapproved_comment"
+                 <%= "unapproved_comment".equals(filterMode) ? "checked" : "" %>
+                 onchange="applyFilter(this)">
+          미승인 댓글
+        </label>
+      </div>
     </div>
 
     <table>
@@ -526,6 +348,8 @@
           <th class="col-no">번호</th>
           <th class="col-title">제목</th>
           <th class="col-author">작성자</th>
+          <th class="col-del">삭제여부</th>
+          <th class="col-unappr-cmt">미승인 댓글</th>
           <th class="col-date">작성일</th>
           <th class="col-views">조회</th>
           <th class="col-likes">추천 / 비추천</th>
@@ -535,7 +359,7 @@
         <% if (postList != null && !postList.isEmpty()) {
            int rowNum = totalCount - (currentPage - 1) * 15;
            for (BoardPostVO post : postList) { %>
-        <tr>
+        <tr<%= "Y".equals(post.getDelYn()) ? " class=\"row-deleted\"" : "" %>>
           <td class="col-no"><%= rowNum-- %></td>
           <td class="col-title">
             <a class="post-title-link"
@@ -547,6 +371,18 @@
             </a>
           </td>
           <td class="col-author" style="font-size:0.82rem;"><%= (post.getNickname() != null && !post.getNickname().isEmpty()) ? org.springframework.web.util.HtmlUtils.htmlEscape(post.getNickname()) : "관리자" %></td>
+          <td class="col-del">
+            <% boolean isDeleted = "Y".equals(post.getDelYn()); %>
+            <button class="del-badge <%= isDeleted ? "del" : "live" %>"
+                    onclick="toggleDelYn(<%= post.getPostNo() %>, this)">
+              <%= isDeleted ? "삭제" : "정상" %>
+            </button>
+          </td>
+          <td class="col-unappr-cmt">
+            <% if (post.getUnapprovedCommentCnt() > 0) { %>
+            <span style="color:#dc2626;font-size:0.82rem;font-weight:700;"><%= post.getUnapprovedCommentCnt() %></span>
+            <% } %>
+          </td>
           <td class="col-date"><%= post.getFormattedDate() %></td>
           <td class="col-views"><%= post.getViewCnt() %></td>
           <td class="col-likes">
@@ -564,7 +400,7 @@
         <% } %>
         <% } else { %>
         <tr>
-          <td colspan="6">
+          <td colspan="8">
             <div class="table-empty">
               <div class="empty-icon">📭</div>
               <p><%= !searchKeyword.isEmpty() ? "검색 결과가 없습니다." : "아직 공지사항이 없습니다." %></p>
@@ -610,5 +446,39 @@
   </div>
 
 </div><!-- /adm-content -->
+
+<script>
+  function applyFilter(radio) {
+    const params = new URLSearchParams();
+    params.set('page', '1');
+    const st = '<%= org.springframework.web.util.HtmlUtils.htmlEscape(searchType) %>';
+    const sk = '<%= org.springframework.web.util.HtmlUtils.htmlEscape(searchKeyword) %>';
+    if (st && st !== 'all') params.set('searchType', st);
+    if (sk) params.set('searchKeyword', sk);
+    if (radio.value !== 'all') params.set('filterMode', radio.value);
+    window.location.href = '/lottorank/admin/notice/list?' + params.toString();
+  }
+
+  function toggleDelYn(postNo, btn) {
+    fetch('/lottorank/admin/notice/del/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'postNo=' + postNo
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const isNowDel = data.delYn === 'Y';
+        btn.textContent = isNowDel ? '삭제' : '정상';
+        btn.className   = 'del-badge ' + (isNowDel ? 'del' : 'live');
+        const row = btn.closest('tr');
+        if (isNowDel) row.classList.add('row-deleted');
+        else          row.classList.remove('row-deleted');
+      } else {
+        alert(data.msg || '처리에 실패했습니다.');
+      }
+    });
+  }
+</script>
 </body>
 </html>

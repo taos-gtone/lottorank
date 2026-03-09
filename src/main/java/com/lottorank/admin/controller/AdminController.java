@@ -123,20 +123,66 @@ public class AdminController {
     }
 
     /* ─────────────────────────────────────────
+       관리자 정보 변경 (비밀번호)
+    ───────────────────────────────────────── */
+    @GetMapping("/myinfo")
+    public String myinfoForm(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+        model.addAttribute("adminUser", session.getAttribute("adminUser"));
+        return "admin/myinfo";
+    }
+
+    @PostMapping("/myinfo")
+    public String myinfoSubmit(@RequestParam String currentPw,
+                               @RequestParam String newPw,
+                               @RequestParam String newPwConfirm,
+                               HttpServletRequest request,
+                               Model model) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+
+        String adminId = (String) session.getAttribute("adminUser");
+        model.addAttribute("adminUser", adminId);
+
+        if (!newPw.equals(newPwConfirm)) {
+            model.addAttribute("errorMsg", "새 비밀번호와 확인이 일치하지 않습니다.");
+            return "admin/myinfo";
+        }
+        if (newPw.length() < 8) {
+            model.addAttribute("errorMsg", "새 비밀번호는 8자 이상이어야 합니다.");
+            return "admin/myinfo";
+        }
+
+        try {
+            adminService.changePassword(adminId, currentPw, newPw);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin/myinfo";
+        }
+
+        model.addAttribute("successMsg", "비밀번호가 성공적으로 변경되었습니다.");
+        return "admin/myinfo";
+    }
+
+    /* ─────────────────────────────────────────
        관리자 공지사항 목록
     ───────────────────────────────────────── */
     @GetMapping("/notice/list")
     public String noticeList(
-            @RequestParam(defaultValue = "1")  int    page,
-            @RequestParam(required = false)    String searchType,
-            @RequestParam(required = false)    String searchKeyword,
+            @RequestParam(defaultValue = "1")   int    page,
+            @RequestParam(required = false)     String searchType,
+            @RequestParam(required = false)     String searchKeyword,
+            @RequestParam(defaultValue = "all") String filterMode,
             HttpServletRequest request, Model model) {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("adminUser") == null)
             return "redirect:/lottorank/admin/login";
 
-        int totalCount = boardService.getPostCount(NOTICE_GBN, searchType, searchKeyword);
+        int totalCount = adminMapper.selectAdminNoticeCount(NOTICE_GBN, searchType, searchKeyword, filterMode);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / NOTICE_PS);
         if (page < 1)          page = 1;
         if (page > totalPages) page = totalPages;
@@ -145,8 +191,8 @@ public class AdminController {
         int endPage   = startPage + NOTICE_PBC - 1;
         if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - NOTICE_PBC + 1); }
 
-        List<BoardPostVO> postList = boardService.getPostList(
-                NOTICE_GBN, searchType, searchKeyword, page, NOTICE_PS);
+        List<BoardPostVO> postList = adminMapper.selectAdminNoticeList(
+                NOTICE_GBN, searchType, searchKeyword, filterMode, (page - 1) * NOTICE_PS, NOTICE_PS);
 
         model.addAttribute("postList",       postList);
         model.addAttribute("currentPage",    page);
@@ -156,6 +202,7 @@ public class AdminController {
         model.addAttribute("totalCount",     totalCount);
         model.addAttribute("searchType",     searchType != null ? searchType : "all");
         model.addAttribute("searchKeyword",  searchKeyword != null ? searchKeyword : "");
+        model.addAttribute("filterMode",     filterMode);
         model.addAttribute("adminUser",      session.getAttribute("adminUser"));
         return "admin/notice/list";
     }
@@ -166,24 +213,26 @@ public class AdminController {
     @GetMapping("/notice/view/{postNo}")
     public String noticeView(
             @PathVariable long postNo,
-            @RequestParam(defaultValue = "1")  int    page,
-            @RequestParam(required = false)    String searchType,
-            @RequestParam(required = false)    String searchKeyword,
+            @RequestParam(defaultValue = "1")   int    page,
+            @RequestParam(required = false)     String searchType,
+            @RequestParam(required = false)     String searchKeyword,
+            @RequestParam(defaultValue = "all") String filterMode,
             HttpServletRequest request, Model model) {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("adminUser") == null)
             return "redirect:/lottorank/admin/login";
 
-        BoardPostVO post = boardService.getPost(postNo);
+        BoardPostVO post = adminMapper.selectAdminNoticePost(postNo);
         if (post == null) return "redirect:/lottorank/admin/notice/list";
 
         boardService.increaseViewCnt(postNo);
         post.setViewCnt(post.getViewCnt() + 1);
 
-        List<BoardCommentVO> commentList = boardService.getCommentList(postNo);
+        List<BoardCommentVO> commentList = boardService.getCommentList(postNo, -1L);
 
-        int totalCount = boardService.getPostCount(NOTICE_GBN, searchType, searchKeyword);
+        // 하단 목록: 삭제글 포함 전체 조회 (행번호·current-row 정확성을 위해 "all" 고정)
+        int totalCount = adminMapper.selectAdminNoticeCount(NOTICE_GBN, searchType, searchKeyword, "all");
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / NOTICE_PS);
         if (page < 1)          page = 1;
         if (page > totalPages) page = totalPages;
@@ -192,8 +241,8 @@ public class AdminController {
         int endPage   = startPage + NOTICE_PBC - 1;
         if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - NOTICE_PBC + 1); }
 
-        List<BoardPostVO> postList = boardService.getPostList(
-                NOTICE_GBN, searchType, searchKeyword, page, NOTICE_PS);
+        List<BoardPostVO> postList = adminMapper.selectAdminNoticeList(
+                NOTICE_GBN, searchType, searchKeyword, "all", (page - 1) * NOTICE_PS, NOTICE_PS);
 
         model.addAttribute("post",           post);
         model.addAttribute("commentList",    commentList);
@@ -205,6 +254,7 @@ public class AdminController {
         model.addAttribute("currentPage",    page);
         model.addAttribute("searchType",     searchType != null ? searchType : "all");
         model.addAttribute("searchKeyword",  searchKeyword != null ? searchKeyword : "");
+        model.addAttribute("filterMode",     filterMode);
         model.addAttribute("adminUser",      session.getAttribute("adminUser"));
         return "admin/notice/view";
     }
@@ -218,8 +268,8 @@ public class AdminController {
         if (session == null || session.getAttribute("adminUser") == null)
             return "redirect:/lottorank/admin/login";
 
-        List<BoardPostVO> postList = boardService.getPostList(NOTICE_GBN, null, null, 1, NOTICE_PS);
-        int totalCount = boardService.getPostCount(NOTICE_GBN, null, null);
+        List<BoardPostVO> postList = boardService.getPostList(NOTICE_GBN, null, null, -1L, 1, NOTICE_PS);
+        int totalCount = boardService.getPostCount(NOTICE_GBN, null, null, -1L);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / NOTICE_PS);
 
         model.addAttribute("postList",    postList);
@@ -244,6 +294,7 @@ public class AdminController {
         post.setTitle(title.trim());
         post.setContent(content.trim());
         post.setRegIp(resolveIp(request));
+        post.setApprovalYn("Y");
 
         long postNo = boardService.writePost(post);
         return "redirect:/lottorank/admin/notice/view/" + postNo;
@@ -262,8 +313,8 @@ public class AdminController {
         BoardPostVO post = boardService.getPost(postNo);
         if (post == null) return "redirect:/lottorank/admin/notice/list";
 
-        List<BoardPostVO> postList = boardService.getPostList(NOTICE_GBN, null, null, 1, NOTICE_PS);
-        int totalCount = boardService.getPostCount(NOTICE_GBN, null, null);
+        List<BoardPostVO> postList = boardService.getPostList(NOTICE_GBN, null, null, -1L, 1, NOTICE_PS);
+        int totalCount = boardService.getPostCount(NOTICE_GBN, null, null, -1L);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / NOTICE_PS);
 
         model.addAttribute("post",        post);
@@ -307,6 +358,29 @@ public class AdminController {
     }
 
     /* ─────────────────────────────────────────
+       관리자 공지사항 삭제여부 토글 (AJAX)
+    ───────────────────────────────────────── */
+    @PostMapping("/notice/del/toggle")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> noticeDelToggle(
+            @RequestParam long postNo,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null) {
+            result.put("success", false);
+            result.put("msg", "관리자 로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        adminMapper.toggleNoticeDelYn(postNo);
+        BoardPostVO post = adminMapper.selectAdminNoticePost(postNo);
+        result.put("success", true);
+        result.put("delYn", post != null ? post.getDelYn() : "N");
+        return ResponseEntity.ok(result);
+    }
+
+    /* ─────────────────────────────────────────
        관리자 공지사항 댓글 삭제 (AJAX)
     ───────────────────────────────────────── */
     @PostMapping("/notice/comment/delete")
@@ -341,36 +415,66 @@ public class AdminController {
     ───────────────────────────────────────── */
     @GetMapping("/board/list")
     public String boardList(
-            @RequestParam(defaultValue = "1")  int    page,
-            @RequestParam(required = false)    String searchType,
-            @RequestParam(required = false)    String searchKeyword,
+            @RequestParam(defaultValue = "1")   int    page,
+            @RequestParam(required = false)     String searchType,
+            @RequestParam(required = false)     String searchKeyword,
+            @RequestParam(defaultValue = "all") String filterMode,
             HttpServletRequest request, Model model) {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("adminUser") == null)
             return "redirect:/lottorank/admin/login";
 
-        int totalCount = boardService.getPostCount(BOARD_GBN, searchType, searchKeyword);
-        int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / BOARD_PS);
-        if (page < 1)          page = 1;
-        if (page > totalPages) page = totalPages;
+        int totalCount;
+        List<BoardPostVO> postList;
 
-        int startPage = Math.max(1, page - BOARD_PBC / 2);
-        int endPage   = startPage + BOARD_PBC - 1;
-        if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - BOARD_PBC + 1); }
+        if ("approved".equals(filterMode)) {
+            totalCount = adminMapper.selectAdminBoardCountApproved(BOARD_GBN, searchType, searchKeyword);
+            int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / BOARD_PS);
+            if (page < 1)          page = 1;
+            if (page > totalPages) page = totalPages;
+            int startPage = Math.max(1, page - BOARD_PBC / 2);
+            int endPage   = startPage + BOARD_PBC - 1;
+            if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - BOARD_PBC + 1); }
+            postList = adminMapper.selectAdminBoardListApproved(
+                    BOARD_GBN, searchType, searchKeyword, (page - 1) * BOARD_PS, BOARD_PS);
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("startPage",  startPage);
+            model.addAttribute("endPage",    endPage);
+        } else if ("unapproved".equals(filterMode)) {
+            totalCount = adminMapper.selectAdminBoardCountUnapproved(BOARD_GBN, searchType, searchKeyword);
+            int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / BOARD_PS);
+            if (page < 1)          page = 1;
+            if (page > totalPages) page = totalPages;
+            int startPage = Math.max(1, page - BOARD_PBC / 2);
+            int endPage   = startPage + BOARD_PBC - 1;
+            if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - BOARD_PBC + 1); }
+            postList = adminMapper.selectAdminBoardListUnapproved(
+                    BOARD_GBN, searchType, searchKeyword, (page - 1) * BOARD_PS, BOARD_PS);
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("startPage",  startPage);
+            model.addAttribute("endPage",    endPage);
+        } else {
+            totalCount = boardService.getPostCount(BOARD_GBN, searchType, searchKeyword, -1L);
+            int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / BOARD_PS);
+            if (page < 1)          page = 1;
+            if (page > totalPages) page = totalPages;
+            int startPage = Math.max(1, page - BOARD_PBC / 2);
+            int endPage   = startPage + BOARD_PBC - 1;
+            if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - BOARD_PBC + 1); }
+            postList = boardService.getPostList(BOARD_GBN, searchType, searchKeyword, -1L, page, BOARD_PS);
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("startPage",  startPage);
+            model.addAttribute("endPage",    endPage);
+        }
 
-        List<BoardPostVO> postList = boardService.getPostList(
-                BOARD_GBN, searchType, searchKeyword, page, BOARD_PS);
-
-        model.addAttribute("postList",       postList);
-        model.addAttribute("currentPage",    page);
-        model.addAttribute("totalPages",     totalPages);
-        model.addAttribute("startPage",      startPage);
-        model.addAttribute("endPage",        endPage);
-        model.addAttribute("totalCount",     totalCount);
-        model.addAttribute("searchType",     searchType != null ? searchType : "all");
-        model.addAttribute("searchKeyword",  searchKeyword != null ? searchKeyword : "");
-        model.addAttribute("adminUser",      session.getAttribute("adminUser"));
+        model.addAttribute("postList",      postList);
+        model.addAttribute("currentPage",   page);
+        model.addAttribute("totalCount",    totalCount);
+        model.addAttribute("searchType",    searchType != null ? searchType : "all");
+        model.addAttribute("searchKeyword", searchKeyword != null ? searchKeyword : "");
+        model.addAttribute("filterMode",    filterMode);
+        model.addAttribute("adminUser",     session.getAttribute("adminUser"));
         return "admin/board/list";
     }
 
@@ -380,9 +484,10 @@ public class AdminController {
     @GetMapping("/board/view/{postNo}")
     public String boardView(
             @PathVariable long postNo,
-            @RequestParam(defaultValue = "1")  int    page,
-            @RequestParam(required = false)    String searchType,
-            @RequestParam(required = false)    String searchKeyword,
+            @RequestParam(defaultValue = "1")   int    page,
+            @RequestParam(required = false)     String searchType,
+            @RequestParam(required = false)     String searchKeyword,
+            @RequestParam(defaultValue = "all") String filterMode,
             HttpServletRequest request, Model model) {
 
         HttpSession session = request.getSession(false);
@@ -395,9 +500,9 @@ public class AdminController {
         boardService.increaseViewCnt(postNo);
         post.setViewCnt(post.getViewCnt() + 1);
 
-        List<BoardCommentVO> commentList = boardService.getCommentList(postNo);
+        List<BoardCommentVO> commentList = boardService.getCommentList(postNo, -1L);
 
-        int totalCount = boardService.getPostCount(BOARD_GBN, searchType, searchKeyword);
+        int totalCount = boardService.getPostCount(BOARD_GBN, searchType, searchKeyword, -1L);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / BOARD_PS);
         if (page < 1)          page = 1;
         if (page > totalPages) page = totalPages;
@@ -407,7 +512,7 @@ public class AdminController {
         if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - BOARD_PBC + 1); }
 
         List<BoardPostVO> postList = boardService.getPostList(
-                BOARD_GBN, searchType, searchKeyword, page, BOARD_PS);
+                BOARD_GBN, searchType, searchKeyword, -1L, page, BOARD_PS);
 
         model.addAttribute("post",           post);
         model.addAttribute("commentList",    commentList);
@@ -419,6 +524,7 @@ public class AdminController {
         model.addAttribute("currentPage",    page);
         model.addAttribute("searchType",     searchType != null ? searchType : "all");
         model.addAttribute("searchKeyword",  searchKeyword != null ? searchKeyword : "");
+        model.addAttribute("filterMode",     filterMode);
         model.addAttribute("adminUser",      session.getAttribute("adminUser"));
         return "admin/board/view";
     }
@@ -432,8 +538,8 @@ public class AdminController {
         if (session == null || session.getAttribute("adminUser") == null)
             return "redirect:/lottorank/admin/login";
 
-        List<BoardPostVO> postList = boardService.getPostList(BOARD_GBN, null, null, 1, BOARD_PS);
-        int totalCount = boardService.getPostCount(BOARD_GBN, null, null);
+        List<BoardPostVO> postList = boardService.getPostList(BOARD_GBN, null, null, -1L, 1, BOARD_PS);
+        int totalCount = boardService.getPostCount(BOARD_GBN, null, null, -1L);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / BOARD_PS);
 
         model.addAttribute("postList",    postList);
@@ -476,8 +582,8 @@ public class AdminController {
         BoardPostVO post = boardService.getPost(postNo);
         if (post == null) return "redirect:/lottorank/admin/board/list";
 
-        List<BoardPostVO> postList = boardService.getPostList(BOARD_GBN, null, null, 1, BOARD_PS);
-        int totalCount = boardService.getPostCount(BOARD_GBN, null, null);
+        List<BoardPostVO> postList = boardService.getPostList(BOARD_GBN, null, null, -1L, 1, BOARD_PS);
+        int totalCount = boardService.getPostCount(BOARD_GBN, null, null, -1L);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / BOARD_PS);
 
         model.addAttribute("post",        post);
@@ -517,6 +623,52 @@ public class AdminController {
             return "redirect:/lottorank/admin/login";
         boardService.deletePost(postNo, 0L);
         return "redirect:/lottorank/admin/board/list";
+    }
+
+    /* ─────────────────────────────────────────
+       관리자 게시판 게시글 승인 토글 (AJAX)
+    ───────────────────────────────────────── */
+    @PostMapping("/board/post/approval")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> boardPostApproval(
+            @RequestParam long postNo,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null) {
+            result.put("success", false);
+            result.put("msg", "관리자 로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        adminMapper.togglePostApprovalYn(postNo);
+        BoardPostVO post = boardService.getPost(postNo);
+        result.put("success", true);
+        result.put("approvalYn", post != null ? post.getApprovalYn() : "N");
+        return ResponseEntity.ok(result);
+    }
+
+    /* ─────────────────────────────────────────
+       관리자 게시판 댓글 승인 토글 (AJAX)
+    ───────────────────────────────────────── */
+    @PostMapping("/board/comment/approval")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> boardCommentApproval(
+            @RequestParam long commentNo,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null) {
+            result.put("success", false);
+            result.put("msg", "관리자 로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        adminMapper.toggleCommentApprovalYn(commentNo);
+        String approvalYn = adminMapper.selectCommentApprovalYn(commentNo);
+        result.put("success", true);
+        result.put("approvalYn", approvalYn != null ? approvalYn : "N");
+        return ResponseEntity.ok(result);
     }
 
     /* ─────────────────────────────────────────

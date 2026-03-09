@@ -18,14 +18,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<BoardPostVO> getPostList(String boardGbnCd, String searchType,
-                                         String searchKeyword, int page, int pageSize) {
+                                         String searchKeyword, long loginMemberNo, int page, int pageSize) {
         int offset = (page - 1) * pageSize;
-        return boardMapper.selectPostList(boardGbnCd, searchType, searchKeyword, offset, pageSize);
+        return boardMapper.selectPostList(boardGbnCd, searchType, searchKeyword, loginMemberNo, offset, pageSize);
     }
 
     @Override
-    public int getPostCount(String boardGbnCd, String searchType, String searchKeyword) {
-        return boardMapper.selectPostCount(boardGbnCd, searchType, searchKeyword);
+    public int getPostCount(String boardGbnCd, String searchType, String searchKeyword, long loginMemberNo) {
+        return boardMapper.selectPostCount(boardGbnCd, searchType, searchKeyword, loginMemberNo);
     }
 
     @Override
@@ -55,8 +55,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<BoardCommentVO> getCommentList(long postNo) {
-        return boardMapper.selectCommentList(postNo);
+    public List<BoardCommentVO> getCommentList(long postNo, long loginMemberNo) {
+        return boardMapper.selectCommentList(postNo, loginMemberNo);
     }
 
     @Override

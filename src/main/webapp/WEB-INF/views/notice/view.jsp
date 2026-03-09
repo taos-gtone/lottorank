@@ -154,8 +154,8 @@
         <h2 class="post-view-title"><%= org.springframework.web.util.HtmlUtils.htmlEscape(post.getTitle()) %></h2>
         <div class="post-view-meta">
           <div class="post-meta-author">
-            <span class="author-icon">관</span>
-            관리자
+            <span class="author-icon"><%= post.getNickname() != null && !post.getNickname().isEmpty() ? post.getNickname().substring(0,1).toUpperCase() : "관" %></span>
+            <%= org.springframework.web.util.HtmlUtils.htmlEscape(post.getNickname() != null && !post.getNickname().isEmpty() ? post.getNickname() : "관리자") %>
           </div>
           <span class="post-meta-divider"></span>
           <span><%= post.getFormattedDate() %></span>
@@ -166,15 +166,6 @@
           <span class="post-meta-divider"></span>
           <span>댓글 <%= post.getCommentCnt() %></span>
         </div>
-        <% if (isAdmin) { %>
-        <div class="post-view-actions">
-          <a href="<%= contextPath %>/notice/edit/<%= post.getPostNo() %>" class="btn-post-edit">수정</a>
-          <form method="post" action="<%= contextPath %>/notice/delete/<%= post.getPostNo() %>"
-                onsubmit="return confirm('정말 삭제하시겠습니까?')" style="display:inline;">
-            <button type="submit" class="btn-post-delete">삭제</button>
-          </form>
-        </div>
-        <% } %>
       </div>
 
       <div class="post-view-body">
@@ -197,9 +188,6 @@
 
       <div class="post-nav-wrap">
         <a href="<%= contextPath %>/notice/list<%= backParams %>" class="btn-back-list">← 목록으로</a>
-        <% if (isAdmin) { %>
-        <a href="<%= contextPath %>/notice/write" class="btn-write">✏️ 글쓰기</a>
-        <% } %>
       </div>
     </div>
 

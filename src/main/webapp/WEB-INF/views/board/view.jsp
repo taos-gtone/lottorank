@@ -231,7 +231,7 @@
           <span class="post-meta-divider"></span>
           <span>비추천 <%= post.getDislikeCnt() %></span>
           <span class="post-meta-divider"></span>
-          <span>댓글 <%= post.getCommentCnt() %></span>
+          <span>댓글 <%= commentList != null ? commentList.size() : 0 %></span>
         </div>
         <% if (isAuthor) { %>
         <div class="post-view-actions">

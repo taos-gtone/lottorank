@@ -66,9 +66,12 @@ public class BoardController {
             @RequestParam(defaultValue = "1")  int    page,
             @RequestParam(required = false)    String searchType,
             @RequestParam(required = false)    String searchKeyword,
-            Model model) {
+            HttpServletRequest request, Model model) {
 
-        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword);
+        HttpSession session = request.getSession(false);
+        long loginMemberNo  = getLoginMemberNo(session);
+
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword, loginMemberNo);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
 
         if (page < 1)          page = 1;
@@ -82,7 +85,7 @@ public class BoardController {
         }
 
         List<BoardPostVO> postList = boardService.getPostList(
-                BOARD_GBN_CD, searchType, searchKeyword, page, PAGE_SIZE);
+                BOARD_GBN_CD, searchType, searchKeyword, loginMemberNo, page, PAGE_SIZE);
 
         model.addAttribute("postList",       postList);
         model.addAttribute("currentPage",    page);
@@ -118,12 +121,12 @@ public class BoardController {
         boardService.increaseViewCnt(postNo);
         post.setViewCnt(post.getViewCnt() + 1);
 
-        List<BoardCommentVO> commentList = boardService.getCommentList(postNo);
+        List<BoardCommentVO> commentList = boardService.getCommentList(postNo, loginMemberNo);
         String myReaction = boardService.getMyReaction(postNo, loginMemberNo);
         Map<Long, String> commentReactions = boardService.getMyCommentReactions(postNo, loginMemberNo);
 
         // 하단 목록용 페이지 계산
-        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword);
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword, loginMemberNo);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
         if (page < 1)          page = 1;
         if (page > totalPages) page = totalPages;
@@ -134,7 +137,7 @@ public class BoardController {
             startPage = Math.max(1, endPage - PAGE_BUTTON_COUNT + 1);
         }
         List<BoardPostVO> postList = boardService.getPostList(
-                BOARD_GBN_CD, searchType, searchKeyword, page, PAGE_SIZE);
+                BOARD_GBN_CD, searchType, searchKeyword, loginMemberNo, page, PAGE_SIZE);
 
         model.addAttribute("post",              post);
         model.addAttribute("commentList",       commentList);
@@ -164,7 +167,7 @@ public class BoardController {
         long memberNo = getLoginMemberNo(session);
         if (memberNo == 0) return "redirect:/member/login?redirect=/board/write";
 
-        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword);
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword, memberNo);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
         if (page < 1)          page = 1;
         if (page > totalPages) page = totalPages;
@@ -175,7 +178,7 @@ public class BoardController {
             startPage = Math.max(1, endPage - PAGE_BUTTON_COUNT + 1);
         }
         List<BoardPostVO> postList = boardService.getPostList(
-                BOARD_GBN_CD, searchType, searchKeyword, page, PAGE_SIZE);
+                BOARD_GBN_CD, searchType, searchKeyword, memberNo, page, PAGE_SIZE);
 
         model.addAttribute("postList",      postList);
         model.addAttribute("totalCount",    totalCount);
@@ -226,7 +229,7 @@ public class BoardController {
         if (post == null || post.getMemberNo() != memberNo)
             return "redirect:/board/list";
 
-        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword);
+        int totalCount = boardService.getPostCount(BOARD_GBN_CD, searchType, searchKeyword, memberNo);
         int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / PAGE_SIZE);
         if (page < 1)          page = 1;
         if (page > totalPages) page = totalPages;
@@ -237,7 +240,7 @@ public class BoardController {
             startPage = Math.max(1, endPage - PAGE_BUTTON_COUNT + 1);
         }
         List<BoardPostVO> postList = boardService.getPostList(
-                BOARD_GBN_CD, searchType, searchKeyword, page, PAGE_SIZE);
+                BOARD_GBN_CD, searchType, searchKeyword, memberNo, page, PAGE_SIZE);
 
         model.addAttribute("post",          post);
         model.addAttribute("postList",      postList);

@@ -38,6 +38,16 @@ public class AdminServiceImpl implements AdminService {
         return admin;
     }
 
+    @Override
+    public void changePassword(String adminId, String currentPw, String newPw) {
+        AdminLoginInfoVO admin = adminMapper.selectAdminById(adminId);
+        if (admin == null || !BCrypt.checkpw(currentPw, admin.getAdminPw())) {
+            throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
+        }
+        String hashed = BCrypt.hashpw(newPw, BCrypt.gensalt());
+        adminMapper.updateAdminPassword(adminId, hashed);
+    }
+
     private void saveHist(String adminId, String rsltCd, String failRsnCd,
                           String loginIp, String userAgent) {
         AdminLoginHistVO hist = new AdminLoginHistVO();

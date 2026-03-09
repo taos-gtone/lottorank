@@ -19,8 +19,9 @@ public class BoardPostVO {
     private Timestamp createTs;
     private Timestamp updateTs;
 
-    // 조인 필드 (SELECT 시 회원 닉네임)
+    // 조인 필드
     private String nickname;
+    private int    unapprovedCommentCnt;
 
     public long getPostNo() { return postNo; }
     public void setPostNo(long postNo) { this.postNo = postNo; }
@@ -66,6 +67,9 @@ public class BoardPostVO {
 
     public String getNickname() { return nickname; }
     public void setNickname(String nickname) { this.nickname = nickname; }
+
+    public int getUnapprovedCommentCnt() { return unapprovedCommentCnt; }
+    public void setUnapprovedCommentCnt(int unapprovedCommentCnt) { this.unapprovedCommentCnt = unapprovedCommentCnt; }
 
     /** 등록일 yyyy.MM.dd 형식 반환 */
     public String getFormattedDate() {

@@ -13,16 +13,18 @@ public interface BoardMapper {
 
     /* ── 목록 & 카운트 ── */
     List<BoardPostVO> selectPostList(
-            @Param("boardGbnCd")    String  boardGbnCd,
-            @Param("searchType")    String  searchType,
-            @Param("searchKeyword") String  searchKeyword,
-            @Param("offset")        int     offset,
-            @Param("pageSize")      int     pageSize);
+            @Param("boardGbnCd")     String  boardGbnCd,
+            @Param("searchType")     String  searchType,
+            @Param("searchKeyword")  String  searchKeyword,
+            @Param("loginMemberNo")  long    loginMemberNo,
+            @Param("offset")         int     offset,
+            @Param("pageSize")       int     pageSize);
 
     int selectPostCount(
             @Param("boardGbnCd")    String boardGbnCd,
             @Param("searchType")    String searchType,
-            @Param("searchKeyword") String searchKeyword);
+            @Param("searchKeyword") String searchKeyword,
+            @Param("loginMemberNo") long   loginMemberNo);
 
     /* ── 단건 조회 ── */
     BoardPostVO selectPost(@Param("postNo") long postNo);
@@ -42,7 +44,9 @@ public interface BoardMapper {
             @Param("memberNo")  long   memberNo);
 
     /* ── 댓글 목록 ── */
-    List<BoardCommentVO> selectCommentList(@Param("postNo") long postNo);
+    List<BoardCommentVO> selectCommentList(
+            @Param("postNo")        long postNo,
+            @Param("loginMemberNo") long loginMemberNo);
 
     /* ── 댓글 등록 ── */
     void insertComment(BoardCommentVO comment);
@@ -93,4 +97,7 @@ public interface BoardMapper {
             @Param("memberNo")  long memberNo);
 
     void syncCommentReactionCnt(@Param("commentNo") long commentNo);
+
+    /* ── 공지사항 최신 N건 (util-ticker 용) ── */
+    List<BoardPostVO> selectRecentNotices(@Param("limit") int limit);
 }

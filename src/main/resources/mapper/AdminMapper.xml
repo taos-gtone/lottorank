@@ -49,4 +49,271 @@
          WHERE post_no = #{postNo}
     </update>
 
+    <!-- 게시글 승인여부 토글 (N↔Y) + 승인일시 -->
+    <update id="togglePostApprovalYn">
+        UPDATE BRD_POST_MST
+           SET approval_yn = IF(approval_yn = 'Y', 'N', 'Y'),
+               approval_at = IF(approval_yn = 'Y', NOW(), NULL)
+         WHERE post_no = #{postNo}
+    </update>
+
+    <!-- 댓글 승인여부 토글 (N↔Y) + 승인일시 -->
+    <update id="toggleCommentApprovalYn">
+        UPDATE BRD_POST_COMMENT
+           SET approval_yn = IF(approval_yn = 'Y', 'N', 'Y'),
+               approval_at = IF(approval_yn = 'Y', NOW(), NULL)
+         WHERE comment_no = #{commentNo}
+    </update>
+
+    <!-- 댓글 승인여부 단건 조회 -->
+    <select id="selectCommentApprovalYn" resultType="String">
+        SELECT approval_yn
+          FROM BRD_POST_COMMENT
+         WHERE comment_no = #{commentNo}
+    </select>
+
+    <!-- 승인 게시글/댓글 필터 - 공통 검색 WHERE -->
+    <sql id="approvedSearchWhere">
+        AND p.del_yn       = 'N'
+        AND p.board_gbn_cd = #{boardGbnCd}
+        AND p.approval_yn  = 'Y'
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchType == 'title'">
+                    AND p.title LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <when test="searchType == 'content'">
+                    AND p.content LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <otherwise>
+                    AND (p.title   LIKE CONCAT('%', #{searchKeyword}, '%')
+                      OR p.content LIKE CONCAT('%', #{searchKeyword}, '%'))
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <!-- 승인 게시글/댓글 필터 - 목록 (comment_cnt는 승인된 댓글만 카운팅) -->
+    <select id="selectAdminBoardListApproved" resultType="BoardPostVO">
+        SELECT
+            p.post_no,
+            p.board_gbn_cd,
+            p.member_no,
+            p.title,
+            p.view_cnt,
+            p.like_cnt,
+            p.dislike_cnt,
+            (SELECT COUNT(*) FROM BRD_POST_COMMENT c2
+              WHERE c2.post_no    = p.post_no
+                AND c2.del_yn     = 'N'
+                AND c2.approval_yn = 'Y') AS comment_cnt,
+            (SELECT COUNT(*) FROM BRD_POST_COMMENT c3
+              WHERE c3.post_no = p.post_no AND c3.del_yn = 'N'
+                AND c3.approval_yn = 'N') AS unapproved_comment_cnt,
+            p.approval_yn,
+            p.del_yn,
+            p.create_ts,
+            p.update_ts,
+            COALESCE(m.nickname, IF(p.member_no = 0,
+                (SELECT admin_id FROM ADM_LOGIN_INFO LIMIT 1), NULL)) AS nickname
+        FROM BRD_POST_MST p
+        LEFT JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+        WHERE 1=1
+        <include refid="approvedSearchWhere"/>
+        ORDER BY p.post_no DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 승인 게시글 필터 - 건수 -->
+    <select id="selectAdminBoardCountApproved" resultType="int">
+        SELECT COUNT(*)
+        FROM BRD_POST_MST p
+        WHERE 1=1
+        <include refid="approvedSearchWhere"/>
+    </select>
+
+    <!-- 미승인 게시글/댓글 필터 - 공통 검색 WHERE -->
+    <sql id="unapprovedSearchWhere">
+        AND p.del_yn       = 'N'
+        AND p.board_gbn_cd = #{boardGbnCd}
+        AND (
+            p.approval_yn = 'N'
+            OR EXISTS (
+                SELECT 1 FROM BRD_POST_COMMENT c
+                 WHERE c.post_no     = p.post_no
+                   AND c.del_yn      = 'N'
+                   AND c.approval_yn = 'N'
+            )
+        )
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchType == 'title'">
+                    AND p.title LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <when test="searchType == 'content'">
+                    AND p.content LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <otherwise>
+                    AND (p.title   LIKE CONCAT('%', #{searchKeyword}, '%')
+                      OR p.content LIKE CONCAT('%', #{searchKeyword}, '%'))
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <!-- 미승인 게시글/댓글 필터 - 목록 -->
+    <select id="selectAdminBoardListUnapproved" resultType="BoardPostVO">
+        SELECT
+            p.post_no,
+            p.board_gbn_cd,
+            p.member_no,
+            p.title,
+            p.view_cnt,
+            p.like_cnt,
+            p.dislike_cnt,
+            (SELECT COUNT(*) FROM BRD_POST_COMMENT c2
+              WHERE c2.post_no = p.post_no AND c2.del_yn = 'N') AS comment_cnt,
+            (SELECT COUNT(*) FROM BRD_POST_COMMENT c3
+              WHERE c3.post_no = p.post_no AND c3.del_yn = 'N'
+                AND c3.approval_yn = 'N') AS unapproved_comment_cnt,
+            p.approval_yn,
+            p.del_yn,
+            p.create_ts,
+            p.update_ts,
+            COALESCE(m.nickname, IF(p.member_no = 0,
+                (SELECT admin_id FROM ADM_LOGIN_INFO LIMIT 1), NULL)) AS nickname
+        FROM BRD_POST_MST p
+        LEFT JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+        WHERE 1=1
+        <include refid="unapprovedSearchWhere"/>
+        ORDER BY p.post_no DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 공지사항 공통 WHERE (filterMode 지원) -->
+    <sql id="noticeFilterWhere">
+        AND p.board_gbn_cd = #{boardGbnCd}
+        <choose>
+            <when test="filterMode == 'normal'">
+                AND p.del_yn = 'N'
+            </when>
+            <when test="filterMode == 'unapproved_comment'">
+                AND p.del_yn = 'N'
+                AND EXISTS (
+                    SELECT 1 FROM BRD_POST_COMMENT c
+                     WHERE c.post_no     = p.post_no
+                       AND c.del_yn      = 'N'
+                       AND c.approval_yn = 'N'
+                )
+            </when>
+        </choose>
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchType == 'title'">
+                    AND p.title LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <when test="searchType == 'content'">
+                    AND p.content LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <otherwise>
+                    AND (p.title   LIKE CONCAT('%', #{searchKeyword}, '%')
+                      OR p.content LIKE CONCAT('%', #{searchKeyword}, '%'))
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <!-- 공지사항 목록 (삭제글 포함, filterMode 지원) -->
+    <select id="selectAdminNoticeList" resultType="BoardPostVO">
+        SELECT
+            p.post_no,
+            p.board_gbn_cd,
+            p.member_no,
+            p.title,
+            p.view_cnt,
+            p.like_cnt,
+            p.dislike_cnt,
+            (SELECT COUNT(*) FROM BRD_POST_COMMENT c2
+              WHERE c2.post_no = p.post_no AND c2.del_yn = 'N') AS comment_cnt,
+            (SELECT COUNT(*) FROM BRD_POST_COMMENT c3
+              WHERE c3.post_no = p.post_no AND c3.del_yn = 'N'
+                AND c3.approval_yn = 'N') AS unapproved_comment_cnt,
+            p.approval_yn,
+            p.del_yn,
+            p.create_ts,
+            p.update_ts,
+            COALESCE(m.nickname, IF(p.member_no = 0,
+                (SELECT admin_id FROM ADM_LOGIN_INFO LIMIT 1), NULL)) AS nickname
+        FROM BRD_POST_MST p
+        LEFT JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+        WHERE 1=1
+        <include refid="noticeFilterWhere"/>
+        ORDER BY p.post_no DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 공지사항 건수 (삭제글 포함, filterMode 지원) -->
+    <select id="selectAdminNoticeCount" resultType="int">
+        SELECT COUNT(*)
+        FROM BRD_POST_MST p
+        WHERE 1=1
+        <include refid="noticeFilterWhere"/>
+    </select>
+
+    <!-- 공지사항 단건 조회 (삭제글 포함, 관리자용) -->
+    <select id="selectAdminNoticePost" resultType="BoardPostVO">
+        SELECT
+            p.post_no,
+            p.board_gbn_cd,
+            p.member_no,
+            p.title,
+            p.content,
+            p.view_cnt,
+            p.like_cnt,
+            p.dislike_cnt,
+            p.comment_cnt,
+            p.approval_yn,
+            p.del_yn,
+            p.create_ts,
+            p.update_ts,
+            COALESCE(m.nickname, IF(p.member_no = 0,
+                (SELECT admin_id FROM ADM_LOGIN_INFO LIMIT 1), NULL)) AS nickname
+        FROM BRD_POST_MST p
+        LEFT JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+        WHERE p.post_no       = #{postNo}
+          AND p.board_gbn_cd  = '02'
+    </select>
+
+    <!-- 공지사항 삭제여부 토글 (N→Y 삭제 / Y→N 복구) -->
+    <update id="toggleNoticeDelYn">
+        UPDATE BRD_POST_MST
+           SET del_ts = IF(del_yn = 'N', NOW(), NULL),
+               del_yn = IF(del_yn = 'N', 'Y', 'N')
+         WHERE post_no      = #{postNo}
+           AND board_gbn_cd = '02'
+    </update>
+
+    <!-- 게시글 즉시 승인 (공지사항 등록 시 사용) -->
+    <update id="approvePost">
+        UPDATE BRD_POST_MST
+           SET approval_yn = 'Y',
+               approval_at = NOW()
+         WHERE post_no = #{postNo}
+    </update>
+
+    <!-- 미승인 게시글/댓글 필터 - 건수 -->
+    <select id="selectAdminBoardCountUnapproved" resultType="int">
+        SELECT COUNT(*)
+        FROM BRD_POST_MST p
+        WHERE 1=1
+        <include refid="unapprovedSearchWhere"/>
+    </select>
+
+    <!-- 관리자 비밀번호 변경 -->
+    <update id="updateAdminPassword">
+        UPDATE ADM_LOGIN_INFO
+           SET admin_pw = #{adminPw}
+         WHERE admin_id = #{adminId}
+    </update>
+
 </mapper>
