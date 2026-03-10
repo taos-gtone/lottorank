@@ -256,6 +256,18 @@ public class MemberController {
                 return ResponseEntity.ok(result);
             }
 
+            if (memberService.isNicknameBanned(nickname)) {
+                result.put("success", false);
+                result.put("message", "사용할 수 없는 닉네임입니다.");
+                return ResponseEntity.ok(result);
+            }
+
+            if (!memberService.isNicknameAvailable(nickname)) {
+                result.put("success", false);
+                result.put("message", "이미 사용 중인 닉네임입니다.");
+                return ResponseEntity.ok(result);
+            }
+
             MemberVO member = new MemberVO();
             member.setUserId(userId);
             member.setUserPw(userPw);
@@ -396,6 +408,26 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> checkId(@RequestParam String userId) {
         Map<String, Object> result = new HashMap<>();
         result.put("available", memberService.isUserIdAvailable(userId));
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/checkNickname")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> checkNickname(@RequestParam String nickname) {
+        Map<String, Object> result = new HashMap<>();
+        if (memberService.isNicknameBanned(nickname)) {
+            result.put("available", false);
+            result.put("banned", true);
+            result.put("message", "사용할 수 없는 닉네임입니다.");
+        } else if (!memberService.isNicknameAvailable(nickname)) {
+            result.put("available", false);
+            result.put("banned", false);
+            result.put("message", "이미 사용 중인 닉네임입니다.");
+        } else {
+            result.put("available", true);
+            result.put("banned", false);
+            result.put("message", "사용 가능한 닉네임입니다.");
+        }
         return ResponseEntity.ok(result);
     }
 
@@ -567,6 +599,18 @@ public class MemberController {
             if (!memberService.isUserIdAvailable(userId)) {
                 result.put("success", false);
                 result.put("message", "이미 사용 중인 아이디입니다.");
+                return ResponseEntity.ok(result);
+            }
+
+            if (memberService.isNicknameBanned(nickname)) {
+                result.put("success", false);
+                result.put("message", "사용할 수 없는 닉네임입니다.");
+                return ResponseEntity.ok(result);
+            }
+
+            if (!memberService.isNicknameAvailable(nickname)) {
+                result.put("success", false);
+                result.put("message", "이미 사용 중인 닉네임입니다.");
                 return ResponseEntity.ok(result);
             }
 
@@ -765,6 +809,18 @@ public class MemberController {
             if (!memberService.isUserIdAvailable(userId)) {
                 result.put("success", false);
                 result.put("message", "이미 사용 중인 아이디입니다.");
+                return ResponseEntity.ok(result);
+            }
+
+            if (memberService.isNicknameBanned(nickname)) {
+                result.put("success", false);
+                result.put("message", "사용할 수 없는 닉네임입니다.");
+                return ResponseEntity.ok(result);
+            }
+
+            if (!memberService.isNicknameAvailable(nickname)) {
+                result.put("success", false);
+                result.put("message", "이미 사용 중인 닉네임입니다.");
                 return ResponseEntity.ok(result);
             }
 

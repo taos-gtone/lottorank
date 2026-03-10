@@ -194,8 +194,11 @@
         <!-- 닉네임 -->
         <div class="form-group">
           <label class="form-label" for="userNick">닉네임 <span class="req">*</span></label>
-          <input type="text" class="form-input" id="userNick"
-                 placeholder="랭킹에 표시될 닉네임 (2~12자)" maxlength="12">
+          <div class="input-btn-row">
+            <input type="text" class="form-input" id="userNick"
+                   placeholder="랭킹에 표시될 닉네임 (2~12자)" maxlength="12">
+            <button type="button" class="btn-check" id="btnNickCheck">중복확인</button>
+          </div>
           <p class="form-hint" id="hintNick">한글·영문·숫자를 사용해 2~12자로 입력하세요.</p>
         </div>
 
@@ -717,7 +720,12 @@ document.getElementById('userName').addEventListener('input', function() {
   }
 });
 
+var nickVerified = false;
 document.getElementById('userNick').addEventListener('input', function() {
+  nickVerified = false;
+  var btn = document.getElementById('btnNickCheck');
+  btn.classList.remove('verified');
+  btn.textContent = '중복확인';
   var hint = document.getElementById('hintNick');
   if (JAMO_RE.test(this.value)) {
     this.classList.add('is-error');
@@ -728,6 +736,41 @@ document.getElementById('userNick').addEventListener('input', function() {
     hint.textContent = '한글·영문·숫자를 사용해 2~12자로 입력하세요.';
     hint.className = 'form-hint';
   }
+});
+
+/* ── 닉네임 중복확인 ── */
+document.getElementById('btnNickCheck').addEventListener('click', function() {
+  var val = document.getElementById('userNick').value.trim();
+  var hint = document.getElementById('hintNick');
+  var input = document.getElementById('userNick');
+  var btn = this;
+  if (!val || val.length < 2 || JAMO_RE.test(val)) {
+    hint.textContent = '✗ 한글·영문·숫자 2~12자로 입력해 주세요.';
+    hint.className = 'form-hint error';
+    input.className = 'form-input is-error';
+    nickVerified = false;
+    return;
+  }
+  fetch('${pageContext.request.contextPath}/member/checkNickname?nickname=' + encodeURIComponent(val))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.available) {
+        hint.textContent = '✓ 사용 가능한 닉네임입니다.';
+        hint.className = 'form-hint ok';
+        input.className = 'form-input is-ok';
+        btn.classList.add('verified');
+        btn.textContent = '확인완료';
+        nickVerified = true;
+      } else {
+        hint.textContent = '✗ ' + data.message;
+        hint.className = 'form-hint error';
+        input.className = 'form-input is-error';
+        nickVerified = false;
+      }
+    })
+    .catch(function() {
+      alert('중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    });
 });
 
 /* ── 생년월일 자동 하이픈 ── */
@@ -770,6 +813,9 @@ function validateForm() {
   }
   if (/[\u3131-\u3163]/.test(nick)) {
     alert('닉네임에 단자음 또는 단모음(ㄱ, ㅏ 등)은 사용할 수 없습니다.'); return false;
+  }
+  if (!nickVerified) {
+    alert('닉네임 중복확인을 해주세요.'); return false;
   }
   if (!emailId || !domain) { alert('이메일을 입력해 주세요.'); return false; }
   if (!birth || birth.length < 10) { alert('생년월일을 정확히 입력해 주세요.'); return false; }

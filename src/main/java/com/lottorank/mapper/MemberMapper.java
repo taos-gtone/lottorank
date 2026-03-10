@@ -59,4 +59,10 @@ public interface MemberMapper {
 
     /** 회원 등급명 조회 (COM_CODE_DTL C012 코드 JOIN) */
     String findGradeNmByMemberNo(@Param("memberNo") long memberNo);
+
+    /** 금지 닉네임 포함 여부 (대소문자 무시, banned_word가 nickname 안에 포함되면 1 이상) */
+    int countBannedNicknameMatch(@Param("nickname") String nickname);
+
+    /** 닉네임 중복 여부 */
+    int countByNickname(@Param("nickname") String nickname);
 }

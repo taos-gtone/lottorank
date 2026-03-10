@@ -43,6 +43,16 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public boolean isNicknameBanned(String nickname) {
+        return memberMapper.countBannedNicknameMatch(nickname) > 0;
+    }
+
+    @Override
+    public boolean isNicknameAvailable(String nickname) {
+        return memberMapper.countByNickname(nickname) == 0;
+    }
+
+    @Override
     public MemberVO login(String userId, String userPw) {
         MemberVO member = memberMapper.findByUserId(userId);
         if (member == null)                                            throw new LoginFailException("02"); // 없는 계정

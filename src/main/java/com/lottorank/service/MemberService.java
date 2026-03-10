@@ -11,6 +11,12 @@ public interface MemberService {
 
     boolean isUserIdAvailable(String userId);
 
+    /** 금지 닉네임 포함 여부 (true = 금지된 단어 포함됨) */
+    boolean isNicknameBanned(String nickname);
+
+    /** 닉네임 중복 여부 (true = 사용 가능) */
+    boolean isNicknameAvailable(String nickname);
+
     /** 소셜 ID로 기존 회원 조회 */
     MemberVO findBySocialId(String socialId);
 

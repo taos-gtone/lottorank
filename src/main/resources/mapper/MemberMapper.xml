@@ -119,6 +119,18 @@
         LIMIT 1
     </select>
 
+    <!-- 금지 닉네임 포함 여부: UPPER(banned_word)가 UPPER(nickname) 안에 포함되면 1 이상 반환 -->
+    <select id="countBannedNicknameMatch" resultType="int">
+        SELECT COUNT(*)
+        FROM MEM_BANNED_NICKNAME
+        WHERE UPPER(#{nickname}) LIKE CONCAT('%', UPPER(banned_word), '%')
+    </select>
+
+    <!-- 닉네임 중복 여부 -->
+    <select id="countByNickname" resultType="int">
+        SELECT COUNT(*) FROM MEM_JOIN_INFO WHERE nickname = #{nickname}
+    </select>
+
     <!-- 로그인 이력 저장 (성공/실패 공통) -->
     <insert id="insertLoginHist" parameterType="LoginHistVO">
         INSERT INTO MEM_LOGIN_HIST (
