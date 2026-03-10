@@ -6,6 +6,7 @@ import com.lottorank.service.BoardService;
 import com.lottorank.vo.AdminLoginInfoVO;
 import com.lottorank.vo.BoardCommentVO;
 import com.lottorank.vo.BoardPostVO;
+import com.lottorank.vo.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -401,6 +402,42 @@ public class AdminController {
         adminMapper.syncCommentCnt(postNo);
         result.put("success", true);
         return ResponseEntity.ok(result);
+    }
+
+    /* ═════════════════════════════════════════
+       고객 관리 - 회원정보
+    ═════════════════════════════════════════ */
+    private static final int MEMBER_PS  = 20;
+    private static final int MEMBER_PBC = 5;
+
+    @GetMapping("/customer/member/list")
+    public String memberList(
+            @RequestParam(defaultValue = "1") int page,
+            HttpServletRequest request, Model model) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+
+        int totalCount = adminMapper.selectMemberCount();
+        int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / MEMBER_PS);
+        if (page < 1)          page = 1;
+        if (page > totalPages) page = totalPages;
+
+        int startPage = Math.max(1, page - MEMBER_PBC / 2);
+        int endPage   = startPage + MEMBER_PBC - 1;
+        if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - MEMBER_PBC + 1); }
+
+        List<MemberVO> memberList = adminMapper.selectMemberList((page - 1) * MEMBER_PS, MEMBER_PS);
+
+        model.addAttribute("memberList",  memberList);
+        model.addAttribute("totalCount",  totalCount);
+        model.addAttribute("totalPages",  totalPages);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("startPage",   startPage);
+        model.addAttribute("endPage",     endPage);
+        model.addAttribute("adminUser",   session.getAttribute("adminUser"));
+        return "admin/customer/member/list";
     }
 
     /* ═════════════════════════════════════════

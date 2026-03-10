@@ -34,6 +34,12 @@
     </a>
 
     <nav class="main-nav">
+      <div class="nav-item has-dropdown <%= "customer".equals(_activeNavSection) ? "active" : "" %>">
+        <span>고객 관리</span>
+        <div class="dropdown-menu">
+          <a href="/lottorank/admin/customer/member/list" class="dropdown-item">회원정보</a>
+        </div>
+      </div>
       <div class="nav-item has-dropdown <%= "board".equals(_activeNavSection) ? "active" : "" %>">
         <span>랭크 커뮤니티</span>
         <div class="dropdown-menu">

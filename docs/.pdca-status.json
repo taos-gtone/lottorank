@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-10T00:02:45.629Z",
+  "lastUpdated": "2026-03-10T06:54:26.218Z",
   "activeFeatures": [
     "mapper",
     "service",
@@ -26,9 +26,9 @@
       },
       "timestamps": {
         "started": "2026-02-19T15:10:07.894Z",
-        "lastUpdated": "2026-03-09T23:57:22.455Z"
+        "lastUpdated": "2026-03-10T06:29:35.934Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\mapper\\MemberMapper.java"
+      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/mapper/AdminMapper.java"
     },
     "service": {
       "phase": "do",
@@ -52,9 +52,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:26.070Z",
-        "lastUpdated": "2026-03-10T00:02:45.629Z"
+        "lastUpdated": "2026-03-10T06:30:11.404Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\controller\\MemberController.java"
+      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/admin/controller/AdminController.java"
     },
     "lottorank": {
       "phase": "do",
@@ -92,9 +92,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-21T04:54:35.500Z",
-        "lastUpdated": "2026-03-09T05:15:43.885Z"
+        "lastUpdated": "2026-03-10T06:54:26.218Z"
       },
-      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/vo/BoardPostVO.java"
+      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/vo/MemberVO.java"
     },
     "interceptor": {
       "phase": "do",
@@ -157,7 +157,7 @@
   "session": {
     "startedAt": "2026-02-19T14:55:10.648Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-10T00:02:45.629Z"
+    "lastActivity": "2026-03-10T06:54:26.218Z"
   },
   "history": [
     {
@@ -2497,6 +2497,54 @@
     {
       "timestamp": "2026-03-10T00:02:45.629Z",
       "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-10T06:29:13.306Z",
+      "feature": "vo",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-10T06:29:23.442Z",
+      "feature": "vo",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-10T06:29:29.270Z",
+      "feature": "mapper",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-10T06:29:35.934Z",
+      "feature": "mapper",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-10T06:29:56.573Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-10T06:30:11.405Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-10T06:54:18.967Z",
+      "feature": "vo",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-10T06:54:26.218Z",
+      "feature": "vo",
       "phase": "do",
       "action": "updated"
     }

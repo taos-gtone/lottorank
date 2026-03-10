@@ -16,6 +16,10 @@ public class MemberVO {
     private String regLoginTypCd; // I:아이디, N:네이버, K:카카오
     private String socialId;      // 소셜 로그인 고유 ID (네이버/카카오 등)
     private String mobileNo;      // 휴대전화번호
+    private String memGradeCd;    // 회원등급코드
+    private String memGradeNm;    // 회원등급명
+    private String lastLoginAt;   // 최종로그인시간
+    private String createTs;      // 등록시간
 
     public long getMemberNo() { return memberNo; }
     public void setMemberNo(long memberNo) { this.memberNo = memberNo; }
@@ -58,4 +62,16 @@ public class MemberVO {
 
     public String getMobileNo() { return mobileNo; }
     public void setMobileNo(String mobileNo) { this.mobileNo = mobileNo; }
+
+    public String getMemGradeCd() { return memGradeCd; }
+    public void setMemGradeCd(String memGradeCd) { this.memGradeCd = memGradeCd; }
+
+    public String getMemGradeNm() { return memGradeNm; }
+    public void setMemGradeNm(String memGradeNm) { this.memGradeNm = memGradeNm; }
+
+    public String getLastLoginAt() { return lastLoginAt; }
+    public void setLastLoginAt(String lastLoginAt) { this.lastLoginAt = lastLoginAt; }
+
+    public String getCreateTs() { return createTs; }
+    public void setCreateTs(String createTs) { this.createTs = createTs; }
 }

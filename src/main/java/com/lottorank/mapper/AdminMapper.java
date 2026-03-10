@@ -3,6 +3,7 @@ package com.lottorank.mapper;
 import com.lottorank.vo.AdminLoginHistVO;
 import com.lottorank.vo.AdminLoginInfoVO;
 import com.lottorank.vo.BoardPostVO;
+import com.lottorank.vo.MemberVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -91,4 +92,12 @@ public interface AdminMapper {
     /** 관리자 비밀번호 변경 */
     void updateAdminPassword(@Param("adminId") String adminId,
                              @Param("adminPw") String adminPw);
+
+    /** 회원 목록 조회 (등록시간 내림차순) */
+    List<MemberVO> selectMemberList(
+            @Param("offset")   int offset,
+            @Param("pageSize") int pageSize);
+
+    /** 회원 전체 건수 */
+    int selectMemberCount();
 }
