@@ -52,6 +52,9 @@
           <a href="/lottorank/admin/notice/list" class="dropdown-item">공지사항</a>
         </div>
       </div>
+      <div class="nav-item <%= "code".equals(_activeNavSection) ? "active" : "" %>">
+        <a href="/lottorank/admin/code/list">코드 관리</a>
+      </div>
       <div class="nav-item">
         <a href="/lottorank/admin/myinfo">관리자 정보 변경</a>
       </div>
@@ -68,5 +71,81 @@
         로그아웃
       </button>
     </div>
+
+    <!-- 햄버거 버튼 (모바일) -->
+    <button class="adm-hamburger" id="admMenuBtn" aria-label="메뉴 열기">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+
+<!-- 모바일 슬라이드 메뉴 -->
+<div class="adm-mobile-menu" id="admMobileMenu">
+  <div class="adm-mobile-panel">
+    <div class="adm-mobile-top">
+      <span class="adm-badge">🔒 ADMIN</span>
+      <button class="adm-mobile-close" id="admMenuClose">✕</button>
+    </div>
+
+    <nav class="adm-mobile-nav">
+      <a href="/lottorank/admin/customer/member/list"
+         class="<%= "customer".equals(_activeNavSection) ? "active-menu" : "" %>">
+        고객 관리
+      </a>
+      <a href="/lottorank/admin/customer/member/list" class="adm-mobile-sub">회원정보</a>
+
+      <a href="/lottorank/admin/board/list"
+         class="<%= "board".equals(_activeNavSection) ? "active-menu" : "" %>">
+        랭크 커뮤니티
+      </a>
+      <a href="/lottorank/admin/board/list" class="adm-mobile-sub">자유게시판</a>
+
+      <a href="/lottorank/admin/notice/list"
+         class="<%= "notice".equals(_activeNavSection) ? "active-menu" : "" %>">
+        고객센터
+      </a>
+      <a href="/lottorank/admin/notice/list" class="adm-mobile-sub">공지사항</a>
+
+      <a href="/lottorank/admin/code/list"
+         class="<%= "code".equals(_activeNavSection) ? "active-menu" : "" %>">
+        코드 관리
+      </a>
+
+      <a href="/lottorank/admin/myinfo">관리자 정보 변경</a>
+    </nav>
+
+    <div class="adm-mobile-footer">
+      <% if (_bannerAdminUser != null) { %>
+      <div class="adm-mobile-user">
+        <strong><%= org.springframework.web.util.HtmlUtils.htmlEscape(_bannerAdminUser) %></strong>님
+      </div>
+      <% } %>
+      <button class="adm-mobile-logout"
+              onclick="if(confirm('로그아웃 하시겠습니까?')) location.href='/lottorank/admin/logout'">
+        로그아웃
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var btn   = document.getElementById('admMenuBtn');
+  var menu  = document.getElementById('admMobileMenu');
+  var close = document.getElementById('admMenuClose');
+  if (!btn || !menu) return;
+
+  btn.addEventListener('click', function() {
+    menu.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+  function closeMenu() {
+    menu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  close.addEventListener('click', closeMenu);
+  menu.addEventListener('click', function(e) {
+    if (e.target === menu) closeMenu();
+  });
+})();
+</script>

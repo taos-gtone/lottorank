@@ -336,4 +336,114 @@
         SELECT COUNT(*) FROM MEM_JOIN_INFO
     </select>
 
+    <!-- ═══════════════ 공통 코드 관리 ═══════════════ -->
+
+    <!-- 코드그룹 전체 목록 -->
+    <select id="selectCodeMstList" resultType="ComCodeMstVO">
+        SELECT code_grp_id,
+               code_grp_nm,
+               use_yn,
+               sort_ord,
+               remark,
+               DATE_FORMAT(create_ts, '%Y-%m-%d %H:%i') AS create_ts,
+               DATE_FORMAT(update_ts, '%Y-%m-%d %H:%i') AS update_ts
+          FROM COM_CODE_MST
+         ORDER BY sort_ord ASC, code_grp_id ASC
+    </select>
+
+    <!-- 코드그룹 단건 조회 -->
+    <select id="selectCodeMstById" resultType="ComCodeMstVO">
+        SELECT code_grp_id, code_grp_nm, use_yn, sort_ord, remark
+          FROM COM_CODE_MST
+         WHERE code_grp_id = #{codeGrpId}
+    </select>
+
+    <!-- 코드그룹 ID 중복 체크 -->
+    <select id="selectCodeMstIdExists" resultType="int">
+        SELECT COUNT(*) FROM COM_CODE_MST WHERE code_grp_id = #{codeGrpId}
+    </select>
+
+    <!-- 코드그룹 등록 -->
+    <insert id="insertCodeMst" parameterType="ComCodeMstVO">
+        INSERT INTO COM_CODE_MST (code_grp_id, code_grp_nm, use_yn, sort_ord, remark, create_ts)
+        VALUES (#{codeGrpId}, #{codeGrpNm}, #{useYn}, #{sortOrd}, #{remark, jdbcType=VARCHAR}, NOW())
+    </insert>
+
+    <!-- 코드그룹 수정 -->
+    <update id="updateCodeMst" parameterType="ComCodeMstVO">
+        UPDATE COM_CODE_MST
+           SET code_grp_nm = #{codeGrpNm},
+               use_yn      = #{useYn},
+               sort_ord    = #{sortOrd},
+               remark      = #{remark, jdbcType=VARCHAR},
+               update_ts   = NOW()
+         WHERE code_grp_id = #{codeGrpId}
+    </update>
+
+    <!-- 코드그룹 삭제 -->
+    <delete id="deleteCodeMst">
+        DELETE FROM COM_CODE_MST WHERE code_grp_id = #{codeGrpId}
+    </delete>
+
+    <!-- 코드 상세 목록 -->
+    <select id="selectCodeDtlList" resultType="ComCodeDtlVO">
+        SELECT code_grp_id,
+               code_id,
+               code_nm,
+               code_nm_en,
+               use_yn,
+               sort_ord,
+               etc_val1,
+               etc_val2,
+               remark,
+               DATE_FORMAT(create_ts, '%Y-%m-%d %H:%i') AS create_ts,
+               DATE_FORMAT(update_ts, '%Y-%m-%d %H:%i') AS update_ts
+          FROM COM_CODE_DTL
+         WHERE code_grp_id = #{codeGrpId}
+         ORDER BY sort_ord ASC, code_id ASC
+    </select>
+
+    <!-- 코드 ID 중복 체크 -->
+    <select id="selectCodeDtlIdExists" resultType="int">
+        SELECT COUNT(*) FROM COM_CODE_DTL
+         WHERE code_grp_id = #{codeGrpId} AND code_id = #{codeId}
+    </select>
+
+    <!-- 코드 상세 등록 -->
+    <insert id="insertCodeDtl" parameterType="ComCodeDtlVO">
+        INSERT INTO COM_CODE_DTL
+            (code_grp_id, code_id, code_nm, code_nm_en, use_yn, sort_ord,
+             etc_val1, etc_val2, remark, create_ts)
+        VALUES
+            (#{codeGrpId}, #{codeId}, #{codeNm}, #{codeNmEn, jdbcType=VARCHAR},
+             #{useYn}, #{sortOrd}, #{etcVal1, jdbcType=VARCHAR}, #{etcVal2, jdbcType=VARCHAR},
+             #{remark, jdbcType=VARCHAR}, NOW())
+    </insert>
+
+    <!-- 코드 상세 수정 -->
+    <update id="updateCodeDtl" parameterType="ComCodeDtlVO">
+        UPDATE COM_CODE_DTL
+           SET code_nm    = #{codeNm},
+               code_nm_en = #{codeNmEn, jdbcType=VARCHAR},
+               use_yn     = #{useYn},
+               sort_ord   = #{sortOrd},
+               etc_val1   = #{etcVal1, jdbcType=VARCHAR},
+               etc_val2   = #{etcVal2, jdbcType=VARCHAR},
+               remark     = #{remark, jdbcType=VARCHAR},
+               update_ts  = NOW()
+         WHERE code_grp_id = #{codeGrpId}
+           AND code_id     = #{codeId}
+    </update>
+
+    <!-- 코드 상세 단건 삭제 -->
+    <delete id="deleteCodeDtl">
+        DELETE FROM COM_CODE_DTL
+         WHERE code_grp_id = #{codeGrpId} AND code_id = #{codeId}
+    </delete>
+
+    <!-- 코드 그룹 하위 전체 삭제 -->
+    <delete id="deleteCodeDtlByGrp">
+        DELETE FROM COM_CODE_DTL WHERE code_grp_id = #{codeGrpId}
+    </delete>
+
 </mapper>

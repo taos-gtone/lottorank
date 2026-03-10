@@ -6,6 +6,8 @@ import com.lottorank.service.BoardService;
 import com.lottorank.vo.AdminLoginInfoVO;
 import com.lottorank.vo.BoardCommentVO;
 import com.lottorank.vo.BoardPostVO;
+import com.lottorank.vo.ComCodeDtlVO;
+import com.lottorank.vo.ComCodeMstVO;
 import com.lottorank.vo.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -727,6 +729,181 @@ public class AdminController {
         }
         adminMapper.deleteCommentByAdmin(commentNo);
         adminMapper.syncCommentCnt(postNo);
+        result.put("success", true);
+        return ResponseEntity.ok(result);
+    }
+
+    /* ═════════════════════════════════════════
+       공통 코드 관리
+    ═════════════════════════════════════════ */
+
+    @GetMapping("/code/list")
+    public String codeList(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+
+        List<ComCodeMstVO> codeGrpList = adminMapper.selectCodeMstList();
+        model.addAttribute("codeGrpList", codeGrpList);
+        model.addAttribute("adminUser", session.getAttribute("adminUser"));
+        return "admin/code/list";
+    }
+
+    /* ─── 코드그룹 저장 (등록 / 수정) ─── */
+    @PostMapping("/code/mst/save")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> codeMstSave(
+            @RequestParam String  codeGrpId,
+            @RequestParam String  codeGrpNm,
+            @RequestParam(defaultValue = "Y") String  useYn,
+            @RequestParam(defaultValue = "0") Integer sortOrd,
+            @RequestParam(required = false)   String  remark,
+            @RequestParam String  mode,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null) {
+            result.put("success", false); result.put("msg", "관리자 로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        if (codeGrpId == null || codeGrpId.trim().isEmpty()) {
+            result.put("success", false); result.put("msg", "코드그룹ID를 입력하세요.");
+            return ResponseEntity.ok(result);
+        }
+        if (codeGrpNm == null || codeGrpNm.trim().isEmpty()) {
+            result.put("success", false); result.put("msg", "코드그룹명을 입력하세요.");
+            return ResponseEntity.ok(result);
+        }
+
+        ComCodeMstVO vo = new ComCodeMstVO();
+        vo.setCodeGrpId(codeGrpId.trim().toUpperCase());
+        vo.setCodeGrpNm(codeGrpNm.trim());
+        vo.setUseYn(useYn);
+        vo.setSortOrd(sortOrd);
+        vo.setRemark(remark != null ? remark.trim() : null);
+
+        if ("insert".equals(mode)) {
+            if (adminMapper.selectCodeMstIdExists(vo.getCodeGrpId()) > 0) {
+                result.put("success", false); result.put("msg", "이미 존재하는 코드그룹ID입니다.");
+                return ResponseEntity.ok(result);
+            }
+            adminMapper.insertCodeMst(vo);
+        } else {
+            adminMapper.updateCodeMst(vo);
+        }
+        result.put("success", true);
+        return ResponseEntity.ok(result);
+    }
+
+    /* ─── 코드그룹 삭제 ─── */
+    @PostMapping("/code/mst/delete")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> codeMstDelete(
+            @RequestParam String codeGrpId,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null) {
+            result.put("success", false); result.put("msg", "관리자 로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        adminMapper.deleteCodeDtlByGrp(codeGrpId);
+        adminMapper.deleteCodeMst(codeGrpId);
+        result.put("success", true);
+        return ResponseEntity.ok(result);
+    }
+
+    /* ─── 코드 상세 목록 (AJAX) ─── */
+    @GetMapping("/code/dtl/list")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> codeDtlList(
+            @RequestParam String codeGrpId,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null) {
+            result.put("success", false); result.put("msg", "관리자 로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        List<ComCodeDtlVO> list = adminMapper.selectCodeDtlList(codeGrpId);
+        result.put("success", true);
+        result.put("list", list);
+        return ResponseEntity.ok(result);
+    }
+
+    /* ─── 코드 상세 저장 (등록 / 수정) ─── */
+    @PostMapping("/code/dtl/save")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> codeDtlSave(
+            @RequestParam String  codeGrpId,
+            @RequestParam String  codeId,
+            @RequestParam String  codeNm,
+            @RequestParam(required = false)   String  codeNmEn,
+            @RequestParam(defaultValue = "Y") String  useYn,
+            @RequestParam(defaultValue = "0") Integer sortOrd,
+            @RequestParam(required = false)   String  etcVal1,
+            @RequestParam(required = false)   String  etcVal2,
+            @RequestParam(required = false)   String  remark,
+            @RequestParam String  mode,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null) {
+            result.put("success", false); result.put("msg", "관리자 로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        if (codeId == null || codeId.trim().isEmpty()) {
+            result.put("success", false); result.put("msg", "코드ID를 입력하세요.");
+            return ResponseEntity.ok(result);
+        }
+        if (codeNm == null || codeNm.trim().isEmpty()) {
+            result.put("success", false); result.put("msg", "코드명을 입력하세요.");
+            return ResponseEntity.ok(result);
+        }
+
+        ComCodeDtlVO vo = new ComCodeDtlVO();
+        vo.setCodeGrpId(codeGrpId);
+        vo.setCodeId(codeId.trim());
+        vo.setCodeNm(codeNm.trim());
+        vo.setCodeNmEn(codeNmEn != null ? codeNmEn.trim() : null);
+        vo.setUseYn(useYn);
+        vo.setSortOrd(sortOrd);
+        vo.setEtcVal1(etcVal1 != null ? etcVal1.trim() : null);
+        vo.setEtcVal2(etcVal2 != null ? etcVal2.trim() : null);
+        vo.setRemark(remark != null ? remark.trim() : null);
+
+        if ("insert".equals(mode)) {
+            if (adminMapper.selectCodeDtlIdExists(codeGrpId, vo.getCodeId()) > 0) {
+                result.put("success", false); result.put("msg", "이미 존재하는 코드ID입니다.");
+                return ResponseEntity.ok(result);
+            }
+            adminMapper.insertCodeDtl(vo);
+        } else {
+            adminMapper.updateCodeDtl(vo);
+        }
+        result.put("success", true);
+        return ResponseEntity.ok(result);
+    }
+
+    /* ─── 코드 상세 삭제 ─── */
+    @PostMapping("/code/dtl/delete")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> codeDtlDelete(
+            @RequestParam String codeGrpId,
+            @RequestParam String codeId,
+            HttpServletRequest request) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null) {
+            result.put("success", false); result.put("msg", "관리자 로그인이 필요합니다.");
+            return ResponseEntity.ok(result);
+        }
+        adminMapper.deleteCodeDtl(codeGrpId, codeId);
         result.put("success", true);
         return ResponseEntity.ok(result);
     }

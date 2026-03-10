@@ -3,6 +3,8 @@ package com.lottorank.mapper;
 import com.lottorank.vo.AdminLoginHistVO;
 import com.lottorank.vo.AdminLoginInfoVO;
 import com.lottorank.vo.BoardPostVO;
+import com.lottorank.vo.ComCodeDtlVO;
+import com.lottorank.vo.ComCodeMstVO;
 import com.lottorank.vo.MemberVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -100,4 +102,44 @@ public interface AdminMapper {
 
     /** 회원 전체 건수 */
     int selectMemberCount();
+
+    /* ═══════════════ 공통 코드 관리 ═══════════════ */
+
+    /** 코드그룹 전체 목록 (정렬순서 오름차순) */
+    List<ComCodeMstVO> selectCodeMstList();
+
+    /** 코드그룹 단건 조회 */
+    ComCodeMstVO selectCodeMstById(@Param("codeGrpId") String codeGrpId);
+
+    /** 코드그룹 ID 중복 체크 */
+    int selectCodeMstIdExists(@Param("codeGrpId") String codeGrpId);
+
+    /** 코드그룹 등록 */
+    void insertCodeMst(ComCodeMstVO vo);
+
+    /** 코드그룹 수정 */
+    void updateCodeMst(ComCodeMstVO vo);
+
+    /** 코드그룹 삭제 */
+    void deleteCodeMst(@Param("codeGrpId") String codeGrpId);
+
+    /** 코드 상세 목록 (정렬순서 오름차순) */
+    List<ComCodeDtlVO> selectCodeDtlList(@Param("codeGrpId") String codeGrpId);
+
+    /** 코드 ID 중복 체크 */
+    int selectCodeDtlIdExists(@Param("codeGrpId") String codeGrpId,
+                              @Param("codeId")    String codeId);
+
+    /** 코드 상세 등록 */
+    void insertCodeDtl(ComCodeDtlVO vo);
+
+    /** 코드 상세 수정 */
+    void updateCodeDtl(ComCodeDtlVO vo);
+
+    /** 코드 상세 단건 삭제 */
+    void deleteCodeDtl(@Param("codeGrpId") String codeGrpId,
+                       @Param("codeId")    String codeId);
+
+    /** 코드 그룹 하위 전체 삭제 */
+    void deleteCodeDtlByGrp(@Param("codeGrpId") String codeGrpId);
 }

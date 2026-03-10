@@ -62,15 +62,136 @@
   .btn-logout { padding: 7px 16px; background: transparent; border: 1px solid var(--g4); border-radius: 6px; color: var(--g6); font-size: 0.83rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: border-color 0.18s, color 0.18s; }
   .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
 
+  /* ═══ 햄버거 버튼 ═══ */
+  .adm-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    flex-shrink: 0;
+  }
+  .adm-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--g7);
+    border-radius: 2px;
+    transition: opacity 0.2s;
+  }
+  .adm-hamburger:hover span { background: var(--g8); }
+
+  /* ═══ 모바일 슬라이드 메뉴 ═══ */
+  .adm-mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 500;
+    justify-content: flex-end;
+  }
+  .adm-mobile-menu.open { display: flex; }
+
+  .adm-mobile-panel {
+    width: 270px;
+    background: var(--g7);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .adm-mobile-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .adm-mobile-top .adm-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #fff;
+    background: rgba(255,255,255,0.15);
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+  .adm-mobile-close {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 6px;
+  }
+  .adm-mobile-close:hover { color: #fff; }
+
+  .adm-mobile-nav {
+    padding: 6px 0;
+    flex: 1;
+  }
+  .adm-mobile-nav a {
+    display: block;
+    padding: 12px 20px;
+    color: rgba(255,255,255,0.82);
+    font-size: 0.93rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    transition: background 0.15s, color 0.15s;
+    text-decoration: none;
+  }
+  .adm-mobile-nav a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .adm-mobile-nav a.active-menu { color: #93c5fd; }
+
+  .adm-mobile-nav .adm-mobile-sub {
+    padding: 9px 20px 9px 36px;
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    background: rgba(0,0,0,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .adm-mobile-nav .adm-mobile-sub:hover { background: rgba(0,0,0,0.25); color: rgba(255,255,255,0.85); }
+
+  .adm-mobile-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .adm-mobile-user {
+    font-size: 0.84rem;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding-bottom: 4px;
+  }
+  .adm-mobile-user strong { color: #fff; font-weight: 700; }
+  .adm-mobile-logout {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.87rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.18s, color 0.18s;
+  }
+  .adm-mobile-logout:hover { border-color: #fca5a5; color: #fca5a5; }
+
   /* ═══ 반응형 ═══ */
   @media (max-width: 768px) {
     .util-notice { display: none; }
     .header-admin-label { display: none; }
     .logo-sub { display: none; }
-    .main-nav { padding-left: 4px; }
-    .nav-item > a, .nav-item > span { padding: 0 10px; font-size: 0.82rem; }
-  }
-  @media (max-width: 480px) {
     .main-nav { display: none; }
+    .adm-hamburger { display: flex; }
   }
 </style>
