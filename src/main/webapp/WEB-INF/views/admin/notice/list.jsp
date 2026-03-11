@@ -131,15 +131,19 @@
       color: var(--g6);
       text-align: left;
       border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
       white-space: nowrap;
     }
+    thead th:last-child { border-right: none; }
     tbody td {
       padding: 11px 14px;
       font-size: 0.88rem;
       color: var(--g7);
       border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
       vertical-align: middle;
     }
+    tbody td:last-child { border-right: none; }
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: #f9fafb; }
 

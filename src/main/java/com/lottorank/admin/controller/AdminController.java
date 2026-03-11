@@ -3,6 +3,7 @@ package com.lottorank.admin.controller;
 import com.lottorank.admin.service.AdminLoginFailException;
 import com.lottorank.admin.service.AdminService;
 import com.lottorank.service.BoardService;
+import com.lottorank.vo.AdminLoginHistVO;
 import com.lottorank.vo.AdminLoginInfoVO;
 import com.lottorank.vo.BoardCommentVO;
 import com.lottorank.vo.BoardPostVO;
@@ -168,6 +169,41 @@ public class AdminController {
 
         model.addAttribute("successMsg", "비밀번호가 성공적으로 변경되었습니다.");
         return "admin/myinfo";
+    }
+
+    /* ─────────────────────────────────────────
+       관리자 로그인 이력
+    ───────────────────────────────────────── */
+    private static final int LOGIN_HIST_PS  = 20;
+    private static final int LOGIN_HIST_PBC = 5;
+
+    @GetMapping("/myinfo/login-history")
+    public String loginHistory(
+            @RequestParam(defaultValue = "1") int page,
+            HttpServletRequest request, Model model) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+
+        int totalCount = adminMapper.selectLoginHistCount();
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalCount / LOGIN_HIST_PS));
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+
+        int startPage = Math.max(1, page - LOGIN_HIST_PBC / 2);
+        int endPage   = startPage + LOGIN_HIST_PBC - 1;
+        if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - LOGIN_HIST_PBC + 1); }
+
+        List<AdminLoginHistVO> histList = adminMapper.selectLoginHistList((page - 1) * LOGIN_HIST_PS, LOGIN_HIST_PS);
+
+        model.addAttribute("histList",    histList);
+        model.addAttribute("totalCount",  totalCount);
+        model.addAttribute("totalPages",  totalPages);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("startPage",   startPage);
+        model.addAttribute("endPage",     endPage);
+        return "admin/myinfo/login-history";
     }
 
     /* ─────────────────────────────────────────

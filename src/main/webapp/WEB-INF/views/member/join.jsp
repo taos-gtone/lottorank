@@ -222,6 +222,14 @@
           </div>
         </div>
 
+        <!-- 휴대전화번호 -->
+        <div class="form-group">
+          <label class="form-label" for="mobileNo">휴대전화번호</label>
+          <input type="tel" class="form-input" id="mobileNo"
+                 placeholder="숫자만 입력 (예: 01012345678)" inputmode="numeric" maxlength="11">
+          <p class="form-hint">선택 입력 · 숫자만 입력 가능합니다.</p>
+        </div>
+
         <!-- 생년월일 + 성별 -->
         <div class="form-row-half">
           <div class="form-group">
@@ -583,6 +591,7 @@ document.getElementById('btn2Next').addEventListener('click', function() {
   params.append('emailDomain', document.getElementById('emailDomain').value.trim());
   params.append('birthDate',   document.getElementById('birthDate').value.trim());
   params.append('gender',      gender);
+  params.append('mobileNo',    document.getElementById('mobileNo').value.trim());
 
   fetch('${pageContext.request.contextPath}/member/join', {
     method: 'POST',
@@ -779,6 +788,11 @@ document.getElementById('birthDate').addEventListener('input', function() {
   if (v.length >= 5) v = v.slice(0,4) + '-' + v.slice(4);
   if (v.length >= 8) v = v.slice(0,7) + '-' + v.slice(7,9);
   this.value = v;
+});
+
+/* ── 휴대전화번호 숫자만 허용 ── */
+document.getElementById('mobileNo').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g, '');
 });
 
 /* ── 폼 유효성 검사 ── */

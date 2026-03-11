@@ -1,13 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.time.LocalDate" %>
-<%@ page import="com.lottorank.vo.MemberVO" %>
+<%@ page import="com.lottorank.vo.AdminLoginHistVO" %>
+<%@ page import="org.springframework.web.util.HtmlUtils" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>회원정보 - 로또랭크 ADMIN</title>
+  <title>로그인 이력 - 로또랭크 ADMIN</title>
   <meta name="robots" content="noindex, nofollow">
   <%@ include file="/WEB-INF/views/admin/layout/admin-head.jsp" %>
   <style>
@@ -30,17 +30,14 @@
       align-items: center;
       gap: 8px;
     }
-    .page-hd-sub {
-      font-size: 0.84rem;
-      color: var(--g5);
-      margin-top: 3px;
-    }
+    .page-hd-sub { font-size: 0.84rem; color: var(--g5); margin-top: 3px; }
 
     /* 테이블 */
     .tbl-wrap {
       border: 1px solid var(--line);
       border-radius: 10px;
       overflow: hidden;
+      overflow-x: auto;
     }
     .adm-table {
       width: 100%;
@@ -75,17 +72,33 @@
     .adm-table tbody td:last-child { border-right: none; }
     .adm-table tbody td.empty {
       text-align: center;
-      padding: 40px;
+      padding: 48px;
       color: var(--g5);
     }
-    .badge-grade {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      background: #ede9fe;
-      color: #6d28d9;
+
+    /* 결과 배지 */
+    .badge-success {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+      background: rgba(16,185,129,0.12); color: #059669;
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+    .badge-fail {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+      background: rgba(239,68,68,0.1); color: #dc2626;
+      border: 1px solid rgba(239,68,68,0.25);
+    }
+
+    /* user-agent 말줄임 */
+    .ua-cell {
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.8rem;
+      color: var(--g5);
+      cursor: default;
     }
 
     /* 페이지네이션 */
@@ -113,23 +126,14 @@
       text-decoration: none;
     }
     .pg-btn:hover { background: var(--g3); color: var(--g8); }
-    .pg-btn.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-      font-weight: 700;
-    }
-    .pg-btn.disabled {
-      color: var(--g4);
-      cursor: default;
-      pointer-events: none;
-    }
+    .pg-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; }
+    .pg-btn.disabled { color: var(--g4); cursor: default; pointer-events: none; }
   </style>
 </head>
 <body>
 <%
-  String _activeNavSection = "customer";
-  List<MemberVO> memberList = (List<MemberVO>) request.getAttribute("memberList");
+  String _activeNavSection = "myinfo";
+  List<AdminLoginHistVO> histList = (List<AdminLoginHistVO>) request.getAttribute("histList");
   int totalCount  = (Integer) request.getAttribute("totalCount");
   int totalPages  = (Integer) request.getAttribute("totalPages");
   int currentPage = (Integer) request.getAttribute("currentPage");
@@ -142,8 +146,8 @@
   <!-- 페이지 헤더 -->
   <div class="page-hd">
     <div>
-      <div class="page-hd-title">👥 회원정보</div>
-      <div class="page-hd-sub">전체 <strong><%= totalCount %></strong>명</div>
+      <div class="page-hd-title">🔐 로그인 이력</div>
+      <div class="page-hd-sub">전체 <strong><%= totalCount %></strong>건</div>
     </div>
   </div>
 
@@ -152,40 +156,57 @@
     <table class="adm-table">
       <thead>
         <tr>
-          <th>회원번호</th>
-          <th>아이디</th>
-          <th>이름</th>
-          <th>닉네임</th>
-          <th>가입IP</th>
-          <th>회원등급</th>
-          <th>최종로그인</th>
-          <th>등록시간</th>
+          <th style="width:60px; text-align:center">No.</th>
+          <th style="width:120px">관리자ID</th>
+          <th style="width:90px; text-align:center">결과</th>
+          <th style="width:160px">실패 사유</th>
+          <th style="width:140px">로그인 IP</th>
+          <th>브라우저 정보</th>
+          <th style="width:160px">로그인 시각</th>
         </tr>
       </thead>
       <tbody>
         <%
-          if (memberList == null || memberList.isEmpty()) {
+          if (histList == null || histList.isEmpty()) {
         %>
-        <tr><td class="empty" colspan="8">등록된 회원이 없습니다.</td></tr>
+        <tr><td class="empty" colspan="7">로그인 이력이 없습니다.</td></tr>
         <%
           } else {
-            String today = LocalDate.now().toString(); // "yyyy-MM-dd"
+            String today = java.time.LocalDate.now().toString(); // "yyyy-MM-dd"
             int rowNum = totalCount - (currentPage - 1) * 20;
-            for (MemberVO m : memberList) {
-              String grade = m.getMemGradeNm() != null ? m.getMemGradeNm() : (m.getMemGradeCd() != null ? m.getMemGradeCd() : "-");
-              String lastLogin = m.getLastLoginAt() != null ? m.getLastLoginAt() : "-";
-              String createTs  = m.getCreateTs()  != null ? m.getCreateTs()  : "-";
-              boolean isToday  = createTs.length() >= 10 && createTs.substring(0, 10).equals(today);
+            for (AdminLoginHistVO h : histList) {
+              boolean isSuccess = "S".equals(h.getLoginRsltCd());
+              String failRsn = "-";
+              if (!isSuccess && h.getFailRsnCd() != null) {
+                switch (h.getFailRsnCd()) {
+                  case "01": failRsn = "비밀번호 불일치"; break;
+                  case "02": failRsn = "없는 계정"; break;
+                  case "03": failRsn = "계정 비활성"; break;
+                  default:   failRsn = h.getFailRsnCd(); break;
+                }
+              }
+              String loginAtStr  = h.getLoginAtStr()  != null ? h.getLoginAtStr()  : "-";
+              boolean isToday = loginAtStr.length() >= 10 && loginAtStr.substring(0, 10).equals(today);
+              String ua = h.getUserAgent() != null ? HtmlUtils.htmlEscape(h.getUserAgent()) : "-";
+              String adminId = h.getAdminId() != null ? HtmlUtils.htmlEscape(h.getAdminId()) : "-";
+              String loginIp = h.getLoginIp() != null ? HtmlUtils.htmlEscape(h.getLoginIp()) : "-";
         %>
         <tr class="<%= isToday ? "today-row" : "" %>">
-          <td><%= rowNum-- %></td>
-          <td><%= org.springframework.web.util.HtmlUtils.htmlEscape(m.getUserId() != null ? m.getUserId() : "") %></td>
-          <td><%= org.springframework.web.util.HtmlUtils.htmlEscape(m.getUserName() != null ? m.getUserName() : "") %></td>
-          <td><%= org.springframework.web.util.HtmlUtils.htmlEscape(m.getNickname() != null ? m.getNickname() : "") %></td>
-          <td><%= org.springframework.web.util.HtmlUtils.htmlEscape(m.getRegIp() != null ? m.getRegIp() : "") %></td>
-          <td><span class="badge-grade"><%= org.springframework.web.util.HtmlUtils.htmlEscape(grade) %></span></td>
-          <td><%= lastLogin %></td>
-          <td><%= createTs %></td>
+          <td style="text-align:center; color:var(--g5); font-size:0.82rem"><%= rowNum-- %></td>
+          <td><strong><%= adminId %></strong></td>
+          <td style="text-align:center">
+            <% if (isSuccess) { %>
+            <span class="badge-success">✓ 성공</span>
+            <% } else { %>
+            <span class="badge-fail">✕ 실패</span>
+            <% } %>
+          </td>
+          <td style="font-size:0.84rem; color:<%= isSuccess ? "var(--g5)" : "#dc2626" %>">
+            <%= isSuccess ? "-" : failRsn %>
+          </td>
+          <td style="font-size:0.85rem; font-family:monospace"><%= loginIp %></td>
+          <td><div class="ua-cell" title="<%= ua %>"><%= ua %></div></td>
+          <td style="font-size:0.82rem; color:var(--g6); white-space:nowrap"><%= loginAtStr %></td>
         </tr>
         <%
             }

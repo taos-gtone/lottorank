@@ -109,7 +109,7 @@
     .footer-disclaimer {
       font-size: 0.9rem;
       color: rgba(255,255,255,0.22);
-      max-width: 480px;
+      white-space: nowrap;
       text-align: right;
     }
 

@@ -11,15 +11,20 @@ public class AdminLoginHistVO {
     private String        userAgent;
     private LocalDateTime loginAt;
     private LocalDateTime logoutAt;
+    // 목록 조회용 포맷된 문자열 (DATE_FORMAT 결과)
+    private String        loginAtStr;
+    private String        logoutAtStr;
 
-    public long          getLoginHistNo() { return loginHistNo; }
-    public String        getAdminId()     { return adminId; }
-    public String        getLoginRsltCd() { return loginRsltCd; }
-    public String        getFailRsnCd()   { return failRsnCd; }
-    public String        getLoginIp()     { return loginIp; }
-    public String        getUserAgent()   { return userAgent; }
-    public LocalDateTime getLoginAt()     { return loginAt; }
-    public LocalDateTime getLogoutAt()    { return logoutAt; }
+    public long          getLoginHistNo()  { return loginHistNo; }
+    public String        getAdminId()      { return adminId; }
+    public String        getLoginRsltCd()  { return loginRsltCd; }
+    public String        getFailRsnCd()    { return failRsnCd; }
+    public String        getLoginIp()      { return loginIp; }
+    public String        getUserAgent()    { return userAgent; }
+    public LocalDateTime getLoginAt()      { return loginAt; }
+    public LocalDateTime getLogoutAt()     { return logoutAt; }
+    public String        getLoginAtStr()   { return loginAtStr; }
+    public String        getLogoutAtStr()  { return logoutAtStr; }
 
     public void setLoginHistNo(long v)         { this.loginHistNo = v; }
     public void setAdminId(String v)           { this.adminId = v; }
@@ -29,4 +34,6 @@ public class AdminLoginHistVO {
     public void setUserAgent(String v)         { this.userAgent = v; }
     public void setLoginAt(LocalDateTime v)    { this.loginAt = v; }
     public void setLogoutAt(LocalDateTime v)   { this.logoutAt = v; }
+    public void setLoginAtStr(String v)        { this.loginAtStr = v; }
+    public void setLogoutAtStr(String v)       { this.logoutAtStr = v; }
 }

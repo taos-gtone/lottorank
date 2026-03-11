@@ -55,8 +55,12 @@
       <div class="nav-item <%= "code".equals(_activeNavSection) ? "active" : "" %>">
         <a href="/lottorank/admin/code/list">코드관리</a>
       </div>
-      <div class="nav-item">
-        <a href="/lottorank/admin/myinfo">관리자정보변경</a>
+      <div class="nav-item has-dropdown <%= "myinfo".equals(_activeNavSection) ? "active" : "" %>">
+        <span>관리자정보</span>
+        <div class="dropdown-menu">
+          <a href="/lottorank/admin/myinfo" class="dropdown-item">비밀번호 변경</a>
+          <a href="/lottorank/admin/myinfo/login-history" class="dropdown-item">로그인 이력</a>
+        </div>
       </div>
     </nav>
 
@@ -78,6 +82,20 @@
     </button>
   </div>
 </header>
+
+<!-- 모바일 네비게이션 바 -->
+<div class="adm-mobile-nav-bar">
+  <a href="/lottorank/admin/customer/member/list"
+     class="<%= "customer".equals(_activeNavSection) ? "active" : "" %>">고객관리</a>
+  <a href="/lottorank/admin/board/list"
+     class="<%= "board".equals(_activeNavSection) ? "active" : "" %>">커뮤니티</a>
+  <a href="/lottorank/admin/notice/list"
+     class="<%= "notice".equals(_activeNavSection) ? "active" : "" %>">고객센터</a>
+  <a href="/lottorank/admin/code/list"
+     class="<%= "code".equals(_activeNavSection) ? "active" : "" %>">코드관리</a>
+  <a href="/lottorank/admin/myinfo"
+     class="<%= "myinfo".equals(_activeNavSection) ? "active" : "" %>">관리자정보</a>
+</div>
 
 <!-- 모바일 슬라이드 메뉴 -->
 <div class="adm-mobile-menu" id="admMobileMenu">
@@ -111,7 +129,12 @@
         코드 관리
       </a>
 
-      <a href="/lottorank/admin/myinfo">관리자 정보 변경</a>
+      <a href="/lottorank/admin/myinfo"
+         class="<%= "myinfo".equals(_activeNavSection) ? "active-menu" : "" %>">
+        관리자정보
+      </a>
+      <a href="/lottorank/admin/myinfo" class="adm-mobile-sub">비밀번호 변경</a>
+      <a href="/lottorank/admin/myinfo/login-history" class="adm-mobile-sub">로그인 이력</a>
     </nav>
 
     <div class="adm-mobile-footer">

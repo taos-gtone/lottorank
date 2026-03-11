@@ -186,12 +186,44 @@
   }
   .adm-mobile-logout:hover { border-color: #fca5a5; color: #fca5a5; }
 
+  /* ═══ 모바일 네비바 ═══ */
+  .adm-mobile-nav-bar {
+    display: none;
+    overflow-x: auto;
+    white-space: nowrap;
+    background: var(--g2);
+    border-bottom: 2px solid var(--line);
+    position: sticky;
+    top: 64px;
+    z-index: 99;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .adm-mobile-nav-bar::-webkit-scrollbar { display: none; }
+  .adm-mobile-nav-bar a {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 16px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--g6);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+    text-decoration: none;
+  }
+  .adm-mobile-nav-bar a:hover { color: var(--g8); }
+  .adm-mobile-nav-bar a.active { color: var(--primary); border-bottom-color: var(--primary); }
+
   /* ═══ 반응형 ═══ */
   @media (max-width: 768px) {
+    .util-bar { display: none; }
     .util-notice { display: none; }
     .header-admin-label { display: none; }
     .logo-sub { display: none; }
     .main-nav { display: none; }
     .adm-hamburger { display: flex; }
+    .adm-mobile-nav-bar { display: block; }
+    .header-actions { margin-left: auto; }
   }
 </style>

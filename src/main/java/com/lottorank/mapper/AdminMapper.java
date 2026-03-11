@@ -95,6 +95,14 @@ public interface AdminMapper {
     void updateAdminPassword(@Param("adminId") String adminId,
                              @Param("adminPw") String adminPw);
 
+    /** 로그인 이력 목록 조회 (최신순, 페이징) */
+    List<AdminLoginHistVO> selectLoginHistList(
+            @Param("offset")   int offset,
+            @Param("pageSize") int pageSize);
+
+    /** 로그인 이력 전체 건수 */
+    int selectLoginHistCount();
+
     /** 회원 목록 조회 (등록시간 내림차순) */
     List<MemberVO> selectMemberList(
             @Param("offset")   int offset,

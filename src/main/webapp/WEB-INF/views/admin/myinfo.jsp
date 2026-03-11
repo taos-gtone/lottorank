@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>관리자 정보 변경 - 로또랭크</title>
+  <title>관리자정보 - 로또랭크</title>
   <meta name="robots" content="noindex, nofollow">
   <%@ include file="/WEB-INF/views/admin/layout/admin-head.jsp" %>
   <style>
@@ -110,7 +110,7 @@
 
 <div class="adm-content">
   <div class="myinfo-card">
-    <div class="myinfo-title">관리자 정보 변경</div>
+    <div class="myinfo-title">비밀번호 변경</div>
     <div class="myinfo-subtitle">비밀번호를 변경합니다. 현재 비밀번호를 먼저 입력하세요.</div>
 
     <%

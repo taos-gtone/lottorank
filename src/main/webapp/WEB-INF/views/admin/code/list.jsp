@@ -83,8 +83,10 @@
       padding: 10px 12px;
       text-align: left;
       border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
       white-space: nowrap;
     }
+    .adm-table thead th:last-child { border-right: none; }
     .adm-table tbody tr {
       border-bottom: 1px solid var(--line);
       transition: background 0.12s;
@@ -96,7 +98,9 @@
       padding: 9px 12px;
       color: var(--g7);
       vertical-align: middle;
+      border-right: 1px solid var(--line);
     }
+    .adm-table tbody td:last-child { border-right: none; }
     .adm-table tbody td.empty {
       text-align: center;
       padding: 36px;

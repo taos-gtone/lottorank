@@ -20,7 +20,10 @@
       "Bash(perl -0777 -i -pe 's|    </div>\\\\r\\\\n    \\(<p class=\"\"page-desc\"\">.*?</p>\\)|      $1\\\\r\\\\n    </div>|gs' \"$f\")",
       "Bash(grep -r \"datasource\\\\|url\\\\|username\\\\|password\" src/main/resources/application*.properties src/main/resources/application*.yml)",
       "Bash(xargs cat)",
-      "Bash(grep -E \"\\\\.\\(java|xml\\)$\")"
+      "Bash(grep -E \"\\\\.\\(java|xml\\)$\")",
+      "Bash(grep -E \"\\\\.xml$\")",
+      "Bash(grep -l \"class.*Controller\" \"c:/projects/lottorank/src/main/java/com/lottorank/controller/\"*.java)",
+      "Bash(grep -l \"@Mapper\\\\|extends SqlSessionDaoSupport\" \"c:/projects/lottorank/src/main/java/com/lottorank/mapper/\"*.java)"
     ]
   }
 }

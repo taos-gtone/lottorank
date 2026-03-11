@@ -245,6 +245,7 @@ public class MemberController {
             @RequestParam String emailDomain,
             @RequestParam(required = false) String birthDate,
             @RequestParam String gender,
+            @RequestParam(required = false) String mobileNo,
             HttpServletRequest request) {
 
         Map<String, Object> result = new HashMap<>();
@@ -280,6 +281,9 @@ public class MemberController {
                 member.setBirthDate(birthDate.replace("-", ""));
             }
             member.setGenderCd(gender);
+            if (mobileNo != null && !mobileNo.isEmpty()) {
+                member.setMobileNo(mobileNo.replaceAll("\\D", ""));
+            }
             member.setRegIp(resolveIpv4(request));
             member.setRegLoginTypCd("I"); // 아이디 회원가입
 

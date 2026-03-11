@@ -151,12 +151,6 @@
             </a>
           </li>
           <li>
-            <a href="${pageContext.request.contextPath}/member/mypage">
-              <span class="sm-link-icon">▸</span>마이페이지
-              <span class="sm-link-desc">내 정보 조회·수정, 랭킹·예측 이력</span>
-            </a>
-          </li>
-          <li>
             <a href="${pageContext.request.contextPath}/member/find-id">
               <span class="sm-link-icon">▸</span>아이디 찾기
               <span class="sm-link-desc">가입 정보로 아이디를 확인</span>
@@ -179,6 +173,18 @@
           <span class="sm-title">고객센터 / 정책</span>
         </div>
         <ul class="sm-links">
+          <li>
+            <a href="${pageContext.request.contextPath}/notice/list#how">
+              <span class="sm-link-icon">▸</span>이용방법
+              <span class="sm-link-desc">로또랭크 서비스 이용 안내</span>
+            </a>
+          </li>
+          <li>
+            <a href="${pageContext.request.contextPath}/notice/list">
+              <span class="sm-link-icon">▸</span>공지사항
+              <span class="sm-link-desc">서비스 공지 및 업데이트 안내</span>
+            </a>
+          </li>
           <li>
             <a href="${pageContext.request.contextPath}/policy/terms">
               <span class="sm-link-icon">▸</span>이용약관
