@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-11T05:21:34.017Z",
+  "lastUpdated": "2026-03-11T12:18:03.347Z",
   "activeFeatures": [
     "mapper",
     "service",
@@ -26,9 +26,9 @@
       },
       "timestamps": {
         "started": "2026-02-19T15:10:07.894Z",
-        "lastUpdated": "2026-03-11T04:59:49.351Z"
+        "lastUpdated": "2026-03-11T11:47:53.386Z"
       },
-      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/mapper/AdminMapper.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\mapper\\AdminMapper.java"
     },
     "service": {
       "phase": "do",
@@ -52,9 +52,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:26.070Z",
-        "lastUpdated": "2026-03-11T05:21:34.017Z"
+        "lastUpdated": "2026-03-11T11:48:21.509Z"
       },
-      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/controller/MemberController.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\admin\\controller\\AdminController.java"
     },
     "lottorank": {
       "phase": "do",
@@ -92,9 +92,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-21T04:54:35.500Z",
-        "lastUpdated": "2026-03-11T05:00:23.430Z"
+        "lastUpdated": "2026-03-11T11:54:05.281Z"
       },
-      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/vo/AdminLoginHistVO.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\vo\\SysConfigVO.java"
     },
     "interceptor": {
       "phase": "do",
@@ -105,9 +105,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-28T11:07:23.883Z",
-        "lastUpdated": "2026-03-09T07:13:01.103Z"
+        "lastUpdated": "2026-03-11T12:18:03.347Z"
       },
-      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\interceptor\\NoticeTickerInterceptor.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\interceptor\\MaintenanceInterceptor.java"
     },
     "logging": {
       "phase": "do",
@@ -157,7 +157,7 @@
   "session": {
     "startedAt": "2026-02-19T14:55:10.648Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-11T05:21:34.017Z"
+    "lastActivity": "2026-03-11T12:18:03.347Z"
   },
   "history": [
     {
@@ -2617,6 +2617,48 @@
     {
       "timestamp": "2026-03-11T05:21:34.017Z",
       "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-11T11:47:41.396Z",
+      "feature": "vo",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-11T11:47:47.081Z",
+      "feature": "mapper",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-11T11:47:53.386Z",
+      "feature": "mapper",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-11T11:48:21.509Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-11T11:54:05.281Z",
+      "feature": "vo",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-11T12:13:17.077Z",
+      "feature": "interceptor",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-11T12:18:03.347Z",
+      "feature": "interceptor",
       "phase": "do",
       "action": "updated"
     }

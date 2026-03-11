@@ -35,6 +35,16 @@
             <mvc:exclude-mapping path="/uploads/**"/>
             <ref bean="noticeTickerInterceptor"/>
         </mvc:interceptor>
+        <!-- 시스템 점검 인터셉터: sys_oper_yn 이 Y 아니면 일반 사용자 점검 화면으로 전환 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/lottorank/admin/**"/>
+            <mvc:exclude-mapping path="/css/**"/>
+            <mvc:exclude-mapping path="/images/**"/>
+            <mvc:exclude-mapping path="/resources/**"/>
+            <mvc:exclude-mapping path="/uploads/**"/>
+            <ref bean="maintenanceInterceptor"/>
+        </mvc:interceptor>
         <!-- 관리자 인증 인터셉터: /lottorank/admin/** 에서 adminUser 세션 없으면 로그인으로 리다이렉트 -->
         <mvc:interceptor>
             <mvc:mapping path="/lottorank/admin/**"/>

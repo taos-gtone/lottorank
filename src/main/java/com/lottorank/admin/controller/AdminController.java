@@ -770,6 +770,48 @@ public class AdminController {
     }
 
     /* ═════════════════════════════════════════
+       환경설정
+    ═════════════════════════════════════════ */
+
+    @GetMapping("/settings")
+    public String settingsForm(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+
+        model.addAttribute("config", adminMapper.selectSysConfig());
+        model.addAttribute("adminUser", session.getAttribute("adminUser"));
+        return "admin/settings";
+    }
+
+    @PostMapping("/settings")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> settingsSave(
+            HttpServletRequest request,
+            @RequestParam String  sysOperYn,
+            @RequestParam Integer sysStopDay,
+            @RequestParam String  sysStopTime) {
+
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null) {
+            result.put("success", false);
+            result.put("message", "인증이 필요합니다.");
+            return ResponseEntity.status(401).body(result);
+        }
+
+        com.lottorank.vo.SysConfigVO vo = new com.lottorank.vo.SysConfigVO();
+        vo.setSysOperYn(sysOperYn);
+        vo.setSysStopDay(sysStopDay);
+        vo.setSysStopTime(sysStopTime);
+        adminMapper.updateSysConfig(vo);
+
+        result.put("success", true);
+        result.put("message", "저장되었습니다.");
+        return ResponseEntity.ok(result);
+    }
+
+    /* ═════════════════════════════════════════
        공통 코드 관리
     ═════════════════════════════════════════ */
 

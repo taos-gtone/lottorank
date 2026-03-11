@@ -350,6 +350,56 @@ a:hover { opacity: 0.85; }
 
 .adm-nav-icon { font-size: 1rem; flex-shrink: 0; }
 
+/* 드랍다운 그룹 */
+.adm-nav-group-toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.adm-nav-arrow {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--adm-txt3);
+  transition: transform 0.2s;
+}
+
+.adm-nav-group.open .adm-nav-arrow {
+  transform: rotate(180deg);
+}
+
+.adm-nav-sub {
+  display: none;
+  padding-left: 10px;
+}
+
+.adm-nav-group.open .adm-nav-sub {
+  display: block;
+}
+
+.adm-nav-sub-item {
+  font-size: 0.86rem;
+  padding: 7px 12px;
+}
+
+.adm-nav-sub-item::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--adm-txt3);
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.adm-nav-sub-item.active::before {
+  background: var(--adm-primary);
+}
+
 /* 메인 콘텐츠 */
 .adm-main {
   margin-left: 220px;

@@ -52,8 +52,12 @@
           <a href="/lottorank/admin/notice/list" class="dropdown-item">공지사항</a>
         </div>
       </div>
-      <div class="nav-item <%= "code".equals(_activeNavSection) ? "active" : "" %>">
-        <a href="/lottorank/admin/code/list">코드관리</a>
+      <div class="nav-item has-dropdown <%= ("settings".equals(_activeNavSection) || "code".equals(_activeNavSection)) ? "active" : "" %>">
+        <span>시스템관리</span>
+        <div class="dropdown-menu">
+          <a href="/lottorank/admin/settings" class="dropdown-item">환경설정</a>
+          <a href="/lottorank/admin/code/list" class="dropdown-item">코드 관리</a>
+        </div>
       </div>
       <div class="nav-item has-dropdown <%= "myinfo".equals(_activeNavSection) ? "active" : "" %>">
         <span>관리자정보</span>
@@ -91,8 +95,8 @@
      class="<%= "board".equals(_activeNavSection) ? "active" : "" %>">커뮤니티</a>
   <a href="/lottorank/admin/notice/list"
      class="<%= "notice".equals(_activeNavSection) ? "active" : "" %>">고객센터</a>
-  <a href="/lottorank/admin/code/list"
-     class="<%= "code".equals(_activeNavSection) ? "active" : "" %>">코드관리</a>
+  <a href="/lottorank/admin/settings"
+     class="<%= ("settings".equals(_activeNavSection) || "code".equals(_activeNavSection)) ? "active" : "" %>">시스템관리</a>
   <a href="/lottorank/admin/myinfo"
      class="<%= "myinfo".equals(_activeNavSection) ? "active" : "" %>">관리자정보</a>
 </div>
@@ -124,10 +128,12 @@
       </a>
       <a href="/lottorank/admin/notice/list" class="adm-mobile-sub">공지사항</a>
 
-      <a href="/lottorank/admin/code/list"
-         class="<%= "code".equals(_activeNavSection) ? "active-menu" : "" %>">
-        코드 관리
+      <a href="/lottorank/admin/settings"
+         class="<%= ("settings".equals(_activeNavSection) || "code".equals(_activeNavSection)) ? "active-menu" : "" %>">
+        시스템관리
       </a>
+      <a href="/lottorank/admin/settings" class="adm-mobile-sub">환경설정</a>
+      <a href="/lottorank/admin/code/list" class="adm-mobile-sub">코드 관리</a>
 
       <a href="/lottorank/admin/myinfo"
          class="<%= "myinfo".equals(_activeNavSection) ? "active-menu" : "" %>">

@@ -6,6 +6,7 @@ import com.lottorank.vo.BoardPostVO;
 import com.lottorank.vo.ComCodeDtlVO;
 import com.lottorank.vo.ComCodeMstVO;
 import com.lottorank.vo.MemberVO;
+import com.lottorank.vo.SysConfigVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -150,4 +151,12 @@ public interface AdminMapper {
 
     /** 코드 그룹 하위 전체 삭제 */
     void deleteCodeDtlByGrp(@Param("codeGrpId") String codeGrpId);
+
+    /* ═══════════════ 시스템 환경설정 ═══════════════ */
+
+    /** 시스템 설정 조회 (단일 row) */
+    SysConfigVO selectSysConfig();
+
+    /** 시스템 설정 수정 */
+    void updateSysConfig(SysConfigVO vo);
 }

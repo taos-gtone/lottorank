@@ -52,4 +52,27 @@
       <span>사이트 보기</span>
     </a>
   </div>
+  <div class="adm-nav-section">
+    <div class="adm-nav-section-label">시스템관리</div>
+    <div class="adm-nav-group <%= _currentPath.contains("/admin/code") || _currentPath.contains("/admin/settings") ? "open" : "" %>">
+      <button class="adm-nav-item adm-nav-group-toggle"
+              onclick="this.closest('.adm-nav-group').classList.toggle('open')">
+        <span class="adm-nav-icon">⚙️</span>
+        <span>시스템관리</span>
+        <span class="adm-nav-arrow">▾</span>
+      </button>
+      <div class="adm-nav-sub">
+        <a href="#"
+           class="adm-nav-item adm-nav-sub-item">
+          <span class="adm-nav-icon">🔧</span>
+          <span>환경설정</span>
+        </a>
+        <a href="<%= _ctx %>/admin/code/list"
+           class="adm-nav-item adm-nav-sub-item <%= _currentPath.contains("/admin/code") ? "active" : "" %>">
+          <span class="adm-nav-icon">🗂️</span>
+          <span>코드 관리</span>
+        </a>
+      </div>
+    </div>
+  </div>
 </nav>
