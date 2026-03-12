@@ -121,6 +121,45 @@
       color: #3360BE;
     }
 
+    /* ── 골드 멤버십 드롭다운 (일반 드롭다운 이후에 선언해야 덮어씀) ── */
+    .nav-dropdown-gold {
+      background: linear-gradient(160deg, #1a1200 0%, #2e1f00 60%, #1a1200 100%);
+      border-top: 2px solid var(--gold);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(228,170,0,0.25);
+    }
+
+    .nav-dropdown-item-gold {
+      color: #FFD54F !important;
+      font-weight: 700 !important;
+      font-size: 0.97rem !important;
+      border-bottom: 1px solid rgba(228,170,0,0.18) !important;
+      letter-spacing: 0.3px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-dropdown-item-gold::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(228,170,0,0.08) 50%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .nav-dropdown-item-gold:hover {
+      background: rgba(228,170,0,0.14) !important;
+      color: #ffe082 !important;
+    }
+
+    .nav-dropdown-item-gold:hover::before {
+      opacity: 1;
+    }
+
+    .nav-dropdown-item-gold:last-child {
+      border-bottom: none !important;
+    }
+
 
     .mobile-nav-parent {
       display: flex;
@@ -371,6 +410,25 @@
     .mobile-nav-links .mobile-nav-sub:hover {
       background: rgba(255,255,255,0.88);
       color: #3360BE;
+    }
+
+    /* 골드 멤버십 모바일 메뉴 */
+    .mobile-nav-links .mobile-nav-gold {
+      color: #FFD54F !important;
+      font-weight: 700;
+    }
+
+    .mobile-nav-links .mobile-nav-sub-gold {
+      background: linear-gradient(90deg, #1a1200 0%, #2e1f00 100%);
+      color: #FFD54F !important;
+      font-weight: 700;
+      border-left: 3px solid var(--gold);
+      border-bottom: 1px solid rgba(228,170,0,0.2);
+    }
+
+    .mobile-nav-links .mobile-nav-sub-gold:hover {
+      background: #2e1f00;
+      color: #ffe082 !important;
     }
 
     .mobile-actions {

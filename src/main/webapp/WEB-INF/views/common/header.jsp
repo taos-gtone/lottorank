@@ -139,8 +139,11 @@
               <a href="/notice/list" class="nav-dropdown-item">공지사항</a>
             </div>
           </div>
-          <div class="nav-item nav-gold">
-            <a href="#">🏆 골드 멤버십</a>
+          <div class="nav-item nav-gold has-dropdown" data-path="/gold">
+            <a href="#">골드 멤버십</a>
+            <div class="nav-dropdown nav-dropdown-gold">
+              <a href="/gold/best" class="nav-dropdown-item nav-dropdown-item-gold">골드번호 조합</a>
+            </div>
           </div>
         </nav>
 
@@ -221,7 +224,8 @@
         <a href="/notice/list" class="mobile-nav-parent">고객센터 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
         <a href="#how" class="mobile-nav-sub">이용방법</a>
         <a href="/notice/list" class="mobile-nav-sub">공지사항</a>
-        <a href="#" style="color: #FFD54F;">🏆 골드 멤버십</a>
+        <a href="#" class="mobile-nav-parent mobile-nav-gold">골드 멤버십 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
+        <a href="#" class="mobile-nav-sub mobile-nav-sub-gold">골드번호 조합</a>
       </nav>
       <% if (_hLoggedIn) { %>
       <div class="mobile-actions">

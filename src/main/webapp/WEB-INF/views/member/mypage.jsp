@@ -99,23 +99,23 @@
     <!-- 탭 버튼 -->
     <div class="mypage-tabs" role="tablist">
       <button class="mypage-tab-btn active" role="tab"
-              aria-selected="true" aria-controls="tab-info"
-              onclick="switchTab('info', this)">내 정보 조회/변경</button>
-      <button class="mypage-tab-btn" role="tab"
-              aria-selected="false" aria-controls="tab-predict"
-              onclick="switchTab('predict', this)">내 예측번호</button>
-      <button class="mypage-tab-btn" role="tab"
-              aria-selected="false" aria-controls="tab-rank-all"
+              aria-selected="true" aria-controls="tab-rank-all"
               onclick="switchTab('rank-all', this)">내 전체 랭킹</button>
       <button class="mypage-tab-btn" role="tab"
               aria-selected="false" aria-controls="tab-rank-5"
               onclick="switchTab('rank-5', this)">내 최근5주 랭킹</button>
+      <button class="mypage-tab-btn" role="tab"
+              aria-selected="false" aria-controls="tab-predict"
+              onclick="switchTab('predict', this)">내 예측번호</button>
+      <button class="mypage-tab-btn" role="tab"
+              aria-selected="false" aria-controls="tab-info"
+              onclick="switchTab('info', this)">내 정보 조회/변경</button>
     </div>
 
     <!-- ════════════════════════════════════
-         탭 1: 내 정보 조회
+         탭 4: 내 정보 조회
     ════════════════════════════════════ -->
-    <div id="tab-info" class="mypage-tab-content active" role="tabpanel">
+    <div id="tab-info" class="mypage-tab-content" role="tabpanel">
 
       <!-- ── 아이디 ── -->
       <div class="info-section">
@@ -251,7 +251,7 @@
     </div><!-- /tab-info -->
 
     <!-- ════════════════════════════════════
-         탭 2: 내 예측번호 조회
+         탭 3: 내 예측번호 조회
     ════════════════════════════════════ -->
     <div id="tab-predict" class="mypage-tab-content" role="tabpanel">
 
@@ -362,9 +362,9 @@
     </div><!-- /tab-predict -->
 
     <!-- ════════════════════════════════════
-         탭 3: 내 전체 랭킹
+         탭 1: 내 전체 랭킹
     ════════════════════════════════════ -->
-    <div id="tab-rank-all" class="mypage-tab-content" role="tabpanel">
+    <div id="tab-rank-all" class="mypage-tab-content active" role="tabpanel">
       <% if (myAllLatest == null) { %>
       <div class="my-rank-empty">
         <div class="my-rank-empty-icon">🏅</div>
@@ -425,7 +425,7 @@
     </div><!-- /tab-rank-all -->
 
     <!-- ════════════════════════════════════
-         탭 4: 내 최근5주 랭킹
+         탭 2: 내 최근5주 랭킹
     ════════════════════════════════════ -->
     <div id="tab-rank-5" class="mypage-tab-content" role="tabpanel">
       <% if (my5Latest == null) { %>
@@ -509,7 +509,7 @@
   (function() {
     var hash = window.location.hash.replace('#', '');
     if (!hash) return;
-    var tabMap = { 'predict': 1, 'rank-all': 2, 'rank-5': 3 };
+    var tabMap = { 'rank-all': 0, 'rank-5': 1, 'predict': 2, 'info': 3 };
     var idx = tabMap[hash];
     if (idx === undefined) return;
     var btn = document.querySelectorAll('.mypage-tab-btn')[idx];
