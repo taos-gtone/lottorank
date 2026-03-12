@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -153,13 +154,13 @@
 </head>
 <body>
   <header class="maint-header">
-    <div class="maint-logo">
+    <a href="/" class="maint-logo">
       <div class="maint-logo-icon">🎰</div>
       <div>
         <span class="maint-logo-sub">Lotto Rank</span>
         <span class="maint-logo-text">로또랭크</span>
       </div>
-    </div>
+    </a>
   </header>
   <div class="maint-gold-bar"></div>
 
@@ -171,6 +172,9 @@
       <p class="maint-desc">
         로또랭크 서비스를 더욱 안정적으로 제공하기 위해<br>
         시스템 점검을 진행하고 있습니다.<br><br>
+        <c:if test="${not empty mntEndDay and not empty mntEndTime}">
+          <strong>점검 종료 예정: ${mntEndDay}요일 ${mntEndTime}</strong><br><br>
+        </c:if>
         점검이 완료되는 즉시 서비스를 재개하겠습니다.<br>
         이용에 불편을 드려 대단히 죄송합니다.
       </p>

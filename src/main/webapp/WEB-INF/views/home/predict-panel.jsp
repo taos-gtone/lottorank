@@ -60,4 +60,23 @@
             </div>
           </div>
 
+          <!-- 일정 안내 카드 -->
+          <div class="schedule-card">
+            <div class="panel-header schedule-card-header">
+              <div class="panel-title">
+                <span>⏰</span> 로또랭크 운영 안내
+              </div>
+            </div>
+            <div class="schedule-items">
+              <div class="schedule-item">
+                <span class="schedule-label">📌 예측 마감 시간</span>
+                <span class="schedule-time">토요일 오후 7시</span>
+              </div>
+              <div class="schedule-item">
+                <span class="schedule-label">🔧 시스템 점검 시간</span>
+                <span class="schedule-time">토요일 오후 8시30분<br>~ 다음 회차 시작 시까지</span>
+              </div>
+            </div>
+          </div>
+
         </div>

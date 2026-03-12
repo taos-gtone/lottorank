@@ -276,3 +276,43 @@
     .howto-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
     .howto-desc { font-size: 0.85rem; color: var(--txt2); line-height: 1.5; }
 
+    /* 일정 안내 카드 */
+    .schedule-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .schedule-card-header {
+      background: linear-gradient(90deg, #b71c1c, #e53935) !important;
+    }
+
+    .schedule-items { padding: 0; }
+
+    .schedule-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .schedule-item:last-child { border-bottom: none; }
+
+    .schedule-label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--txt2);
+      white-space: nowrap;
+    }
+
+    .schedule-time {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--red);
+      text-align: right;
+      line-height: 1.5;
+    }
+

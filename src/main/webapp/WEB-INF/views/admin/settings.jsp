@@ -3,11 +3,20 @@
 <%@ page import="org.springframework.web.util.HtmlUtils" %>
 <%
   String _activeNavSection = "settings";
-  SysConfigVO sysConfig = (SysConfigVO) request.getAttribute("config");
-  String sysOperYn  = (sysConfig != null && sysConfig.getSysOperYn()  != null) ? sysConfig.getSysOperYn()  : "Y";
-  Integer sysStopDay = (sysConfig != null && sysConfig.getSysStopDay() != null) ? sysConfig.getSysStopDay() : 6;
-  String sysStopTime = (sysConfig != null && sysConfig.getSysStopTime() != null) ? sysConfig.getSysStopTime() : "19:00";
-  String updDt       = (sysConfig != null && sysConfig.getUpdDt() != null) ? sysConfig.getUpdDt() : "-";
+  SysConfigVO cfg = (SysConfigVO) request.getAttribute("config");
+
+  String  sysOperYn     = (cfg != null && cfg.getSysOperYn()     != null) ? cfg.getSysOperYn()     : "Y";
+  Integer sysMntSttDay  = (cfg != null && cfg.getSysMntSttDay()  != null) ? cfg.getSysMntSttDay()  : 6;
+  String  sysMntSttTime = (cfg != null && cfg.getSysMntSttTime() != null) ? cfg.getSysMntSttTime() : "20:30";
+  Integer sysMntEndDay  = (cfg != null && cfg.getSysMntEndDay()  != null) ? cfg.getSysMntEndDay()  : 7;
+  String  sysMntEndTime = (cfg != null && cfg.getSysMntEndTime() != null) ? cfg.getSysMntEndTime() : "00:00";
+  Integer predBanSttDay = (cfg != null && cfg.getPredBanSttDay() != null) ? cfg.getPredBanSttDay() : 6;
+  String  predBanSttTime= (cfg != null && cfg.getPredBanSttTime()!= null) ? cfg.getPredBanSttTime(): "19:00";
+  Integer predBanEndDay = (cfg != null && cfg.getPredBanEndDay() != null) ? cfg.getPredBanEndDay() : 7;
+  String  predBanEndTime= (cfg != null && cfg.getPredBanEndTime()!= null) ? cfg.getPredBanEndTime(): "00:00";
+  String  updDt         = (cfg != null && cfg.getUpdDt()         != null) ? cfg.getUpdDt()         : "-";
+
+  String[] dayNames = {"", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"};
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -19,7 +28,7 @@
   <%@ include file="/WEB-INF/views/admin/layout/admin-head.jsp" %>
   <style>
     .adm-content {
-      max-width: 720px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 28px 24px;
     }
@@ -50,21 +59,31 @@
       align-items: center;
       gap: 8px;
     }
-    .cfg-body { padding: 24px 20px; display: flex; flex-direction: column; gap: 20px; }
+    .cfg-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
 
+    /* 행 레이아웃 */
     .cfg-row {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
     .cfg-label {
-      width: 140px;
+      width: 90px;
       flex-shrink: 0;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: var(--g7);
     }
-    .cfg-field { display: flex; align-items: center; gap: 10px; flex: 1; }
+    .cfg-field { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; }
+
+    /* from~to 구분선 */
+    .range-sep {
+      font-size: 0.85rem;
+      color: var(--g5);
+      font-weight: 600;
+      padding: 0 4px;
+    }
 
     /* 토글 스위치 */
     .toggle-wrap { display: flex; align-items: center; gap: 12px; }
@@ -105,10 +124,10 @@
 
     /* 선택/입력 */
     .cfg-select, .cfg-input {
-      padding: 9px 12px;
+      padding: 8px 10px;
       border: 1.5px solid var(--line);
       border-radius: 7px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-family: inherit;
       color: var(--g8);
       background: #fff;
@@ -119,8 +138,8 @@
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
     }
-    .cfg-select { min-width: 140px; }
-    .cfg-input  { width: 160px; }
+    .cfg-select { min-width: 110px; }
+    .cfg-input  { width: 130px; }
 
     /* 저장 버튼 */
     .btn-save {
@@ -167,6 +186,11 @@
       transform: translateX(-50%) translateY(0);
     }
     .toast.error { background: var(--danger); }
+
+    @media (max-width: 600px) {
+      .cfg-row { flex-direction: column; align-items: flex-start; }
+      .cfg-label { width: auto; }
+    }
   </style>
 </head>
 <body>
@@ -176,7 +200,7 @@
     <div class="page-hd">
       <div>
         <div class="page-hd-title">환경설정</div>
-        <div class="page-hd-sub">시스템 운영 여부 및 예측 마감 시간을 설정합니다.</div>
+        <div class="page-hd-sub">시스템 운영 여부, 점검 시간, 예측 불가 시간을 설정합니다.</div>
       </div>
     </div>
 
@@ -186,7 +210,7 @@
         <div class="cfg-card-hd">⚙️ 시스템 운영</div>
         <div class="cfg-body">
           <div class="cfg-row">
-            <div class="cfg-label">시스템 운영 여부</div>
+            <div class="cfg-label">운영 여부</div>
             <div class="cfg-field">
               <div class="toggle-wrap">
                 <label class="toggle-switch">
@@ -204,29 +228,63 @@
         </div>
       </div>
 
-      <!-- 운영 정지 시간 -->
+      <!-- 시스템 점검 시간 -->
       <div class="cfg-card">
-        <div class="cfg-card-hd">🕐 예측 마감 시간</div>
+        <div class="cfg-card-hd">🔧 시스템 점검 시간</div>
         <div class="cfg-body">
           <div class="cfg-row">
-            <div class="cfg-label">마감 요일</div>
+            <div class="cfg-label">시작</div>
             <div class="cfg-field">
-              <select class="cfg-select" id="sysStopDay" name="sysStopDay">
-                <option value="1" <%= sysStopDay.intValue() == 1 ? "selected" : "" %>>월요일</option>
-                <option value="2" <%= sysStopDay.intValue() == 2 ? "selected" : "" %>>화요일</option>
-                <option value="3" <%= sysStopDay.intValue() == 3 ? "selected" : "" %>>수요일</option>
-                <option value="4" <%= sysStopDay.intValue() == 4 ? "selected" : "" %>>목요일</option>
-                <option value="5" <%= sysStopDay.intValue() == 5 ? "selected" : "" %>>금요일</option>
-                <option value="6" <%= sysStopDay.intValue() == 6 ? "selected" : "" %>>토요일</option>
-                <option value="7" <%= sysStopDay.intValue() == 7 ? "selected" : "" %>>일요일</option>
+              <select class="cfg-select" id="sysMntSttDay" name="sysMntSttDay">
+                <% for (int d = 1; d <= 7; d++) { %>
+                <option value="<%= d %>" <%= sysMntSttDay.intValue() == d ? "selected" : "" %>><%= dayNames[d] %></option>
+                <% } %>
               </select>
+              <input type="time" class="cfg-input" id="sysMntSttTime" name="sysMntSttTime"
+                     value="<%= HtmlUtils.htmlEscape(sysMntSttTime) %>">
             </div>
           </div>
           <div class="cfg-row">
-            <div class="cfg-label">마감 시각</div>
+            <div class="cfg-label">종료</div>
             <div class="cfg-field">
-              <input type="time" class="cfg-input" id="sysStopTime" name="sysStopTime"
-                     value="<%= HtmlUtils.htmlEscape(sysStopTime) %>">
+              <select class="cfg-select" id="sysMntEndDay" name="sysMntEndDay">
+                <% for (int d = 1; d <= 7; d++) { %>
+                <option value="<%= d %>" <%= sysMntEndDay.intValue() == d ? "selected" : "" %>><%= dayNames[d] %></option>
+                <% } %>
+              </select>
+              <input type="time" class="cfg-input" id="sysMntEndTime" name="sysMntEndTime"
+                     value="<%= HtmlUtils.htmlEscape(sysMntEndTime) %>">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 예측 불가 시간 -->
+      <div class="cfg-card">
+        <div class="cfg-card-hd">🚫 예측 불가 시간</div>
+        <div class="cfg-body">
+          <div class="cfg-row">
+            <div class="cfg-label">시작</div>
+            <div class="cfg-field">
+              <select class="cfg-select" id="predBanSttDay" name="predBanSttDay">
+                <% for (int d = 1; d <= 7; d++) { %>
+                <option value="<%= d %>" <%= predBanSttDay.intValue() == d ? "selected" : "" %>><%= dayNames[d] %></option>
+                <% } %>
+              </select>
+              <input type="time" class="cfg-input" id="predBanSttTime" name="predBanSttTime"
+                     value="<%= HtmlUtils.htmlEscape(predBanSttTime) %>">
+            </div>
+          </div>
+          <div class="cfg-row">
+            <div class="cfg-label">종료</div>
+            <div class="cfg-field">
+              <select class="cfg-select" id="predBanEndDay" name="predBanEndDay">
+                <% for (int d = 1; d <= 7; d++) { %>
+                <option value="<%= d %>" <%= predBanEndDay.intValue() == d ? "selected" : "" %>><%= dayNames[d] %></option>
+                <% } %>
+              </select>
+              <input type="time" class="cfg-input" id="predBanEndTime" name="predBanEndTime"
+                     value="<%= HtmlUtils.htmlEscape(predBanEndTime) %>">
             </div>
           </div>
         </div>
@@ -243,13 +301,12 @@
 
   <script>
   (function() {
-    var toggle    = document.getElementById('sysOperToggle');
-    var label     = document.getElementById('toggleLabel');
-    var btnSave   = document.getElementById('btnSave');
-    var toast     = document.getElementById('toast');
-    var updDtLbl  = document.getElementById('updDtLabel');
+    var toggle   = document.getElementById('sysOperToggle');
+    var label    = document.getElementById('toggleLabel');
+    var btnSave  = document.getElementById('btnSave');
+    var toast    = document.getElementById('toast');
+    var updDtLbl = document.getElementById('updDtLabel');
 
-    // 토글 라벨 연동
     toggle.addEventListener('change', function() {
       if (this.checked) {
         label.textContent = '운영중 (Y)';
@@ -260,30 +317,34 @@
       }
     });
 
-    // 저장
     btnSave.addEventListener('click', function() {
-      var sysOperYn  = toggle.checked ? 'Y' : 'N';
-      var sysStopDay = document.getElementById('sysStopDay').value;
-      var sysStopTime = document.getElementById('sysStopTime').value;
+      var sysMntSttTime  = document.getElementById('sysMntSttTime').value;
+      var sysMntEndTime  = document.getElementById('sysMntEndTime').value;
+      var predBanSttTime = document.getElementById('predBanSttTime').value;
+      var predBanEndTime = document.getElementById('predBanEndTime').value;
 
-      if (!sysStopTime) {
-        showToast('정지 시각을 입력해주세요.', true);
-        return;
+      if (!sysMntSttTime || !sysMntEndTime) {
+        showToast('시스템 점검 시각을 입력해주세요.', true); return;
       }
-
+      if (!predBanSttTime || !predBanEndTime) {
+        showToast('예측 불가 시각을 입력해주세요.', true); return;
+      }
       if (!confirm('환경설정을 저장하시겠습니까?')) return;
 
       btnSave.disabled = true;
 
-      var ctx = document.createElement('a');
-      ctx.href = '/lottorank/admin/settings';
-
       fetch('/lottorank/admin/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'sysOperYn=' + encodeURIComponent(sysOperYn)
-            + '&sysStopDay=' + encodeURIComponent(sysStopDay)
-            + '&sysStopTime=' + encodeURIComponent(sysStopTime)
+        body: 'sysOperYn='     + encodeURIComponent(toggle.checked ? 'Y' : 'N')
+            + '&sysMntSttDay='  + encodeURIComponent(document.getElementById('sysMntSttDay').value)
+            + '&sysMntSttTime=' + encodeURIComponent(sysMntSttTime)
+            + '&sysMntEndDay='  + encodeURIComponent(document.getElementById('sysMntEndDay').value)
+            + '&sysMntEndTime=' + encodeURIComponent(sysMntEndTime)
+            + '&predBanSttDay=' + encodeURIComponent(document.getElementById('predBanSttDay').value)
+            + '&predBanSttTime='+ encodeURIComponent(predBanSttTime)
+            + '&predBanEndDay=' + encodeURIComponent(document.getElementById('predBanEndDay').value)
+            + '&predBanEndTime='+ encodeURIComponent(predBanEndTime)
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {

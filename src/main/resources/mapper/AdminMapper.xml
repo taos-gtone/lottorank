@@ -470,19 +470,75 @@
 
     <select id="selectSysConfig" resultType="SysConfigVO">
         SELECT sys_oper_yn,
-               sys_stop_day,
-               DATE_FORMAT(sys_stop_time, '%H:%i') AS sys_stop_time,
+               sys_mnt_stt_day,
+               DATE_FORMAT(sys_mnt_stt_time, '%H:%i') AS sys_mnt_stt_time,
+               sys_mnt_end_day,
+               DATE_FORMAT(sys_mnt_end_time, '%H:%i') AS sys_mnt_end_time,
+               pred_ban_stt_day,
+               DATE_FORMAT(pred_ban_stt_time, '%H:%i') AS pred_ban_stt_time,
+               pred_ban_end_day,
+               DATE_FORMAT(pred_ban_end_time, '%H:%i') AS pred_ban_end_time,
                DATE_FORMAT(upd_dt, '%Y-%m-%d %H:%i:%s') AS upd_dt
         FROM   ADM_SYS_CONFIG
         LIMIT  1
     </select>
 
+    <!-- ═══════════════ 회원 로그인 이력 ═══════════════ -->
+
+    <!-- 회원 로그인 이력 공통 WHERE -->
+    <sql id="memLoginHistWhere">
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchType == 'nickname'">
+                    AND m.nickname LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <otherwise>
+                    AND h.user_id LIKE CONCAT('%', #{searchKeyword}, '%')
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <!-- 회원 로그인 이력 목록 -->
+    <select id="selectMemLoginHistList" resultType="LoginHistVO">
+        SELECT h.login_hist_no,
+               h.member_no,
+               h.user_id,
+               COALESCE(m.nickname, '') AS nickname,
+               h.login_rslt_cd,
+               h.fail_rsn_cd,
+               h.login_ip,
+               h.user_agent,
+               DATE_FORMAT(h.login_at, '%Y-%m-%d %H:%i:%s') AS login_at_str
+          FROM MEM_LOGIN_HIST h
+          LEFT JOIN MEM_JOIN_INFO m ON m.member_no = h.member_no
+         WHERE 1=1
+        <include refid="memLoginHistWhere"/>
+         ORDER BY h.login_hist_no DESC
+         LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 회원 로그인 이력 건수 -->
+    <select id="selectMemLoginHistCount" resultType="int">
+        SELECT COUNT(*)
+          FROM MEM_LOGIN_HIST h
+          LEFT JOIN MEM_JOIN_INFO m ON m.member_no = h.member_no
+         WHERE 1=1
+        <include refid="memLoginHistWhere"/>
+    </select>
+
     <update id="updateSysConfig" parameterType="SysConfigVO">
         UPDATE ADM_SYS_CONFIG
-        SET    sys_oper_yn  = #{sysOperYn},
-               sys_stop_day = #{sysStopDay},
-               sys_stop_time = #{sysStopTime},
-               upd_dt       = NOW()
+        SET    sys_oper_yn      = #{sysOperYn},
+               sys_mnt_stt_day  = #{sysMntSttDay},
+               sys_mnt_stt_time = #{sysMntSttTime},
+               sys_mnt_end_day  = #{sysMntEndDay},
+               sys_mnt_end_time = #{sysMntEndTime},
+               pred_ban_stt_day  = #{predBanSttDay},
+               pred_ban_stt_time = #{predBanSttTime},
+               pred_ban_end_day  = #{predBanEndDay},
+               pred_ban_end_time = #{predBanEndTime},
+               upd_dt            = NOW()
     </update>
 
 </mapper>

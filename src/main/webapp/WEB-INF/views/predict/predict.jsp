@@ -34,6 +34,13 @@
   int    statTotal   = (myStats != null) ? myStats.getSelNumCnt() : 0;
   int    statHit     = (myStats != null) ? myStats.getWinCnt()    : 0;
   String statHitRate = (myStats != null) ? myStats.getHitRateStr() : "0%";
+
+  Integer predBanSttDay  = (Integer) request.getAttribute("predBanSttDay");
+  String  predBanSttTime = (String)  request.getAttribute("predBanSttTime");
+  Integer predBanEndDay  = (Integer) request.getAttribute("predBanEndDay");
+  String  predBanEndTime = (String)  request.getAttribute("predBanEndTime");
+  boolean hasPredBan = (predBanSttDay != null && predBanSttTime != null
+                        && predBanEndDay != null && predBanEndTime != null);
 %>
 
 <!-- ===========================
@@ -285,6 +292,30 @@
   var submitted   = <%= alreadySubmitted %>;
   var submittedNum = <%= submittedNum %>;
 
+  /* ── 예측 불가 시간 설정 ── */
+  var predBanSttDay  = <%= hasPredBan ? predBanSttDay  : "null" %>;
+  var predBanSttTime = '<%= hasPredBan ? predBanSttTime : "" %>';
+  var predBanEndDay  = <%= hasPredBan ? predBanEndDay  : "null" %>;
+  var predBanEndTime = '<%= hasPredBan ? predBanEndTime : "" %>';
+
+  function isPredBanTimeNow() {
+    if (predBanSttDay === null) return false;
+    var now   = new Date();
+    var jsDay = now.getDay();                        // 0=일, 1=월 ~ 6=토
+    var dbDay = (jsDay === 0) ? 7 : jsDay;           // 1=월 ~ 7=일 (DB 기준)
+    var curMin = now.getHours() * 60 + now.getMinutes();
+    var sp = predBanSttTime.split(':');
+    var ep = predBanEndTime.split(':');
+    var sttTotal = predBanSttDay * 1440 + parseInt(sp[0]) * 60 + parseInt(sp[1]);
+    var endTotal = predBanEndDay * 1440 + parseInt(ep[0]) * 60 + parseInt(ep[1]);
+    var curTotal = dbDay * 1440 + curMin;
+    if (sttTotal <= endTotal) {
+      return curTotal >= sttTotal && curTotal <= endTotal;
+    } else {
+      return curTotal >= sttTotal || curTotal <= endTotal;
+    }
+  }
+
   var grid      = document.getElementById('pfNumGrid');
   var display   = document.getElementById('pfNumDisplay');
   var ball      = document.getElementById('pfSelectedBall');
@@ -334,7 +365,9 @@
             ball.className   = 'pf-ball-lg ball-spinning ' + getBallClass(num);
             display.classList.add('has-selection');
 
-            submitBtn.disabled = false;
+            if (!isPredBanTimeNow() && !banDisabled) {
+              submitBtn.disabled = false;
+            }
           });
         }
         grid.appendChild(btn);
@@ -344,13 +377,56 @@
 
   /* ── 모달 처리 (미제출 상태에서만) ── */
   if (!submitted && submitBtn) {
+
+    /* 페이지 진입 시 예측 불가 시간이면 버튼 비활성화 */
+    if (isPredBanTimeNow()) {
+      submitBtn.textContent = '번호 예측 시간이 아닙니다';
+      submitBtn.disabled = true;
+    }
+
     var overlay    = document.getElementById('predModalOverlay');
     var modalBall  = document.getElementById('modalSelectedBall');
     var cancelBtn  = document.getElementById('predModalCancel');
     var confirmBtn = document.getElementById('predModalConfirm');
 
+    /* ── 결과 모달 ── */
+    var resultOverlay = document.getElementById('predResultOverlay');
+    var resultIcon    = document.getElementById('resultModalIcon');
+    var resultTitle   = document.getElementById('resultModalTitle');
+    var resultBody    = document.getElementById('resultModalBody');
+    var resultClose   = document.getElementById('predResultClose');
+    var reloadOnClose = false;
+    var predBanOnClose = false;
+    var banDisabled = false;
+
+    function showResult(success, message) {
+      resultIcon.textContent  = success ? '✅' : '❌';
+      resultTitle.textContent = success ? '제출 완료!' : '제출 실패';
+      resultBody.textContent  = message;
+      reloadOnClose = success;
+      resultOverlay.classList.add('open');
+    }
+
+    resultClose.addEventListener('click', function () {
+      resultOverlay.classList.remove('open');
+      if (reloadOnClose) {
+        location.reload();
+      } else if (predBanOnClose || resultBody.textContent.indexOf('번호 예측 시간이') !== -1) {
+        predBanOnClose = false;
+        banDisabled = true;
+        submitBtn.textContent = '번호 예측 시간이 아닙니다';
+        submitBtn.disabled = true;
+      }
+    });
+
     submitBtn.addEventListener('click', function () {
       if (!selected) return;
+      /* 예측 불가 시간 체크 */
+      if (isPredBanTimeNow()) {
+        predBanOnClose = true;
+        showResult(false, '번호 예측 시간이 지나서 번호를 제출할 수 없습니다.');
+        return;
+      }
       /* 볼 색상 클래스 결정 */
       var colorClass = getBallClass(selected);
       modalBall.className = 'modal-ball ' + colorClass;
@@ -366,27 +442,6 @@
       if (e.target === overlay) overlay.classList.remove('open');
     });
 
-    /* ── 결과 모달 ── */
-    var resultOverlay = document.getElementById('predResultOverlay');
-    var resultIcon    = document.getElementById('resultModalIcon');
-    var resultTitle   = document.getElementById('resultModalTitle');
-    var resultBody    = document.getElementById('resultModalBody');
-    var resultClose   = document.getElementById('predResultClose');
-    var reloadOnClose = false;
-
-    function showResult(success, message) {
-      resultIcon.textContent  = success ? '✅' : '❌';
-      resultTitle.textContent = success ? '제출 완료!' : '제출 실패';
-      resultBody.textContent  = message;
-      reloadOnClose = success;
-      resultOverlay.classList.add('open');
-    }
-
-    resultClose.addEventListener('click', function () {
-      resultOverlay.classList.remove('open');
-      if (reloadOnClose) location.reload();
-    });
-
     confirmBtn.addEventListener('click', function () {
       if (!selected) return;
       confirmBtn.disabled = true;
@@ -397,8 +452,16 @@
       params.append('predNum',  selected);
 
       fetch(contextPath + '/predict/submit', { method: 'POST', body: params })
-        .then(function (r) { return r.json(); })
+        .then(function (r) {
+          var ct = r.headers.get('content-type') || '';
+          if (!ct.includes('application/json')) {
+            window.location.href = contextPath + '/';
+            return null;
+          }
+          return r.json();
+        })
         .then(function (data) {
+          if (!data) return;
           overlay.classList.remove('open');
           if (data.success) {
             showResult(true, data.message);

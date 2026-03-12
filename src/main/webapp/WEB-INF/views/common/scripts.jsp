@@ -139,8 +139,16 @@
         params.append('userPw', userPw);
 
         fetch('/member/login', { method: 'POST', body: params })
-          .then(r => r.json())
+          .then(r => {
+            var ct = r.headers.get('content-type') || '';
+            if (!ct.includes('application/json')) {
+              window.location.href = '/';
+              return null;
+            }
+            return r.json();
+          })
           .then(data => {
+            if (!data) return;
             if (data.success) {
               location.reload();
             } else {

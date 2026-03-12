@@ -5,6 +5,7 @@ import com.lottorank.vo.AdminLoginInfoVO;
 import com.lottorank.vo.BoardPostVO;
 import com.lottorank.vo.ComCodeDtlVO;
 import com.lottorank.vo.ComCodeMstVO;
+import com.lottorank.vo.LoginHistVO;
 import com.lottorank.vo.MemberVO;
 import com.lottorank.vo.SysConfigVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -111,6 +112,18 @@ public interface AdminMapper {
 
     /** 회원 전체 건수 */
     int selectMemberCount();
+
+    /** 회원 로그인 이력 목록 (최신순, 페이징, 검색) */
+    List<LoginHistVO> selectMemLoginHistList(
+            @Param("searchType")    String searchType,
+            @Param("searchKeyword") String searchKeyword,
+            @Param("offset")        int    offset,
+            @Param("pageSize")      int    pageSize);
+
+    /** 회원 로그인 이력 전체 건수 */
+    int selectMemLoginHistCount(
+            @Param("searchType")    String searchType,
+            @Param("searchKeyword") String searchKeyword);
 
     /* ═══════════════ 공통 코드 관리 ═══════════════ */
 

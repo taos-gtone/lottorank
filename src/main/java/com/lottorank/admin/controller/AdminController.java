@@ -478,6 +478,48 @@ public class AdminController {
         return "admin/customer/member/list";
     }
 
+    /* ─────────────────────────────────────────
+       회원 로그인 이력
+    ───────────────────────────────────────── */
+    private static final int MEM_LOGIN_HIST_PS  = 20;
+    private static final int MEM_LOGIN_HIST_PBC = 5;
+
+    @GetMapping("/customer/member/login-history")
+    public String memLoginHistory(
+            @RequestParam(defaultValue = "1")  int    page,
+            @RequestParam(defaultValue = "userId") String searchType,
+            @RequestParam(defaultValue = "")   String searchKeyword,
+            HttpServletRequest request, Model model) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+
+        String kw = searchKeyword.trim();
+        int totalCount = adminMapper.selectMemLoginHistCount(searchType, kw.isEmpty() ? null : kw);
+        int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / MEM_LOGIN_HIST_PS);
+        if (page < 1)          page = 1;
+        if (page > totalPages) page = totalPages;
+
+        int startPage = Math.max(1, page - MEM_LOGIN_HIST_PBC / 2);
+        int endPage   = startPage + MEM_LOGIN_HIST_PBC - 1;
+        if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - MEM_LOGIN_HIST_PBC + 1); }
+
+        List<com.lottorank.vo.LoginHistVO> histList = adminMapper.selectMemLoginHistList(
+                searchType, kw.isEmpty() ? null : kw, (page - 1) * MEM_LOGIN_HIST_PS, MEM_LOGIN_HIST_PS);
+
+        model.addAttribute("histList",      histList);
+        model.addAttribute("totalCount",    totalCount);
+        model.addAttribute("totalPages",    totalPages);
+        model.addAttribute("currentPage",   page);
+        model.addAttribute("startPage",     startPage);
+        model.addAttribute("endPage",       endPage);
+        model.addAttribute("searchType",    searchType);
+        model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("adminUser",     session.getAttribute("adminUser"));
+        return "admin/customer/member/login-history";
+    }
+
     /* ═════════════════════════════════════════
        관리자 커뮤니티 게시판 관리 (GBN: 01)
     ═════════════════════════════════════════ */
@@ -789,8 +831,14 @@ public class AdminController {
     public ResponseEntity<Map<String, Object>> settingsSave(
             HttpServletRequest request,
             @RequestParam String  sysOperYn,
-            @RequestParam Integer sysStopDay,
-            @RequestParam String  sysStopTime) {
+            @RequestParam Integer sysMntSttDay,
+            @RequestParam String  sysMntSttTime,
+            @RequestParam Integer sysMntEndDay,
+            @RequestParam String  sysMntEndTime,
+            @RequestParam Integer predBanSttDay,
+            @RequestParam String  predBanSttTime,
+            @RequestParam Integer predBanEndDay,
+            @RequestParam String  predBanEndTime) {
 
         Map<String, Object> result = new HashMap<>();
         HttpSession session = request.getSession(false);
@@ -802,8 +850,14 @@ public class AdminController {
 
         com.lottorank.vo.SysConfigVO vo = new com.lottorank.vo.SysConfigVO();
         vo.setSysOperYn(sysOperYn);
-        vo.setSysStopDay(sysStopDay);
-        vo.setSysStopTime(sysStopTime);
+        vo.setSysMntSttDay(sysMntSttDay);
+        vo.setSysMntSttTime(sysMntSttTime);
+        vo.setSysMntEndDay(sysMntEndDay);
+        vo.setSysMntEndTime(sysMntEndTime);
+        vo.setPredBanSttDay(predBanSttDay);
+        vo.setPredBanSttTime(predBanSttTime);
+        vo.setPredBanEndDay(predBanEndDay);
+        vo.setPredBanEndTime(predBanEndTime);
         adminMapper.updateSysConfig(vo);
 
         result.put("success", true);

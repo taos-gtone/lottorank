@@ -1,11 +1,13 @@
 package com.lottorank.controller;
 
+import com.lottorank.mapper.AdminMapper;
 import com.lottorank.service.LottoService;
 import com.lottorank.service.PredictService;
 import com.lottorank.service.RankingService;
 import com.lottorank.vo.LottoRoundResult;
 import com.lottorank.vo.MemPredNumVO;
 import com.lottorank.vo.MemRankAllVO;
+import com.lottorank.vo.SysConfigVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +33,9 @@ public class PredictController {
 
     @Autowired
     private RankingService rankingService;
+
+    @Autowired
+    private AdminMapper adminMapper;
 
     /* ─────────────────────────────────────────
        번호 예측하기 (로그인 필요)
@@ -58,6 +65,15 @@ public class PredictController {
         model.addAttribute("myPrediction", myPrediction);
         model.addAttribute("myStats", myStats);
 
+        // 예측 불가 시간 설정 로딩
+        SysConfigVO sysConfig = adminMapper.selectSysConfig();
+        if (sysConfig != null) {
+            model.addAttribute("predBanSttDay",  sysConfig.getPredBanSttDay());
+            model.addAttribute("predBanSttTime", sysConfig.getPredBanSttTime());
+            model.addAttribute("predBanEndDay",  sysConfig.getPredBanEndDay());
+            model.addAttribute("predBanEndTime", sysConfig.getPredBanEndTime());
+        }
+
         return "predict/predict";
     }
 
@@ -86,6 +102,14 @@ public class PredictController {
             return ResponseEntity.ok(result);
         }
 
+        // 예측 불가 시간 체크
+        SysConfigVO sysConfig = adminMapper.selectSysConfig();
+        if (isPredBanTime(sysConfig)) {
+            result.put("success", false);
+            result.put("message", "번호 예측 시간이 지나서 번호를 제출할 수 없습니다.");
+            return ResponseEntity.ok(result);
+        }
+
         long memberNo = (Long) session.getAttribute("loginMemberNo");
         boolean saved = predictService.submitPrediction(roundNo, memberNo, predNum);
 
@@ -97,5 +121,31 @@ public class PredictController {
             result.put("message", "이미 이번 회차 번호를 제출하셨습니다.");
         }
         return ResponseEntity.ok(result);
+    }
+
+    private boolean isPredBanTime(SysConfigVO cfg) {
+        if (cfg == null) return false;
+        Integer sttDay  = cfg.getPredBanSttDay();
+        String  sttTime = cfg.getPredBanSttTime();
+        Integer endDay  = cfg.getPredBanEndDay();
+        String  endTime = cfg.getPredBanEndTime();
+        if (sttDay == null || sttTime == null || endDay == null || endTime == null) return false;
+
+        LocalDateTime now = LocalDateTime.now();
+        int curDay = now.getDayOfWeek().getValue(); // 1=Mon ~ 7=Sun (DB와 동일)
+        int curMin = now.getHour() * 60 + now.getMinute();
+
+        String[] sp = sttTime.split(":");
+        String[] ep = endTime.split(":");
+        int sttTotal = sttDay * 1440 + Integer.parseInt(sp[0]) * 60 + Integer.parseInt(sp[1]);
+        int endTotal = endDay * 1440 + Integer.parseInt(ep[0]) * 60 + Integer.parseInt(ep[1]);
+        int curTotal = curDay * 1440 + curMin;
+
+        if (sttTotal <= endTotal) {
+            return curTotal >= sttTotal && curTotal <= endTotal;
+        } else {
+            // 주 경계를 넘는 경우 (예: 일요일 → 월요일)
+            return curTotal >= sttTotal || curTotal <= endTotal;
+        }
     }
 }

@@ -598,8 +598,13 @@ document.getElementById('btn2Next').addEventListener('click', function() {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: params.toString()
   })
-  .then(function(r) { return r.json(); })
+  .then(function(r) {
+    var ct = r.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) { window.location.href = '${pageContext.request.contextPath}/'; return null; }
+    return r.json();
+  })
   .then(function(data) {
+    if (!data) return;
     if (data.success) {
       goStep(3);
     } else {
@@ -657,8 +662,13 @@ document.getElementById('btnIdCheck').addEventListener('click', function() {
     return;
   }
   fetch('${pageContext.request.contextPath}/member/checkId?userId=' + encodeURIComponent(val))
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+      var ct = r.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) { window.location.href = '${pageContext.request.contextPath}/'; return null; }
+      return r.json();
+    })
     .then(function(data) {
+      if (!data) return;
       if (data.available) {
         hint.textContent = '✓ 사용 가능한 아이디입니다.';
         hint.className = 'form-hint ok';
@@ -761,8 +771,13 @@ document.getElementById('btnNickCheck').addEventListener('click', function() {
     return;
   }
   fetch('${pageContext.request.contextPath}/member/checkNickname?nickname=' + encodeURIComponent(val))
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+      var ct = r.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) { window.location.href = '${pageContext.request.contextPath}/'; return null; }
+      return r.json();
+    })
     .then(function(data) {
+      if (!data) return;
       if (data.available) {
         hint.textContent = '✓ 사용 가능한 닉네임입니다.';
         hint.className = 'form-hint ok';

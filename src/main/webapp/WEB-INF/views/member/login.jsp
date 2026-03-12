@@ -55,7 +55,7 @@
             <label class="form-label" for="loginId">아이디</label>
             <input type="text" class="form-input" id="loginId"
                    placeholder="아이디를 입력하세요"
-                   maxlength="15" autocomplete="username">
+                   maxlength="15" autocomplete="username" autofocus>
           </div>
 
           <!-- 비밀번호 -->
@@ -189,8 +189,17 @@
     var redirectUrl = new URLSearchParams(window.location.search).get('redirect');
 
     fetch('${pageContext.request.contextPath}/member/login', { method: 'POST', body: params })
-      .then(function(r) { return r.json(); })
+      .then(function(r) {
+        var ct = r.headers.get('content-type') || '';
+        if (!ct.includes('application/json')) {
+          // 점검 중 화면(HTML)이 반환된 경우 → 메인 이동 시 인터셉터가 점검 화면으로 전환
+          window.location.href = '${pageContext.request.contextPath}/';
+          return null;
+        }
+        return r.json();
+      })
       .then(function(data) {
+        if (!data) return;
         if (data.success) {
           location.href = data.redirect || redirectUrl || '${pageContext.request.contextPath}/';
         } else {

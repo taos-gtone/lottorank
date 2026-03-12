@@ -38,6 +38,7 @@
         <span>고객관리</span>
         <div class="dropdown-menu">
           <a href="/lottorank/admin/customer/member/list" class="dropdown-item">회원정보</a>
+          <a href="/lottorank/admin/customer/member/login-history" class="dropdown-item">로그인 이력</a>
         </div>
       </div>
       <div class="nav-item has-dropdown <%= "board".equals(_activeNavSection) ? "active" : "" %>">
@@ -115,6 +116,7 @@
         고객 관리
       </a>
       <a href="/lottorank/admin/customer/member/list" class="adm-mobile-sub">회원정보</a>
+      <a href="/lottorank/admin/customer/member/login-history" class="adm-mobile-sub">로그인 이력</a>
 
       <a href="/lottorank/admin/board/list"
          class="<%= "board".equals(_activeNavSection) ? "active-menu" : "" %>">

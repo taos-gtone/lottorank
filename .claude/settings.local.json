@@ -23,7 +23,8 @@
       "Bash(grep -E \"\\\\.\\(java|xml\\)$\")",
       "Bash(grep -E \"\\\\.xml$\")",
       "Bash(grep -l \"class.*Controller\" \"c:/projects/lottorank/src/main/java/com/lottorank/controller/\"*.java)",
-      "Bash(grep -l \"@Mapper\\\\|extends SqlSessionDaoSupport\" \"c:/projects/lottorank/src/main/java/com/lottorank/mapper/\"*.java)"
+      "Bash(grep -l \"@Mapper\\\\|extends SqlSessionDaoSupport\" \"c:/projects/lottorank/src/main/java/com/lottorank/mapper/\"*.java)",
+      "Bash(find c:/projects/lottorank -name *SysConfig* -o -name *SysConfig*)"
     ]
   }
 }

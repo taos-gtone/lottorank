@@ -93,6 +93,11 @@
 <div class="board-content">
   <div class="wrap board-layout">
 
+      <div class="notice-info-box">
+        <span>⏰ 예측 마감 시간 : <em>토요일 오후 7시</em></span>
+        <span>🔧 시스템 점검 시간 : <em>토요일 오후 8시30분 ~ 다음 회차 시작 시까지</em></span>
+      </div>
+
     <!-- 게시글 목록 카드 -->
     <div class="board-card">
       <div class="board-card-header">
@@ -100,9 +105,7 @@
           📢 공지사항
           <span class="board-card-badge"><%= currentPage %> / <%= totalPages %> 페이지</span>
         </div>
-
       </div>
-
       <div class="board-table-wrap">
         <table class="board-table">
           <thead>
