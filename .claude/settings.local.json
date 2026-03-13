@@ -24,7 +24,13 @@
       "Bash(grep -E \"\\\\.xml$\")",
       "Bash(grep -l \"class.*Controller\" \"c:/projects/lottorank/src/main/java/com/lottorank/controller/\"*.java)",
       "Bash(grep -l \"@Mapper\\\\|extends SqlSessionDaoSupport\" \"c:/projects/lottorank/src/main/java/com/lottorank/mapper/\"*.java)",
-      "Bash(find c:/projects/lottorank -name *SysConfig* -o -name *SysConfig*)"
+      "Bash(find c:/projects/lottorank -name *SysConfig* -o -name *SysConfig*)",
+      "Bash(mvn compile:*)",
+      "Bash(./mvnw compile:*)",
+      "Bash(ls c:/projects/lottorank/*.bat c:/projects/lottorank/*.cmd c:/projects/lottorank/mvnw*)",
+      "Read(//c/ProgramData/chocolatey/**)",
+      "Read(//c/tools/maven/**)",
+      "Read(//c/projects/lottorank/$USERPROFILE/**)"
     ]
   }
 }

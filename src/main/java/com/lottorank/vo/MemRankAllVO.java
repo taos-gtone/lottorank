@@ -18,6 +18,7 @@ public class MemRankAllVO {
     private boolean hasPred;       // 다음 예측 회차 예측번호 제출 여부
     private String  predNum;       // 해당 회차 예측번호 (null=미제출)
     private String  hitYn;         // 적중여부 (Y/N/null=대기중)
+    private Integer recent5Ranking; // 같은 회차 최근5주 순위 (관리자 교차표시용, null=미집계)
 
     private static final String[] EMOJIS = {"🦁", "🎯", "🔮", "🌊", "🌙", "🍀"};
 
@@ -103,8 +104,11 @@ public class MemRankAllVO {
     public String getPredNum()            { return predNum; }
     public void setPredNum(String v)      { this.predNum = v; }
 
-    public String getHitYn()              { return hitYn; }
-    public void setHitYn(String v)        { this.hitYn = v; }
+    public String getHitYn()                    { return hitYn; }
+    public void setHitYn(String v)              { this.hitYn = v; }
+
+    public Integer getRecent5Ranking()          { return recent5Ranking; }
+    public void setRecent5Ranking(Integer v)    { this.recent5Ranking = v; }
 
     /** 예측번호 볼 색상 CSS 클래스 */
     public String getPredBallClass() {

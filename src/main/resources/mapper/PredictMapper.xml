@@ -59,4 +59,36 @@
         ORDER BY r.ROUND_NO DESC
     </select>
 
+
+    <!-- 골드 - 회차별 예측번호 목록 (페이징, 닉네임만 노출) -->
+    <select id="selectGoldPredList" resultType="GoldPredListVO">
+        SELECT ra.ranking,
+               COALESCE(m.nickname, m.user_id) AS nickname,
+               p.pred_num AS predNum,
+               p.hit_yn,
+               p.submit_at
+          FROM MEM_PRED_NUM p
+          JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+          LEFT JOIN MEM_RANK_ALL ra
+                 ON ra.member_no = p.member_no
+                AND ra.round_no  = #{roundNo} - 1
+         WHERE p.round_no = #{roundNo}
+         <choose>
+           <when test="sortOrder == 'desc'">
+             ORDER BY (ra.ranking IS NULL) DESC, ra.ranking DESC, p.submit_at ASC
+           </when>
+           <otherwise>
+             ORDER BY (ra.ranking IS NULL) ASC, ra.ranking ASC, p.submit_at ASC
+           </otherwise>
+         </choose>
+         LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 골드 - 회차별 예측번호 건수 -->
+    <select id="selectGoldPredCount" resultType="int">
+        SELECT COUNT(*)
+          FROM MEM_PRED_NUM p
+         WHERE p.round_no = #{roundNo}
+    </select>
+
 </mapper>

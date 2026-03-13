@@ -527,6 +527,222 @@
         <include refid="memLoginHistWhere"/>
     </select>
 
+    <!-- LTT_ROUND_RESULT 최대 회차 -->
+    <select id="selectMaxRoundNo" resultType="int">
+        SELECT COALESCE(MAX(round_no), 0) FROM LTT_ROUND_RESULT
+    </select>
+
+    <!-- ═══════════════ 회원 예측번호 조회 ═══════════════ -->
+
+    <!-- 회원 예측번호 공통 WHERE -->
+    <sql id="memPredNumWhere">
+        <if test="roundNo != null">
+            AND p.round_no = #{roundNo}
+        </if>
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchType == 'nickname'">
+                    AND m.nickname LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <otherwise>
+                    AND m.user_id LIKE CONCAT('%', #{searchKeyword}, '%')
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <!-- 회원 예측번호 목록 -->
+    <select id="selectMemPredNumList" resultType="AdminMemPredVO">
+        SELECT ra.ranking,
+               p.member_no,
+               m.user_id,
+               COALESCE(m.nickname, '') AS nickname,
+               p.pred_num AS predNum,
+               p.hit_yn,
+               p.submit_at
+          FROM MEM_PRED_NUM p
+          JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+          LEFT JOIN MEM_RANK_ALL ra
+                 ON ra.member_no = p.member_no
+                AND ra.round_no  = #{roundNo} - 1
+         WHERE 1=1
+        <include refid="memPredNumWhere"/>
+         ORDER BY (ra.ranking IS NULL) ASC, ra.ranking ASC, p.submit_at ASC
+         LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 회원 예측번호 건수 -->
+    <select id="selectMemPredNumCount" resultType="int">
+        SELECT COUNT(*)
+          FROM MEM_PRED_NUM p
+          JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+         WHERE 1=1
+        <include refid="memPredNumWhere"/>
+    </select>
+
+    <!-- ═══════════════ 회원 랭킹 조회 (관리자) ═══════════════ -->
+
+    <!-- 전체기간 랭킹 목록 -->
+    <select id="selectAdminAllRankingList" resultType="MemRankAllVO">
+        SELECT r.round_no,
+               r.member_no,
+               m.nickname,
+               r.ranking,
+               r.grade,
+               r.elps_cnt,
+               r.sel_num_cnt,
+               r.win_cnt,
+               r.cont_lost_cnt,
+               r.prev_ranking,
+               r.prev_grade,
+               CASE WHEN r.sel_num_cnt > 0
+                    THEN ROUND(r.win_cnt * 100.0 / r.sel_num_cnt, 1)
+                    ELSE 0.0 END AS hitRate,
+               CASE WHEN r.prev_ranking IS NULL THEN NULL
+                    ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+               END AS rankChange,
+               p.pred_num AS predNum,
+               p.hit_yn   AS hitYn,
+               r5.ranking AS recent5Ranking
+          FROM MEM_RANK_ALL r
+          JOIN MEM_JOIN_INFO m ON m.member_no = r.member_no
+          LEFT JOIN MEM_PRED_NUM p
+                 ON p.member_no = r.member_no
+                AND p.round_no  = #{roundNo}
+          LEFT JOIN MEM_RANK_5ROUND r5
+                 ON r5.member_no = r.member_no
+                AND r5.round_no  = #{roundNo}
+         WHERE r.round_no = #{roundNo}
+         ORDER BY r.ranking ASC
+         LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 전체기간 랭킹 건수 -->
+    <select id="selectAdminAllRankingCount" resultType="int">
+        SELECT COUNT(*) FROM MEM_RANK_ALL WHERE round_no = #{roundNo}
+    </select>
+
+    <!-- 최근5주 랭킹 목록 -->
+    <select id="selectAdminRecent5RankingList" resultType="MemRank5RoundVO">
+        SELECT r.round_no,
+               r.member_no,
+               m.nickname,
+               r.ranking,
+               r.last_sel_cnt,
+               r.win_cnt,
+               r.lost_cnt,
+               r.prev_ranking,
+               CASE WHEN r.last_sel_cnt > 0
+                    THEN ROUND(r.win_cnt * 100.0 / r.last_sel_cnt, 1)
+                    ELSE 0.0 END AS hitRate,
+               CASE WHEN r.prev_ranking IS NULL THEN NULL
+                    ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+               END AS rankChange,
+               p.pred_num AS predNum,
+               p.hit_yn   AS hitYn,
+               ra.ranking AS allRanking
+          FROM MEM_RANK_5ROUND r
+          JOIN MEM_JOIN_INFO m ON m.member_no = r.member_no
+          LEFT JOIN MEM_PRED_NUM p
+                 ON p.member_no = r.member_no
+                AND p.round_no  = #{roundNo}
+          LEFT JOIN MEM_RANK_ALL ra
+                 ON ra.member_no = r.member_no
+                AND ra.round_no  = #{roundNo}
+         WHERE r.round_no = #{roundNo}
+         ORDER BY r.ranking ASC
+         LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 최근5주 랭킹 건수 -->
+    <select id="selectAdminRecent5RankingCount" resultType="int">
+        SELECT COUNT(*) FROM MEM_RANK_5ROUND WHERE round_no = #{roundNo}
+    </select>
+
+    <!-- ═══════════════ 회원별 랭킹 이력 (관리자) ═══════════════ -->
+
+    <!-- 회원 기본 정보 -->
+    <select id="selectAdminMemBasicInfo" resultType="MemberVO">
+        SELECT member_no, user_id, nickname FROM MEM_JOIN_INFO WHERE member_no = #{memberNo}
+    </select>
+
+    <!-- 특정 회원 전체기간 랭킹 이력 목록 -->
+    <select id="selectAdminMemAllRankingHist" resultType="MemRankAllVO">
+        SELECT r.round_no,
+               r.member_no,
+               m.nickname,
+               r.ranking,
+               r.grade,
+               r.elps_cnt,
+               r.sel_num_cnt,
+               r.win_cnt,
+               r.cont_lost_cnt,
+               r.prev_ranking,
+               r.prev_grade,
+               CASE WHEN r.sel_num_cnt > 0
+                    THEN ROUND(r.win_cnt * 100.0 / r.sel_num_cnt, 1)
+                    ELSE 0.0 END AS hitRate,
+               CASE WHEN r.prev_ranking IS NULL THEN NULL
+                    ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+               END AS rankChange,
+               p.pred_num AS predNum,
+               p.hit_yn   AS hitYn,
+               r5.ranking AS recent5Ranking
+          FROM MEM_RANK_ALL r
+          JOIN MEM_JOIN_INFO m ON m.member_no = r.member_no
+          LEFT JOIN MEM_PRED_NUM p
+                 ON p.member_no = r.member_no
+                AND p.round_no  = r.round_no
+          LEFT JOIN MEM_RANK_5ROUND r5
+                 ON r5.member_no = r.member_no
+                AND r5.round_no  = r.round_no
+         WHERE r.member_no = #{memberNo}
+         ORDER BY r.round_no DESC
+         LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 특정 회원 전체기간 랭킹 이력 건수 -->
+    <select id="selectAdminMemAllRankingHistCount" resultType="int">
+        SELECT COUNT(*) FROM MEM_RANK_ALL WHERE member_no = #{memberNo}
+    </select>
+
+    <!-- 특정 회원 최근5주 랭킹 이력 목록 -->
+    <select id="selectAdminMemRecent5RankingHist" resultType="MemRank5RoundVO">
+        SELECT r.round_no,
+               r.member_no,
+               m.nickname,
+               r.ranking,
+               r.last_sel_cnt,
+               r.win_cnt,
+               r.lost_cnt,
+               r.prev_ranking,
+               CASE WHEN r.last_sel_cnt > 0
+                    THEN ROUND(r.win_cnt * 100.0 / r.last_sel_cnt, 1)
+                    ELSE 0.0 END AS hitRate,
+               CASE WHEN r.prev_ranking IS NULL THEN NULL
+                    ELSE CAST(r.prev_ranking AS SIGNED) - CAST(r.ranking AS SIGNED)
+               END AS rankChange,
+               p.pred_num AS predNum,
+               p.hit_yn   AS hitYn,
+               ra.ranking AS allRanking
+          FROM MEM_RANK_5ROUND r
+          JOIN MEM_JOIN_INFO m ON m.member_no = r.member_no
+          LEFT JOIN MEM_PRED_NUM p
+                 ON p.member_no = r.member_no
+                AND p.round_no  = r.round_no
+          LEFT JOIN MEM_RANK_ALL ra
+                 ON ra.member_no = r.member_no
+                AND ra.round_no  = r.round_no
+         WHERE r.member_no = #{memberNo}
+         ORDER BY r.round_no DESC
+         LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 특정 회원 최근5주 랭킹 이력 건수 -->
+    <select id="selectAdminMemRecent5RankingHistCount" resultType="int">
+        SELECT COUNT(*) FROM MEM_RANK_5ROUND WHERE member_no = #{memberNo}
+    </select>
+
     <update id="updateSysConfig" parameterType="SysConfigVO">
         UPDATE ADM_SYS_CONFIG
         SET    sys_oper_yn      = #{sysOperYn},

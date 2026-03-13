@@ -1,5 +1,6 @@
 package com.lottorank.mapper;
 
+import com.lottorank.vo.GoldPredListVO;
 import com.lottorank.vo.MemPredNumVO;
 import com.lottorank.vo.PredHistVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,4 +26,13 @@ public interface PredictMapper {
 
     /** 회원의 전체 예측 이력 조회 (전 회차 LEFT JOIN, 최신순) */
     List<PredHistVO> findMyPredHistory(@Param("memberNo") long memberNo);
+
+    /** 골드 - 회차별 예측번호 목록 (페이징, 정렬) */
+    List<GoldPredListVO> selectGoldPredList(@Param("roundNo") int roundNo,
+                                            @Param("pageSize") int pageSize,
+                                            @Param("offset") int offset,
+                                            @Param("sortOrder") String sortOrder);
+
+    /** 골드 - 회차별 예측번호 건수 */
+    int selectGoldPredCount(@Param("roundNo") int roundNo);
 }

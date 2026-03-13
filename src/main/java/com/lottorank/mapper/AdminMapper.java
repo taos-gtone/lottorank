@@ -2,7 +2,10 @@ package com.lottorank.mapper;
 
 import com.lottorank.vo.AdminLoginHistVO;
 import com.lottorank.vo.AdminLoginInfoVO;
+import com.lottorank.vo.AdminMemPredVO;
 import com.lottorank.vo.BoardPostVO;
+import com.lottorank.vo.MemRankAllVO;
+import com.lottorank.vo.MemRank5RoundVO;
 import com.lottorank.vo.ComCodeDtlVO;
 import com.lottorank.vo.ComCodeMstVO;
 import com.lottorank.vo.LoginHistVO;
@@ -124,6 +127,62 @@ public interface AdminMapper {
     int selectMemLoginHistCount(
             @Param("searchType")    String searchType,
             @Param("searchKeyword") String searchKeyword);
+
+    /** LTT_ROUND_RESULT 최대 회차 조회 */
+    int selectMaxRoundNo();
+
+    /** 회원 예측번호 목록 (회차+회원 검색, 페이징) */
+    List<AdminMemPredVO> selectMemPredNumList(
+            @Param("roundNo")       Integer roundNo,
+            @Param("searchType")    String  searchType,
+            @Param("searchKeyword") String  searchKeyword,
+            @Param("offset")        int     offset,
+            @Param("pageSize")      int     pageSize);
+
+    /** 회원 예측번호 전체 건수 */
+    int selectMemPredNumCount(
+            @Param("roundNo")       Integer roundNo,
+            @Param("searchType")    String  searchType,
+            @Param("searchKeyword") String  searchKeyword);
+
+    /** 회원 전체기간 랭킹 목록 (특정 회차 기준) */
+    List<MemRankAllVO> selectAdminAllRankingList(
+            @Param("roundNo") int roundNo,
+            @Param("offset")  int offset,
+            @Param("size")    int size);
+
+    /** 회원 전체기간 랭킹 건수 */
+    int selectAdminAllRankingCount(@Param("roundNo") int roundNo);
+
+    /** 회원 최근5주 랭킹 목록 (특정 회차 기준) */
+    List<MemRank5RoundVO> selectAdminRecent5RankingList(
+            @Param("roundNo") int roundNo,
+            @Param("offset")  int offset,
+            @Param("size")    int size);
+
+    /** 회원 최근5주 랭킹 건수 */
+    int selectAdminRecent5RankingCount(@Param("roundNo") int roundNo);
+
+    /** 회원 기본 정보 조회 (memberNo 기준) */
+    MemberVO selectAdminMemBasicInfo(@Param("memberNo") long memberNo);
+
+    /** 특정 회원의 전체기간 랭킹 이력 목록 (전 회차, 최신순, 페이징) */
+    List<MemRankAllVO> selectAdminMemAllRankingHist(
+            @Param("memberNo") long memberNo,
+            @Param("offset")   int  offset,
+            @Param("size")     int  size);
+
+    /** 특정 회원의 전체기간 랭킹 이력 건수 */
+    int selectAdminMemAllRankingHistCount(@Param("memberNo") long memberNo);
+
+    /** 특정 회원의 최근5주 랭킹 이력 목록 (전 회차, 최신순, 페이징) */
+    List<MemRank5RoundVO> selectAdminMemRecent5RankingHist(
+            @Param("memberNo") long memberNo,
+            @Param("offset")   int  offset,
+            @Param("size")     int  size);
+
+    /** 특정 회원의 최근5주 랭킹 이력 건수 */
+    int selectAdminMemRecent5RankingHistCount(@Param("memberNo") long memberNo);
 
     /* ═══════════════ 공통 코드 관리 ═══════════════ */
 

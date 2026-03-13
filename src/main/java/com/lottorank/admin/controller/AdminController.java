@@ -5,7 +5,10 @@ import com.lottorank.admin.service.AdminService;
 import com.lottorank.service.BoardService;
 import com.lottorank.vo.AdminLoginHistVO;
 import com.lottorank.vo.AdminLoginInfoVO;
+import com.lottorank.vo.AdminMemPredVO;
 import com.lottorank.vo.BoardCommentVO;
+import com.lottorank.vo.MemRankAllVO;
+import com.lottorank.vo.MemRank5RoundVO;
 import com.lottorank.vo.BoardPostVO;
 import com.lottorank.vo.ComCodeDtlVO;
 import com.lottorank.vo.ComCodeMstVO;
@@ -518,6 +521,184 @@ public class AdminController {
         model.addAttribute("searchKeyword", searchKeyword);
         model.addAttribute("adminUser",     session.getAttribute("adminUser"));
         return "admin/customer/member/login-history";
+    }
+
+    /* ─────────────────────────────────────────
+       회원 예측번호 조회
+    ───────────────────────────────────────── */
+    private static final int MEM_PRED_PS  = 20;
+    private static final int MEM_PRED_PBC = 5;
+
+    @GetMapping("/customer/member/pred-num")
+    public String memPredNum(
+            @RequestParam(defaultValue = "1")      int     page,
+            @RequestParam(required = false)        String  roundNoStr,
+            @RequestParam(defaultValue = "userId") String  searchType,
+            @RequestParam(defaultValue = "")       String  searchKeyword,
+            HttpServletRequest request, Model model) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+
+        // 디폴트: 현재 진행 회차 = max(round_no) + 1
+        int maxRoundNo      = adminMapper.selectMaxRoundNo();
+        int currentRoundNo  = maxRoundNo + 1;
+
+        int roundNo;
+        if (roundNoStr != null && !roundNoStr.trim().isEmpty()) {
+            try { roundNo = Integer.parseInt(roundNoStr.trim()); } catch (NumberFormatException e) { roundNo = currentRoundNo; }
+        } else {
+            roundNo = currentRoundNo;
+        }
+        if (roundNo < 1) roundNo = 1;
+
+        String kw = searchKeyword.trim();
+        int totalCount = adminMapper.selectMemPredNumCount(roundNo, searchType, kw.isEmpty() ? null : kw);
+        int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / MEM_PRED_PS);
+        if (page < 1)          page = 1;
+        if (page > totalPages) page = totalPages;
+
+        int startPage = Math.max(1, page - MEM_PRED_PBC / 2);
+        int endPage   = startPage + MEM_PRED_PBC - 1;
+        if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - MEM_PRED_PBC + 1); }
+
+        List<AdminMemPredVO> predList = adminMapper.selectMemPredNumList(
+                roundNo, searchType, kw.isEmpty() ? null : kw, (page - 1) * MEM_PRED_PS, MEM_PRED_PS);
+
+        model.addAttribute("predList",        predList);
+        model.addAttribute("totalCount",      totalCount);
+        model.addAttribute("totalPages",      totalPages);
+        model.addAttribute("currentPage",     page);
+        model.addAttribute("startPage",       startPage);
+        model.addAttribute("endPage",         endPage);
+        model.addAttribute("roundNo",         roundNo);
+        model.addAttribute("currentRoundNo",  currentRoundNo);
+        model.addAttribute("searchType",      searchType);
+        model.addAttribute("searchKeyword",   searchKeyword);
+        model.addAttribute("adminUser",       session.getAttribute("adminUser"));
+        return "admin/customer/member/pred-num";
+    }
+
+    /* ─────────────────────────────────────────
+       회원 랭킹 조회
+    ───────────────────────────────────────── */
+    private static final int MEM_RANK_PS  = 20;
+    private static final int MEM_RANK_PBC = 5;
+
+    @GetMapping("/customer/member/ranking")
+    public String memRanking(
+            @RequestParam(defaultValue = "1")       int    page,
+            @RequestParam(required = false)         String roundNoStr,
+            @RequestParam(defaultValue = "all")     String tab,
+            HttpServletRequest request, Model model) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+
+        int maxRoundNo = adminMapper.selectMaxRoundNo();
+        if (maxRoundNo < 1) maxRoundNo = 1;
+
+        int roundNo;
+        if (roundNoStr != null && !roundNoStr.trim().isEmpty()) {
+            try { roundNo = Integer.parseInt(roundNoStr.trim()); } catch (NumberFormatException e) { roundNo = maxRoundNo; }
+        } else {
+            roundNo = maxRoundNo;
+        }
+        if (roundNo < 1)          roundNo = 1;
+        if (roundNo > maxRoundNo) roundNo = maxRoundNo;
+
+        boolean is5Round = "5round".equals(tab);
+
+        int totalCount = is5Round
+                ? adminMapper.selectAdminRecent5RankingCount(roundNo)
+                : adminMapper.selectAdminAllRankingCount(roundNo);
+        int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / MEM_RANK_PS);
+        if (page < 1)          page = 1;
+        if (page > totalPages) page = totalPages;
+
+        int startPage = Math.max(1, page - MEM_RANK_PBC / 2);
+        int endPage   = startPage + MEM_RANK_PBC - 1;
+        if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - MEM_RANK_PBC + 1); }
+
+        int offset = (page - 1) * MEM_RANK_PS;
+        List<MemRankAllVO>    allList    = null;
+        List<MemRank5RoundVO> round5List = null;
+        if (is5Round) {
+            round5List = adminMapper.selectAdminRecent5RankingList(roundNo, offset, MEM_RANK_PS);
+        } else {
+            allList = adminMapper.selectAdminAllRankingList(roundNo, offset, MEM_RANK_PS);
+        }
+
+        model.addAttribute("allList",      allList);
+        model.addAttribute("round5List",   round5List);
+        model.addAttribute("tab",          tab);
+        model.addAttribute("roundNo",      roundNo);
+        model.addAttribute("maxRoundNo",   maxRoundNo);
+        model.addAttribute("totalCount",   totalCount);
+        model.addAttribute("totalPages",   totalPages);
+        model.addAttribute("currentPage",  page);
+        model.addAttribute("startPage",    startPage);
+        model.addAttribute("endPage",      endPage);
+        model.addAttribute("adminUser",    session.getAttribute("adminUser"));
+        return "admin/customer/member/ranking";
+    }
+
+    /* ─────────────────────────────────────────
+       회원별 랭킹 이력 조회
+    ───────────────────────────────────────── */
+    private static final int MEM_RANK_HIST_PS  = 20;
+    private static final int MEM_RANK_HIST_PBC = 5;
+
+    @GetMapping("/customer/member/ranking-hist")
+    public String memRankingHist(
+            @RequestParam                       long   memberNo,
+            @RequestParam(defaultValue = "1")   int    page,
+            @RequestParam(defaultValue = "all") String tab,
+            HttpServletRequest request, Model model) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("adminUser") == null)
+            return "redirect:/lottorank/admin/login";
+
+        com.lottorank.vo.MemberVO memInfo = adminMapper.selectAdminMemBasicInfo(memberNo);
+        if (memInfo == null) return "redirect:/lottorank/admin/customer/member/ranking";
+
+        boolean is5Round = "5round".equals(tab);
+
+        int totalCount = is5Round
+                ? adminMapper.selectAdminMemRecent5RankingHistCount(memberNo)
+                : adminMapper.selectAdminMemAllRankingHistCount(memberNo);
+        int totalPages = (totalCount == 0) ? 1 : (int) Math.ceil((double) totalCount / MEM_RANK_HIST_PS);
+        if (page < 1)          page = 1;
+        if (page > totalPages) page = totalPages;
+
+        int startPage = Math.max(1, page - MEM_RANK_HIST_PBC / 2);
+        int endPage   = startPage + MEM_RANK_HIST_PBC - 1;
+        if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - MEM_RANK_HIST_PBC + 1); }
+
+        int offset = (page - 1) * MEM_RANK_HIST_PS;
+        List<MemRankAllVO>    allList    = null;
+        List<MemRank5RoundVO> round5List = null;
+        if (is5Round) {
+            round5List = adminMapper.selectAdminMemRecent5RankingHist(memberNo, offset, MEM_RANK_HIST_PS);
+        } else {
+            allList = adminMapper.selectAdminMemAllRankingHist(memberNo, offset, MEM_RANK_HIST_PS);
+        }
+
+        model.addAttribute("memInfo",     memInfo);
+        model.addAttribute("allList",     allList);
+        model.addAttribute("round5List",  round5List);
+        model.addAttribute("tab",         tab);
+        model.addAttribute("memberNo",    memberNo);
+        model.addAttribute("totalCount",  totalCount);
+        model.addAttribute("totalPages",  totalPages);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("startPage",   startPage);
+        model.addAttribute("endPage",     endPage);
+        model.addAttribute("adminUser",   session.getAttribute("adminUser"));
+        return "admin/customer/member/ranking-hist";
     }
 
     /* ═════════════════════════════════════════
