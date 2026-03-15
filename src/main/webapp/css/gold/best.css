@@ -121,24 +121,10 @@
 }
 
 .best-round-input {
-  width: 88px;
-  padding: 6px 10px;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(228,170,0,0.35);
-  border-radius: 5px;
   color: #FFD54F;
   font-size: 1.05rem;
   font-weight: 800;
-  text-align: center;
-  outline: none;
-  transition: border-color 0.18s, background 0.18s;
 }
-.best-round-input:focus {
-  border-color: rgba(228,170,0,0.7);
-  background: rgba(255,255,255,0.11);
-}
-.best-round-input::-webkit-inner-spin-button,
-.best-round-input::-webkit-outer-spin-button { opacity: 0.4; }
 
 .best-round-suffix {
   font-size: 1rem;

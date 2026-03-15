@@ -1,0 +1,319 @@
+/* =============================================
+   골드 멤버십 - 저장번호 조회 페이지
+============================================= */
+
+/* ── 배너 공통 (best.css와 동일) ── */
+.page-breadcrumb {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.page-breadcrumb a { color: rgba(255,255,255,0.75); transition: color 0.2s; }
+.page-breadcrumb a:hover { color: #fff; }
+.breadcrumb-sep { margin: 0 5px; }
+
+.page-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.page-title { font-size: 1.6rem; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+.page-desc  { font-size: 0.85rem; color: rgba(255,255,255,0.88); font-weight: 500; }
+
+/* ── 골드 배너 ── */
+.page-banner.gold-banner {
+  background: linear-gradient(135deg, #1a1000 0%, #3d2200 45%, #2a1800 100%);
+  box-shadow: inset 0 -2px 0 var(--gold);
+  position: relative;
+  overflow: hidden;
+}
+.page-banner.gold-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(228,170,0,0.18) 0%, transparent 65%);
+  pointer-events: none;
+}
+.gold-breadcrumb a,
+.gold-breadcrumb span { color: rgba(255,210,80,0.7) !important; }
+.gold-breadcrumb a:hover { color: #FFD54F !important; }
+.gold-page-title {
+  color: #FFD54F !important;
+  text-shadow: 0 0 24px rgba(228,170,0,0.45);
+}
+.gold-page-desc { color: rgba(255,210,80,0.72) !important; }
+
+/* ── 페이지 본문 (best-wrap과 동일) ── */
+.saved-wrap {
+  background: #f3ede2;
+  min-height: 60vh;
+  padding: 32px 0 64px;
+}
+.saved-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ── 메인 패널 (best-tab-content와 동일) ── */
+.saved-panel {
+  background: linear-gradient(160deg, #1c1100 0%, #311c00 55%, #1c1100 100%);
+  border: 1px solid rgba(228,170,0,0.35);
+  border-radius: 12px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.32), inset 0 1px 0 rgba(228,170,0,0.15);
+}
+
+/* ── 패널 헤더 (회차 네비 + 카운트) ── */
+.saved-panel-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(228,170,0,0.14);
+  gap: 8px;
+}
+
+/* ── 회차 네비게이터 ── */
+.saved-round-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.saved-round-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid rgba(228,170,0,0.35);
+  background: rgba(228,170,0,0.08);
+  color: #FFD54F;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+  user-select: none;
+  flex-shrink: 0;
+}
+.saved-round-btn:hover:not(:disabled) {
+  background: rgba(228,170,0,0.18);
+  border-color: rgba(228,170,0,0.65);
+}
+.saved-round-btn:disabled { opacity: 0.25; cursor: default; }
+
+.saved-round-label {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #FFD54F;
+  letter-spacing: -0.3px;
+  min-width: 90px;
+  text-align: center;
+  text-shadow: 0 0 12px rgba(228,170,0,0.4);
+}
+.saved-round-label .round-suffix {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: rgba(255,210,80,0.6);
+  margin-left: 2px;
+}
+
+/* 세트 수 라벨 */
+.saved-count-label {
+  font-size: 0.82rem;
+  color: rgba(255,210,80,0.5);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ── 테이블 툴바 ── */
+.saved-tbl-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+/* ── 테이블 래퍼 (pred-tbl-wrap과 동일) ── */
+.saved-tbl-wrap {
+  border: 1px solid rgba(228,170,0,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+/* ── 테이블 (pred-tbl과 동일) ── */
+.saved-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  min-width: 480px;
+}
+
+.saved-tbl thead th {
+  background: rgba(0,0,0,0.45);
+  color: rgba(255,210,80,0.75);
+  font-weight: 700;
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid rgba(228,170,0,0.22);
+  border-right: 1px solid rgba(228,170,0,0.1);
+  white-space: nowrap;
+  font-size: 0.86rem;
+  letter-spacing: 0.3px;
+}
+.saved-tbl thead th:last-child { border-right: none; text-align: center; }
+
+.saved-tbl tbody tr {
+  border-bottom: 1px solid rgba(228,170,0,0.1);
+  transition: background 0.12s;
+}
+.saved-tbl tbody tr:last-child { border-bottom: none; }
+.saved-tbl tbody tr:hover { background: rgba(228,170,0,0.06); }
+
+.saved-tbl tbody td {
+  padding: 12px 16px;
+  color: rgba(255,235,160,0.92);
+  vertical-align: middle;
+  text-align: center;
+  border-right: 1px solid rgba(228,170,0,0.08);
+}
+.saved-tbl tbody td:last-child { border-right: none; text-align: left; }
+
+/* 세트 번호 셀 */
+.saved-set-no {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255,210,80,0.5);
+  white-space: nowrap;
+}
+
+/* ── 볼 (best.css ball 스타일과 동일) ── */
+.saved-balls {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-wrap: nowrap;
+}
+.saved-ball {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+/* best.css와 동일한 그라디언트 */
+.saved-ball.ball-y  { background: linear-gradient(145deg, #FFD700 0%, #F5B800 100%); }
+.saved-ball.ball-b  { background: linear-gradient(145deg, #5BAFFF 0%, #2B8EE8 100%); }
+.saved-ball.ball-r  { background: linear-gradient(145deg, #FF6868 0%, #E63535 100%); }
+.saved-ball.ball-g  { background: linear-gradient(145deg, #6EDA64 0%, #44B83A 100%); }
+.saved-ball.ball-gr { background: linear-gradient(145deg, #CACACA 0%, #A2A2A2 100%); }
+
+/* ── 메모 셀 ── */
+.saved-memo {
+  font-size: 0.88rem;
+  color: rgba(255,210,80,0.32);
+  font-style: italic;
+}
+.saved-memo.has-memo {
+  color: rgba(255,218,100,0.8);
+  font-style: normal;
+}
+
+/* ── 전체 삭제 버튼 ── */
+.btn-saved-del-all {
+  padding: 6px 16px;
+  border-radius: 5px;
+  background: rgba(255,80,80,0.08);
+  border: 1px solid rgba(255,80,80,0.28);
+  color: rgba(255,130,130,0.75);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.btn-saved-del-all:hover {
+  background: rgba(255,80,80,0.18);
+  border-color: rgba(255,80,80,0.55);
+  color: #ff8a8a;
+}
+
+/* ── 개별 삭제 버튼 ── */
+.btn-saved-del-row {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.2);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  line-height: 1;
+}
+.btn-saved-del-row:hover {
+  color: #ff6b6b;
+  background: rgba(255,107,107,0.1);
+}
+
+/* ── 빈 상태 / 로딩 (pred-loading과 동일) ── */
+.saved-empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: rgba(255,210,80,0.38);
+  font-size: 0.92rem;
+}
+.saved-empty-icon { font-size: 2.2rem; margin-bottom: 10px; }
+
+.saved-loading {
+  text-align: center;
+  padding: 44px 0;
+  color: rgba(255,210,80,0.4);
+  font-size: 0.9rem;
+}
+.saved-loading::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(228,170,0,0.2);
+  border-top-color: rgba(228,170,0,0.7);
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  animation: gold-spin 0.8s linear infinite;
+}
+@keyframes gold-spin { to { transform: rotate(360deg); } }
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+  .saved-wrap { padding: 20px 0 48px; }
+  .saved-container { padding: 0 12px; }
+  .saved-panel { padding: 18px 14px; }
+  .saved-ball { width: 28px; height: 28px; font-size: 0.72rem; }
+  .saved-balls { gap: 5px; }
+  .saved-tbl tbody td,
+  .saved-tbl thead th { padding: 10px 10px; }
+}
+
+@media (max-width: 480px) {
+  .saved-round-label { font-size: 1rem; min-width: 76px; }
+  .saved-ball { width: 25px; height: 25px; font-size: 0.66rem; }
+  .saved-balls { gap: 4px; }
+}

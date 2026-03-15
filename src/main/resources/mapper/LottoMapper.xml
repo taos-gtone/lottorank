@@ -28,8 +28,13 @@
             NUM5              AS num5,
             NUM6              AS num6,
             BONUS_NUM         AS bonusNum,
-            FST_PRZ_SUM_AMT   AS prize1stAmount,
-            FST_PRZ_WINNER_CNT AS prize1stCount
+            FST_PRZ_SUM_AMT    AS prize1stAmount,
+            FST_PRZ_WINNER_CNT AS prize1stCount,
+            FST_PRZ_PER_AMT    AS prize1stPerAmt,
+            RNK2_WN_NOPE       AS prize2ndCount,
+            RNK2_WN_AMT        AS prize2ndPerAmt,
+            RNK3_WN_NOPE       AS prize3rdCount,
+            RNK3_WN_AMT        AS prize3rdPerAmt
         FROM LTT_ROUND_RESULT
         ORDER BY ROUND_NO DESC
         LIMIT 1

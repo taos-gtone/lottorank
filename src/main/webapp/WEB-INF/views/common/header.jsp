@@ -143,6 +143,7 @@
             <a href="#">골드 멤버십</a>
             <div class="nav-dropdown nav-dropdown-gold">
               <a href="/gold/best" class="nav-dropdown-item nav-dropdown-item-gold">골드번호 조합</a>
+              <a href="/gold/saved" class="nav-dropdown-item nav-dropdown-item-gold">저장번호 조회</a>
             </div>
           </div>
         </nav>
@@ -225,7 +226,8 @@
         <a href="#how" class="mobile-nav-sub">이용방법</a>
         <a href="/notice/list" class="mobile-nav-sub">공지사항</a>
         <a href="#" class="mobile-nav-parent mobile-nav-gold">골드 멤버십 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
-        <a href="#" class="mobile-nav-sub mobile-nav-sub-gold">골드번호 조합</a>
+        <a href="/gold/best" class="mobile-nav-sub mobile-nav-sub-gold">골드번호 조합</a>
+        <a href="/gold/saved" class="mobile-nav-sub mobile-nav-sub-gold">저장번호 조회</a>
       </nav>
       <% if (_hLoggedIn) { %>
       <div class="mobile-actions">

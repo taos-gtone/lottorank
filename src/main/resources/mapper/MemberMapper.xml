@@ -131,6 +131,11 @@
         SELECT COUNT(*) FROM MEM_JOIN_INFO WHERE nickname = #{nickname}
     </select>
 
+    <!-- 골드회원 여부 (mem_grade_cd = '05') -->
+    <select id="isGoldMember" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM MEM_JOIN_INFO WHERE member_no = #{memberNo} AND mem_grade_cd = '05'
+    </select>
+
     <!-- 로그인 이력 저장 (성공/실패 공통) -->
     <insert id="insertLoginHist" parameterType="LoginHistVO">
         INSERT INTO MEM_LOGIN_HIST (
@@ -147,5 +152,41 @@
             #{userAgent, jdbcType=VARCHAR}
         )
     </insert>
+
+    <!-- 회원 저장번호 삭제 (해당 회차 전체) -->
+    <delete id="deleteSavedNums">
+        DELETE FROM MEM_SAVED_NUM
+        WHERE member_no = #{memberNo}
+          AND round_no  = #{roundNo}
+    </delete>
+
+    <!-- 회원 저장번호 삭제 (세트 1건) -->
+    <delete id="deleteSavedNumBySetNo">
+        DELETE FROM MEM_SAVED_NUM
+        WHERE member_no = #{memberNo}
+          AND round_no  = #{roundNo}
+          AND num_set_no = #{numSetNo}
+    </delete>
+
+    <!-- 회원 저장번호 1건 INSERT -->
+    <insert id="insertSavedNum" parameterType="MemSavedNumVO">
+        INSERT INTO MEM_SAVED_NUM
+            (round_no, member_no, num_set_no, num1, num2, num3, num4, num5, num6, memo, hit_yn)
+        VALUES
+            (#{roundNo}, #{memberNo}, #{numSetNo},
+             #{num1}, #{num2}, #{num3}, #{num4}, #{num5}, #{num6},
+             #{memo, jdbcType=VARCHAR}, 'N')
+    </insert>
+
+    <!-- 회원 저장번호 조회 (해당 회차, 세트 순) -->
+    <select id="selectSavedNums" resultType="MemSavedNumVO">
+        SELECT round_no, member_no, num_set_no,
+               num1, num2, num3, num4, num5, num6,
+               memo, hit_yn
+        FROM MEM_SAVED_NUM
+        WHERE member_no = #{memberNo}
+          AND round_no  = #{roundNo}
+        ORDER BY num_set_no
+    </select>
 
 </mapper>

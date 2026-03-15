@@ -12,6 +12,11 @@ public class LottoRoundResult {
     private int      bonusNum;
     private long     prize1stAmount;
     private int      prize1stCount;
+    private long     prize1stPerAmt;
+    private int      prize2ndCount;
+    private long     prize2ndPerAmt;
+    private int      prize3rdCount;
+    private long     prize3rdPerAmt;
 
     /* ── 볼 색상 (번호 범위별) ── */
     private static String ballColor(int n) {
@@ -81,4 +86,27 @@ public class LottoRoundResult {
 
     public int getPrize1stCount()                  { return prize1stCount; }
     public void setPrize1stCount(int v)            { this.prize1stCount = v; }
+
+    public long getPrize1stPerAmt()                { return prize1stPerAmt; }
+    public void setPrize1stPerAmt(long v)          { this.prize1stPerAmt = v; }
+
+    public int getPrize2ndCount()                  { return prize2ndCount; }
+    public void setPrize2ndCount(int v)            { this.prize2ndCount = v; }
+
+    public long getPrize2ndPerAmt()                { return prize2ndPerAmt; }
+    public void setPrize2ndPerAmt(long v)          { this.prize2ndPerAmt = v; }
+
+    public int getPrize3rdCount()                  { return prize3rdCount; }
+    public void setPrize3rdCount(int v)            { this.prize3rdCount = v; }
+
+    public long getPrize3rdPerAmt()                { return prize3rdPerAmt; }
+    public void setPrize3rdPerAmt(long v)          { this.prize3rdPerAmt = v; }
+
+    /* ── 금액 포맷 (콤마 구분, 원) ── */
+    private String formatAmt(long amt) {
+        return String.format(Locale.US, "%,d원", amt);
+    }
+    public String getFormattedPrize1stPer()  { return formatAmt(prize1stPerAmt); }
+    public String getFormattedPrize2ndPer()  { return formatAmt(prize2ndPerAmt); }
+    public String getFormattedPrize3rdPer()  { return formatAmt(prize3rdPerAmt); }
 }

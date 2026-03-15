@@ -51,8 +51,18 @@
         <div class="result-block">
           <div class="rb-label">
             <div>
-              <div class="rb-title">제 1161회 성적</div>
-              <div class="rb-round" style="font-size:0.85rem; color:var(--txt2);">2026.02.14 추첨</div>
+              <div class="rb-title">
+                <% if (latestResult != null) { %>
+                  제 <%= latestResult.getRoundNo() %>회 성적
+                <% } else { %>
+                  최신 성적
+                <% } %>
+              </div>
+              <div class="rb-round" style="font-size:0.85rem; color:var(--txt2);">
+                <% if (latestResult != null) { %>
+                  <%= latestResult.getFormattedDate() %> 추첨
+                <% } %>
+              </div>
             </div>
           </div>
           <table class="prize-table">
@@ -64,21 +74,27 @@
               </tr>
             </thead>
             <tbody>
+              <% if (latestResult != null) { %>
               <tr>
                 <td class="red">1등</td>
-                <td>14명</td>
-                <td class="red">2,370,956,036원</td>
+                <td class="red"><%= String.format("%,d", latestResult.getPrize1stCount()) %>명</td>
+                <td class="red"><%= latestResult.getFormattedPrize1stPer() %></td>
               </tr>
               <tr>
                 <td>2등</td>
-                <td>2명</td>
-                <td>64,328,265원</td>
+                <td><%= String.format("%,d", latestResult.getPrize2ndCount()) %>명</td>
+                <td><%= latestResult.getFormattedPrize2ndPer() %></td>
               </tr>
               <tr>
                 <td>3등</td>
-                <td>105명</td>
-                <td>1,660,334원</td>
+                <td><%= String.format("%,d", latestResult.getPrize3rdCount()) %>명</td>
+                <td><%= latestResult.getFormattedPrize3rdPer() %></td>
               </tr>
+              <% } else { %>
+              <tr>
+                <td colspan="3" style="text-align:center; color:#7f8fa6; font-size:0.85rem;">데이터가 없습니다.</td>
+              </tr>
+              <% } %>
             </tbody>
           </table>
         </div>

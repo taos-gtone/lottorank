@@ -2,6 +2,7 @@
 <%
   int _nextRoundNo = request.getAttribute("nextRoundNo") != null ? (Integer) request.getAttribute("nextRoundNo") : 1;
   int _nextRoundPredMemberCount = request.getAttribute("nextRoundPredMemberCount") != null ? (Integer) request.getAttribute("nextRoundPredMemberCount") : 0;
+  boolean _notGoldMember = Boolean.TRUE.equals(request.getAttribute("notGoldMember"));
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -517,8 +518,7 @@
       <div class="best-sets-header">
         <div class="best-sets-title-row">
           <div class="best-round-wrap">
-            <input type="number" class="best-round-input" id="inputRoundNo"
-                   value="<%=_nextRoundNo%>" min="1" max="<%=_nextRoundNo%>">
+            <span class="best-round-input" id="inputRoundNo"><%=_nextRoundNo%></span>
             <span class="best-round-suffix">회차</span>
           </div>
           <span class="best-sets-title">선택 번호 세트</span>
@@ -531,7 +531,7 @@
 
       <div class="best-sets-footer">
         <button class="btn-add-set" onclick="addSet()">+ 세트 추가</button>
-        <button class="btn-best-analyze" onclick="analyzeHandler()">조합 분석하기</button>
+        <button class="btn-best-analyze" onclick="analyzeHandler()">번호 저장하기</button>
       </div>
     </section>
 
@@ -1036,12 +1036,63 @@
   }
 
   function analyzeHandler() {
+    // 미완성 세트(번호가 1개 이상이지만 6개 미만) 체크
+    var incomplete = sets.filter(function(s) { return s.length > 0 && s.length < 6; });
+    if (incomplete.length > 0) {
+      alert('번호가 6개 선택되지 않은 세트가 있습니다.\n모든 세트의 번호를 6개씩 선택해 주세요.');
+      return;
+    }
     var completed = sets.filter(function(s) { return s.length === 6; });
     if (completed.length === 0) {
       alert('완성된 세트(6개)가 없습니다.\n번호를 선택해 주세요.');
       return;
     }
-    alert('분석 기능은 준비 중입니다.\n완성 세트 수: ' + completed.length + '개');
+
+    var roundNo = parseInt(document.getElementById('inputRoundNo').textContent, 10);
+    var payload = {
+      roundNo: roundNo,
+      sets: completed.map(function(s, i) {
+        return { nums: s.slice(), memo: setMemos[sets.indexOf(s)] || '' };
+      })
+    };
+
+    fetch('${pageContext.request.contextPath}/gold/best/save-nums', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.success) {
+        alert(data.message);
+      } else {
+        alert('저장 실패: ' + (data.message || '오류가 발생했습니다.'));
+      }
+    })
+    .catch(function() {
+      alert('저장 중 오류가 발생했습니다.');
+    });
+  }
+
+  /* ══════════════════════════════════════
+     저장된 번호 로드
+  ══════════════════════════════════════ */
+  function loadSavedNums(roundNo) {
+    fetch('${pageContext.request.contextPath}/gold/best/saved-nums?roundNo=' + roundNo)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (!data.success || !data.list || data.list.length === 0) return;
+      sets = [];
+      setMemos = [];
+      data.list.forEach(function(item) {
+        sets.push([item.num1, item.num2, item.num3, item.num4, item.num5, item.num6]);
+        setMemos.push(item.memo || '');
+      });
+      activeSetIdx = 0;
+      renderSets();
+      updateNumGrid();
+    })
+    .catch(function() { /* 조회 실패 시 무시 */ });
   }
 
   /* ══════════════════════════════════════
@@ -1084,7 +1135,7 @@
      예측번호 탭 - AJAX 로드
   ══════════════════════════════════════ */
   function loadPredTab(page, silent) {
-    var roundNo = parseInt(document.getElementById('inputRoundNo').value, 10);
+    var roundNo = parseInt(document.getElementById('inputRoundNo').textContent, 10);
     tabLoaded['predict'] = false;
 
     if (!silent) {
@@ -1498,20 +1549,6 @@
      회차 입력 범위 제한 + 예측탭 리로드
   ══════════════════════════════════════ */
   var MAX_ROUND = <%=_nextRoundNo%>;
-  var roundInput = document.getElementById('inputRoundNo');
-  roundInput.addEventListener('change', function() {
-    var v = parseInt(this.value, 10);
-    if (isNaN(v) || v < 1) this.value = 1;
-    else if (v > MAX_ROUND) this.value = MAX_ROUND;
-    if (currentActiveTab === 'predict') {
-      tabLoaded['predict'] = false;
-      loadPredTab(1);
-    }
-  });
-  roundInput.addEventListener('keyup', function() {
-    var v = parseInt(this.value, 10);
-    if (!isNaN(v) && v > MAX_ROUND) this.value = MAX_ROUND;
-  });
 
   /* ── XSS 방어 ── */
   function escHtml(s) {
@@ -1526,6 +1563,7 @@
   renderSets();
   updateNumGrid();
   loadPredTab(1);   // 예측번호 탭 첫 로드
+  loadSavedNums(<%=_nextRoundNo%>);  // 저장된 번호 로드
 </script>
 
 <!-- ══ 로또차트 스크립트 (Apache ECharts 5) ══ -->
@@ -1882,6 +1920,44 @@
 
 })();
 </script>
+
+<!-- ── 골드회원 전용 모달 ── -->
+<% if (_notGoldMember) { %>
+<div id="goldOnlyModal" style="
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.72);
+">
+  <div style="
+    background:linear-gradient(160deg,#1a1500 0%,#2a1e00 100%);
+    border:1.5px solid rgba(228,170,0,0.45);
+    border-radius:16px;
+    padding:40px 36px 32px;
+    max-width:360px;width:90%;
+    text-align:center;
+    box-shadow:0 8px 48px rgba(0,0,0,0.7);
+  ">
+    <div style="font-size:2.4rem;margin-bottom:14px;">👑</div>
+    <div style="
+      color:#FFD700;font-size:1.15rem;font-weight:800;
+      margin-bottom:10px;letter-spacing:-0.3px;
+    ">골드회원 전용 서비스입니다.</div>
+    <div style="
+      color:rgba(255,218,100,0.6);font-size:0.88rem;
+      margin-bottom:28px;line-height:1.6;
+    ">이 페이지는 골드회원에게만 제공됩니다.<br>골드회원 가입 후 이용해 주세요.</div>
+    <button onclick="location.href='/'" style="
+      display:inline-block;
+      background:linear-gradient(135deg,#E4AA00,#B07D00);
+      color:#fff;font-weight:800;font-size:0.97rem;
+      border:none;border-radius:8px;
+      padding:12px 36px;cursor:pointer;
+      box-shadow:0 4px 16px rgba(228,170,0,0.35);
+      transition:opacity 0.15s;
+    " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">확인</button>
+  </div>
+</div>
+<% } %>
 
 </body>
 </html>

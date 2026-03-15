@@ -2,9 +2,12 @@ package com.lottorank.mapper;
 
 import com.lottorank.vo.LoginHistVO;
 import com.lottorank.vo.MemberInfoChgHistVO;
+import com.lottorank.vo.MemSavedNumVO;
 import com.lottorank.vo.MemberVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface MemberMapper {
@@ -65,4 +68,21 @@ public interface MemberMapper {
 
     /** 닉네임 중복 여부 */
     int countByNickname(@Param("nickname") String nickname);
+
+    /** 골드회원 여부 (mem_grade_cd = '05') */
+    boolean isGoldMember(@Param("memberNo") long memberNo);
+
+    /** 회원 저장번호 - 특정 회차의 기존 저장 세트 전체 삭제 */
+    void deleteSavedNums(@Param("memberNo") long memberNo, @Param("roundNo") int roundNo);
+
+    /** 회원 저장번호 - 특정 세트 1건 삭제 */
+    void deleteSavedNumBySetNo(@Param("memberNo") long memberNo,
+                               @Param("roundNo")  int    roundNo,
+                               @Param("numSetNo") int    numSetNo);
+
+    /** 회원 저장번호 - 세트 1건 저장 */
+    void insertSavedNum(MemSavedNumVO vo);
+
+    /** 회원 저장번호 - 특정 회차의 저장 세트 목록 조회 */
+    List<MemSavedNumVO> selectSavedNums(@Param("memberNo") long memberNo, @Param("roundNo") int roundNo);
 }
