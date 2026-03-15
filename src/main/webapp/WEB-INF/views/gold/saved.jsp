@@ -76,6 +76,16 @@
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
 <script>
+  /* ── 모바일 햄버거 메뉴 ── */
+  const menuBtn    = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuClose  = document.getElementById('menuClose');
+  if (menuBtn)    menuBtn.addEventListener('click', () => mobileMenu.classList.add('open'));
+  if (menuClose)  menuClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  if (mobileMenu) mobileMenu.addEventListener('click', (e) => {
+    if (e.target === mobileMenu) mobileMenu.classList.remove('open');
+  });
+
   var MAX_ROUND    = <%=_nextRoundNo%>;
   var MIN_ROUND    = 1;
   var currentRound = <%=_nextRoundNo%>;

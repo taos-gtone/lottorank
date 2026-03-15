@@ -306,14 +306,27 @@
   .saved-wrap { padding: 20px 0 48px; }
   .saved-container { padding: 0 12px; }
   .saved-panel { padding: 18px 14px; }
-  .saved-ball { width: 28px; height: 28px; font-size: 0.72rem; }
+  /* 테이블: colgroup 인라인 width 무력화 후 auto 레이아웃 */
+  .saved-tbl { min-width: 0; table-layout: auto; width: 100%; }
+  .saved-tbl col { width: auto !important; }
+  .saved-tbl thead th,
+  .saved-tbl tbody td { padding: 10px 8px; }
+  /* 메모 컬럼 숨김 */
+  .saved-tbl thead th:nth-child(3),
+  .saved-tbl tbody td:nth-child(3) { display: none; }
+  /* 삭제 컬럼: 내용 기준 최소 폭, 나머지 공간 채움 */
+  .saved-tbl thead th:nth-child(4),
+  .saved-tbl tbody td:nth-child(4) { white-space: nowrap; text-align: center; }
+  /* 번호 컬럼이 남은 공간 모두 차지 */
+  .saved-tbl thead th:nth-child(2),
+  .saved-tbl tbody td:nth-child(2) { width: 99%; }
+  /* 볼 크기 */
+  .saved-ball { width: 32px; height: 32px; font-size: 0.76rem; }
   .saved-balls { gap: 5px; }
-  .saved-tbl tbody td,
-  .saved-tbl thead th { padding: 10px 10px; }
 }
 
 @media (max-width: 480px) {
   .saved-round-label { font-size: 1rem; min-width: 76px; }
-  .saved-ball { width: 25px; height: 25px; font-size: 0.66rem; }
+  .saved-ball { width: 28px; height: 28px; font-size: 0.7rem; }
   .saved-balls { gap: 4px; }
 }

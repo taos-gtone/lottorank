@@ -468,7 +468,7 @@
 
     @media (max-width: 768px) {
       #best-tab-manual .num-grid {
-        grid-template-columns: repeat(9, 1fr);
+        grid-template-columns: repeat(7, 1fr);
       }
       .num-grid-row { gap: 8px; }
       .btn-auto-pick { font-size: 0.82rem; padding: 10px 12px; }

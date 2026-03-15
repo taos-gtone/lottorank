@@ -539,11 +539,24 @@
   .best-sets-panel { padding: 16px 14px; top: 98px; }
   .set-ball { width: 28px; height: 28px; font-size: 0.7rem; }
   .set-balls { gap: 4px; }
-  .best-sets-footer { flex-direction: column; gap: 10px; }
-  .btn-best-analyze { width: 100%; text-align: center; }
-  .best-tab-btn { padding: 10px 18px; font-size: 0.88rem; }
+  /* 메모 입력란 숨김 */
+  .set-memo-input { display: none; }
+  /* 세트추가 + 번호저장하기 한 줄 유지 */
+  .best-sets-footer { flex-direction: row; gap: 8px; }
+  .btn-best-analyze { flex: 1; text-align: center; }
+  .btn-add-set { flex-shrink: 0; }
+  /* 탭 줄바꿈 방지 + 좌우 꽉 채움 */
+  .best-tabs { width: 100%; }
+  .best-tab-btn {
+    flex: 1;
+    padding: 10px 4px;
+    font-size: 0.86rem;
+    white-space: nowrap;
+    margin-right: 2px;
+  }
   .best-tab-content { padding: 18px 14px; }
   .num-grid { gap: 5px; max-width: 100%; }
+  #best-tab-manual .num-grid { grid-template-columns: repeat(7, 1fr); }
   .freq-ball-num { width: 32px; height: 32px; font-size: 0.78rem; }
 }
 
@@ -551,6 +564,7 @@
   .best-set-row { gap: 6px; padding: 8px 8px; }
   .set-label { min-width: 36px; font-size: 0.75rem; }
   .num-grid { grid-template-columns: repeat(9, 1fr); gap: 4px; }
+  #best-tab-manual .num-grid { grid-template-columns: repeat(7, 1fr); }
 }
 
 /* ── 로또차트 ── */
