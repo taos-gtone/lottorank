@@ -257,4 +257,85 @@
          ORDER BY consecutiveAbsent DESC, n.n ASC
     </select>
 
+    <!--
+        골드 예측통합 - 최근 N회차 연속 적중/미적중 회원이 선택한 번호 집계
+        hitYn : 'Y'(적중) | 'N'(미적중)
+        해당 조건을 만족하는 회원이 다음 회차에 예측한 번호와 인원수 집계
+    -->
+    <select id="selectIntgPredNumByConsec" resultType="IntgPredNumVO">
+        SELECT
+            p.pred_num AS predNum,
+            COUNT(*)   AS memberCnt,
+            GROUP_CONCAT(
+                CASE WHEN r.ranking IS NULL THEN 'NEW' ELSE CAST(r.ranking AS CHAR) END
+                ORDER BY r.ranking ASC
+                SEPARATOR ','
+            )          AS rankings
+          FROM MEM_PRED_NUM p
+          LEFT JOIN MEM_RANK_ALL r
+                 ON r.member_no = p.member_no
+                AND r.round_no  = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)
+         WHERE p.round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
+           AND p.member_no IN (
+               SELECT member_no
+                 FROM MEM_PRED_NUM
+                WHERE round_no IN (
+                      SELECT round_no
+                        FROM LTT_ROUND_RESULT
+                       ORDER BY round_no DESC
+                       LIMIT #{roundCnt}
+                      )
+                GROUP BY member_no
+               HAVING COUNT(*) >= (#{roundCnt} - #{maxNoSub})
+                  AND SUM(CASE WHEN hit_yn = #{hitYn} THEN 1 ELSE 0 END) = COUNT(*)
+               )
+         GROUP BY p.pred_num
+         ORDER BY memberCnt DESC, p.pred_num ASC
+    </select>
+
+
+    <!--
+        골드 예측통합 - 최근 N회차 연속 적중/미적중 회원 목록 (회원별 상세)
+        hitYn    : 'Y'(적중) | 'N'(미적중)
+        maxNoSub : 허용 미제출 횟수 (0이면 완전 연속만)
+        해당 기간에 전부 hitYn이며, 제출 횟수 >= (roundCnt - maxNoSub)인 회원이
+        다음 회차에 예측 제출한 번호를 회원별로 조회
+        정렬: hitCnt DESC, predNum ASC, ranking ASC (NULL 순위 후순위)
+    -->
+    <select id="selectIntgConsecMemberList" resultType="IntgConsecMemberVO">
+        SELECT
+            p.pred_num                                   AS predNum,
+            sub.hitCnt                                   AS hitCnt,
+            COALESCE(m.nickname, m.user_id)              AS nickname,
+            r.ranking                                    AS ranking,
+            (#{roundCnt} - sub.totalCnt)                 AS noSubmitCnt
+          FROM MEM_PRED_NUM p
+          JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+          LEFT JOIN MEM_RANK_ALL r
+                 ON r.member_no = p.member_no
+                AND r.round_no  = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)
+          JOIN (
+               SELECT member_no,
+                      COUNT(*)                                          AS totalCnt,
+                      SUM(CASE WHEN hit_yn = #{hitYn} THEN 1 ELSE 0 END) AS hitCnt
+                 FROM MEM_PRED_NUM
+                WHERE round_no IN (
+                      SELECT rn FROM (
+                          SELECT round_no AS rn
+                            FROM LTT_ROUND_RESULT
+                           ORDER BY round_no DESC
+                           LIMIT #{roundCnt}
+                      ) t
+                      )
+                GROUP BY member_no
+               HAVING totalCnt &gt;= (#{roundCnt} - #{maxNoSub})
+                  AND SUM(CASE WHEN hit_yn = #{hitYn} THEN 1 ELSE 0 END) = COUNT(*)
+               ) sub ON sub.member_no = p.member_no
+         WHERE p.round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
+         ORDER BY sub.hitCnt DESC,
+                  p.pred_num ASC,
+                  (r.ranking IS NULL) ASC,
+                  r.ranking ASC
+    </select>
+
 </mapper>

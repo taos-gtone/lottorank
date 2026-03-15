@@ -1,6 +1,7 @@
 package com.lottorank.mapper;
 
 import com.lottorank.vo.GoldPredListVO;
+import com.lottorank.vo.IntgConsecMemberVO;
 import com.lottorank.vo.IntgPredNumVO;
 import com.lottorank.vo.MemPredNumVO;
 import com.lottorank.vo.PredHistVO;
@@ -59,4 +60,14 @@ public interface PredictMapper {
     /** 당첨번호 탭 - 최근 N회차 미출현 번호 + 연속 미출현 횟수 */
     List<WinNumStatVO> selectWinNumLeastList(@Param("roundCnt")     int     roundCnt,
                                              @Param("includeBonus") boolean includeBonus);
+
+    /** 골드 예측통합 - 최근 N회차 연속 적중/미적중 회원이 선택한 번호 집계 */
+    List<IntgPredNumVO> selectIntgPredNumByConsec(@Param("roundCnt")   int    roundCnt,
+                                                  @Param("hitYn")      String hitYn,
+                                                  @Param("maxNoSub")   int    maxNoSub);
+
+    /** 골드 예측통합 - 최근 N회차 연속 적중/미적중 회원 목록 (회원별 상세) */
+    List<IntgConsecMemberVO> selectIntgConsecMemberList(@Param("roundCnt")  int    roundCnt,
+                                                        @Param("hitYn")     String hitYn,
+                                                        @Param("maxNoSub")  int    maxNoSub);
 }

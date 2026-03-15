@@ -5,6 +5,7 @@ import com.lottorank.mapper.MemberMapper;
 import com.lottorank.mapper.PredictMapper;
 import com.lottorank.service.RankingService;
 import com.lottorank.vo.GoldPredListVO;
+import com.lottorank.vo.IntgConsecMemberVO;
 import com.lottorank.vo.IntgPredNumVO;
 import com.lottorank.vo.LottoRoundResult;
 import com.lottorank.vo.MemSavedNumVO;
@@ -316,6 +317,38 @@ public class GoldController {
         Map<String, Object> result = new HashMap<>();
         result.put("success", true);
         result.put("message", (setNo - 1) + "개 세트가 저장되었습니다.");
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 예측통합 탭 - 연속 적중/미적중 회원 번호 집계 (AJAX JSON)
+     * GET /gold/best/intg-consec-query?roundCnt=3&hitType=hit
+     */
+    @GetMapping("/best/intg-consec-query")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> intgConsecQuery(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "5")   int    roundCnt,
+            @RequestParam(defaultValue = "hit") String hitType,
+            @RequestParam(defaultValue = "0")   int    noSubmit) {
+        if (getLoginUser(request) == null) {
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+        }
+        if (roundCnt < 1)   roundCnt = 1;
+        if (roundCnt > 100) roundCnt = 100;
+        if (noSubmit < 0)   noSubmit = 0;
+        if (!"hit".equals(hitType) && !"miss".equals(hitType)) hitType = "hit";
+        String hitYn = "miss".equals(hitType) ? "N" : "Y";
+
+        List<IntgConsecMemberVO> list = predictMapper.selectIntgConsecMemberList(roundCnt, hitYn, noSubmit);
+        Map<String, Object> result = new HashMap<>();
+        result.put("success",  true);
+        result.put("hitType",  hitType);
+        result.put("roundCnt", roundCnt);
+        result.put("list",     list);
         return ResponseEntity.ok(result);
     }
 

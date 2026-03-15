@@ -314,8 +314,35 @@
       padding: 6px 20px 20px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 6px;
     }
+
+    /* 라디오 라벨 */
+    .intg-radio-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .intg-radio-label input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #E4AA00;
+      cursor: pointer;
+    }
+
+    /* 비활성 조건 박스 */
+    .intg-query-box--inactive {
+      opacity: 0.42;
+      pointer-events: none;
+    }
+    .intg-query-box--inactive .intg-radio-label {
+      pointer-events: auto;
+    }
+    /* 비활성 박스 전체를 클릭해 활성화 */
+    .intg-query-box { cursor: default; }
+    .intg-query-box--inactive { cursor: pointer; pointer-events: auto; }
+    .intg-query-box--inactive > *:not(.intg-radio-label) { pointer-events: none; }
 
     /* 전체 예측 회원수 텍스트 */
     .intg-member-text {
@@ -333,8 +360,8 @@
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
-      padding: 18px 22px;
+      gap: 8px;
+      padding: 10px 16px;
       background: rgba(0,0,0,0.2);
       border: 1px solid rgba(228,170,0,0.18);
       border-radius: 10px;
@@ -461,8 +488,8 @@
     }
 
     @media (max-width: 768px) {
-      .intg-wrap { padding: 16px 14px; gap: 12px; }
-      .intg-query-box { padding: 14px 16px; gap: 8px; }
+      .intg-wrap { padding: 12px 14px; gap: 5px; }
+      .intg-query-box { padding: 8px 12px; gap: 6px; }
       .intg-query-text { font-size: 0.82rem; }
     }
 
@@ -597,9 +624,12 @@
         <!-- 전체 예측 회원수 (단순 텍스트) -->
         <p class="intg-member-text">번호를 예측한 전체 회원수 : <strong><%=String.format("%,d", _nextRoundPredMemberCount)%></strong> 명</p>
 
-        <!-- 조회 조건 -->
-        <div class="intg-query-box">
-          <span class="intg-query-text">회원 예측 번호 중, 전체 랭킹</span>
+        <!-- 조건 선택 (라디오) -->
+        <div class="intg-query-box" id="intgBox1" onclick="selectIntgMode(1)">
+          <label class="intg-radio-label">
+            <input type="radio" name="intgMode" value="1" id="intgRadio1" checked onchange="selectIntgMode(1)">
+          </label>
+          <span class="intg-query-text">전체 랭킹</span>
           <select class="intg-select" id="intgRankDir">
             <option value="top">상위</option>
             <option value="bottom">하위</option>
@@ -610,7 +640,24 @@
             <option value="pct">%</option>
           </select>
           <span class="intg-query-text">이(가) 가장 많이 선택한 번호</span>
-          <button class="btn-intg-query" onclick="queryIntgPred()">조회</button>
+          <button class="btn-intg-query" onclick="queryIntgByMode(event)">조회</button>
+        </div>
+
+        <div class="intg-query-box intg-query-box--inactive" id="intgBox2" onclick="selectIntgMode(2)">
+          <label class="intg-radio-label">
+            <input type="radio" name="intgMode" value="2" id="intgRadio2" onchange="selectIntgMode(2)">
+          </label>
+          <span class="intg-query-text">최근</span>
+          <input type="number" class="intg-num-input" id="consecRoundCnt" value="5" min="1" max="100" step="1">
+          <span class="intg-query-text">회차 연속으로</span>
+          <select class="intg-select" id="consecHitType">
+            <option value="hit">적중</option>
+            <option value="miss">미적중</option>
+          </select>
+          <span class="intg-query-text">한 회원이 선택한 번호 &nbsp;( 미제출</span>
+          <input type="number" class="intg-num-input" id="consecNoSubmit" value="0" min="0" max="99" step="1" style="width:56px;" onchange="validateNoSubmit(this)">
+          <span class="intg-query-text">회 )</span>
+          <button class="btn-intg-query" onclick="queryIntgByMode(event)">조회</button>
         </div>
 
         <!-- 조회 결과 -->
@@ -1294,6 +1341,25 @@
     }
   }
 
+  /* 현재 선택된 조건 모드 (1: 랭킹, 2: 연속 적중/미적중) */
+  var intgMode = 1;
+
+  function selectIntgMode(mode) {
+    intgMode = mode;
+    document.getElementById('intgRadio' + mode).checked = true;
+    document.getElementById('intgBox1').classList.toggle('intg-query-box--inactive', mode !== 1);
+    document.getElementById('intgBox2').classList.toggle('intg-query-box--inactive', mode !== 2);
+  }
+
+  function queryIntgByMode(e) {
+    e.stopPropagation();
+    if (intgMode === 2) {
+      queryIntgConsec();
+    } else {
+      queryIntgPred();
+    }
+  }
+
   function queryIntgPred() {
     var rankDir  = document.getElementById('intgRankDir').value;
     var rankUnit = document.getElementById('intgRankUnit').value;
@@ -1326,6 +1392,88 @@
       renderIntgResult(data.list, rankDir);
     };
     xhr.send();
+  }
+
+  var _prevNoSubmit = 0;
+  function validateNoSubmit(el) {
+    var roundCnt = parseInt(document.getElementById('consecRoundCnt').value, 10) || 0;
+    var val = parseInt(el.value, 10);
+    if (!isNaN(val) && roundCnt > 0 && val > Math.floor(roundCnt / 2)) {
+      alert('미제출 횟수는 최근 ' + roundCnt + '회차의 50% (' + Math.floor(roundCnt / 2) + '회)를 초과할 수 없습니다.');
+      el.value = _prevNoSubmit;
+    } else {
+      _prevNoSubmit = isNaN(val) ? 0 : val;
+    }
+  }
+
+  function queryIntgConsec() {
+    var roundCnt  = parseInt(document.getElementById('consecRoundCnt').value, 10);
+    var hitType   = document.getElementById('consecHitType').value;
+    var noSubmit  = parseInt(document.getElementById('consecNoSubmit').value, 10) || 0;
+
+    if (isNaN(roundCnt) || roundCnt < 1) {
+      alert('올바른 회차 수를 입력해 주세요.');
+      return;
+    }
+    var area = document.getElementById('intgResultArea');
+    area.style.display = 'block';
+    area.innerHTML = '<div class="pred-loading">조회 중...</div>';
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '${pageContext.request.contextPath}/gold/best/intg-consec-query'
+      + '?roundCnt=' + roundCnt + '&hitType=' + hitType + '&noSubmit=' + noSubmit, true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status !== 200) {
+        area.innerHTML = '<div class="pred-loading">데이터를 불러오지 못했습니다.</div>';
+        return;
+      }
+      var data = JSON.parse(xhr.responseText);
+      if (!data.success) {
+        area.innerHTML = '<div class="pred-loading">오류가 발생했습니다.</div>';
+        return;
+      }
+      renderIntgConsecResult(data.list, data.hitType, data.roundCnt);
+    };
+    xhr.send();
+  }
+
+  function renderIntgConsecResult(list, hitType, roundCnt) {
+    var hitLabel = (hitType === 'miss') ? '미적중횟수' : '적중횟수';
+    var area = document.getElementById('intgResultArea');
+    var html = '<div class="intg-result-tbl-wrap"><table class="intg-result-tbl">';
+    html += '<thead><tr>'
+          + '<th style="width:36px;">No</th>'
+          + '<th style="width:140px;">예측번호</th>'
+          + '<th style="width:90px;">' + hitLabel + '</th>'
+          + '<th>닉네임</th>'
+          + '<th style="width:80px;">전체순위</th>'
+          + '<th style="width:80px;">미제출횟수</th>'
+          + '</tr></thead><tbody>';
+
+    if (!list || list.length === 0) {
+      html += '<tr><td class="empty" colspan="6">해당 조건의 데이터가 없습니다.</td></tr>';
+    } else {
+      list.forEach(function(item, idx) {
+        var bc = item.predNum <= 10 ? 'ball-y' : item.predNum <= 20 ? 'ball-b' :
+                 item.predNum <= 30 ? 'ball-r' : item.predNum <= 40 ? 'ball-gr' : 'ball-g';
+        var ballHtml = '<span class="g-pred-ball ' + bc + '" title="' + item.predNum + '번 · 클릭하면 세트에 추가/삭제" onclick="selectNumber(' + item.predNum + ')">' + item.predNum + '</span>';
+        var rankHtml = (item.ranking != null) ? item.ranking + '위' : '<span style="color:rgba(255,210,80,0.5);">NEW</span>';
+        var noSubHtml = item.noSubmitCnt > 0
+          ? '<span style="color:#f87171;">' + item.noSubmitCnt + '회</span>'
+          : '0회';
+        html += '<tr>'
+              + '<td class="intg-no">' + (idx + 1) + '</td>'
+              + '<td>' + ballHtml + '</td>'
+              + '<td><span class="intg-member-cnt">' + item.hitCnt + '</span></td>'
+              + '<td>' + (item.nickname || '') + '</td>'
+              + '<td>' + rankHtml + '</td>'
+              + '<td>' + noSubHtml + '</td>'
+              + '</tr>';
+      });
+    }
+    html += '</tbody></table></div>';
+    area.innerHTML = html;
   }
 
   /* 예측통합 정렬 상태 */
