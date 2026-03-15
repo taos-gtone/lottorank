@@ -84,11 +84,177 @@
          LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
+    <!-- 골드 - 회차별 예측번호 목록 (최근 5주 랭킹순, 페이징) -->
+    <select id="selectGoldPredList5Round" resultType="GoldPredListVO">
+        SELECT r5.ranking,
+               COALESCE(m.nickname, m.user_id) AS nickname,
+               p.pred_num AS predNum,
+               p.hit_yn,
+               p.submit_at
+          FROM MEM_PRED_NUM p
+          JOIN MEM_JOIN_INFO m ON m.member_no = p.member_no
+          LEFT JOIN MEM_RANK_5ROUND r5
+                 ON r5.member_no = p.member_no
+                AND r5.round_no  = #{roundNo} - 1
+         WHERE p.round_no = #{roundNo}
+         <choose>
+           <when test="sortOrder == 'desc'">
+             ORDER BY (r5.ranking IS NULL) DESC, r5.ranking DESC, p.submit_at ASC
+           </when>
+           <otherwise>
+             ORDER BY (r5.ranking IS NULL) ASC, r5.ranking ASC, p.submit_at ASC
+           </otherwise>
+         </choose>
+         LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
     <!-- 골드 - 회차별 예측번호 건수 -->
     <select id="selectGoldPredCount" resultType="int">
         SELECT COUNT(*)
           FROM MEM_PRED_NUM p
          WHERE p.round_no = #{roundNo}
+    </select>
+
+    <!-- 골드 예측통합 - 다음 회차(max+1) 예측 제출 회원수 -->
+    <select id="selectNextRoundPredMemberCount" resultType="int">
+        SELECT COUNT(*)
+          FROM MEM_PRED_NUM
+         WHERE round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
+    </select>
+
+    <!--
+        골드 예측통합 - 조건별 번호 집계
+        rankDir : top | bottom
+        rankUnit: cnt | pct
+        rankVal : 숫자
+        정렬: 명수 내림차순 → 번호 오름차순
+    -->
+    <select id="selectIntgPredNumList" resultType="IntgPredNumVO" parameterType="map">
+        SELECT
+            p.pred_num AS predNum,
+            COUNT(*)   AS memberCnt,
+            GROUP_CONCAT(
+                CASE WHEN r.ranking IS NULL THEN 'NEW' ELSE CAST(r.ranking AS CHAR) END
+                ORDER BY r.ranking ASC
+                SEPARATOR ','
+            )          AS rankings
+          FROM MEM_PRED_NUM p
+          LEFT JOIN MEM_RANK_ALL r
+                 ON r.member_no = p.member_no
+                AND r.round_no  = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)
+         WHERE p.round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
+        <choose>
+            <when test="rankDir == 'top' and rankUnit == 'cnt'">
+               AND r.ranking IS NOT NULL
+               AND r.ranking &lt;= #{rankVal}
+            </when>
+            <when test="rankDir == 'top' and rankUnit == 'pct'">
+               AND r.ranking IS NOT NULL
+               AND r.ranking &lt;= (SELECT CEIL(c * #{rankVal} / 100.0)
+                                      FROM (SELECT COUNT(*) AS c FROM MEM_RANK_ALL
+                                             WHERE round_no = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)) t)
+            </when>
+            <when test="rankDir == 'bottom' and rankUnit == 'cnt'">
+               AND r.ranking IS NOT NULL
+               AND r.ranking &gt;= (SELECT c - #{rankVal} + 1
+                                      FROM (SELECT COUNT(*) AS c FROM MEM_RANK_ALL
+                                             WHERE round_no = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)) t)
+            </when>
+            <when test="rankDir == 'bottom' and rankUnit == 'pct'">
+               AND r.ranking IS NOT NULL
+               AND r.ranking &gt;= (SELECT c - CEIL(c * #{rankVal} / 100.0) + 1
+                                      FROM (SELECT COUNT(*) AS c FROM MEM_RANK_ALL
+                                             WHERE round_no = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)) t)
+            </when>
+        </choose>
+         GROUP BY p.pred_num
+         ORDER BY memberCnt DESC, p.pred_num ASC
+    </select>
+
+    <!--
+        당첨번호 탭 - 최근 N회차 출현 번호 통계
+        includeBonus: true이면 보너스번호도 집계
+        정렬: 출현횟수 DESC, 번호 ASC
+    -->
+    <select id="selectWinNumMostList" resultType="WinNumStatVO">
+        SELECT num AS lottoNum,
+               COUNT(*) AS appearCnt,
+               GROUP_CONCAT(rn ORDER BY rn DESC SEPARATOR ',') AS roundList
+          FROM (
+            SELECT ROUND_NO AS rn, NUM1 AS num FROM LTT_ROUND_RESULT
+            UNION ALL SELECT ROUND_NO, NUM2 FROM LTT_ROUND_RESULT
+            UNION ALL SELECT ROUND_NO, NUM3 FROM LTT_ROUND_RESULT
+            UNION ALL SELECT ROUND_NO, NUM4 FROM LTT_ROUND_RESULT
+            UNION ALL SELECT ROUND_NO, NUM5 FROM LTT_ROUND_RESULT
+            UNION ALL SELECT ROUND_NO, NUM6 FROM LTT_ROUND_RESULT
+            <if test="includeBonus">
+            UNION ALL SELECT ROUND_NO, BONUS_NUM FROM LTT_ROUND_RESULT
+            </if>
+          ) all_nums
+         WHERE rn IN (
+               SELECT rn2 FROM (SELECT ROUND_NO AS rn2 FROM LTT_ROUND_RESULT ORDER BY ROUND_NO DESC LIMIT #{roundCnt}) t
+         )
+         GROUP BY num
+         ORDER BY appearCnt DESC, num ASC
+    </select>
+
+    <!--
+        당첨번호 탭 - 최근 N회차 미출현 번호 + 연속 미출현 횟수
+        includeBonus: true이면 보너스번호도 출현으로 취급
+        정렬: 번호 ASC
+    -->
+    <select id="selectWinNumLeastList" resultType="WinNumStatVO">
+        SELECT n.n AS lottoNum,
+               (SELECT COUNT(*) FROM LTT_ROUND_RESULT
+                 WHERE ROUND_NO > IFNULL(
+                     (SELECT MAX(aw.ROUND_NO)
+                        FROM (
+                            SELECT NUM1 AS num, ROUND_NO FROM LTT_ROUND_RESULT
+                            UNION ALL SELECT NUM2, ROUND_NO FROM LTT_ROUND_RESULT
+                            UNION ALL SELECT NUM3, ROUND_NO FROM LTT_ROUND_RESULT
+                            UNION ALL SELECT NUM4, ROUND_NO FROM LTT_ROUND_RESULT
+                            UNION ALL SELECT NUM5, ROUND_NO FROM LTT_ROUND_RESULT
+                            UNION ALL SELECT NUM6, ROUND_NO FROM LTT_ROUND_RESULT
+                            <if test="includeBonus">
+                            UNION ALL SELECT BONUS_NUM, ROUND_NO FROM LTT_ROUND_RESULT
+                            </if>
+                        ) aw
+                       WHERE aw.num = n.n
+                     ), 0
+                 )
+               ) AS consecutiveAbsent
+          FROM (
+            SELECT 1 AS n UNION ALL SELECT 2  UNION ALL SELECT 3  UNION ALL SELECT 4  UNION ALL SELECT 5
+            UNION ALL SELECT 6  UNION ALL SELECT 7  UNION ALL SELECT 8  UNION ALL SELECT 9  UNION ALL SELECT 10
+            UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL SELECT 15
+            UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL SELECT 20
+            UNION ALL SELECT 21 UNION ALL SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24 UNION ALL SELECT 25
+            UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL SELECT 29 UNION ALL SELECT 30
+            UNION ALL SELECT 31 UNION ALL SELECT 32 UNION ALL SELECT 33 UNION ALL SELECT 34 UNION ALL SELECT 35
+            UNION ALL SELECT 36 UNION ALL SELECT 37 UNION ALL SELECT 38 UNION ALL SELECT 39 UNION ALL SELECT 40
+            UNION ALL SELECT 41 UNION ALL SELECT 42 UNION ALL SELECT 43 UNION ALL SELECT 44 UNION ALL SELECT 45
+          ) n
+         WHERE n.n NOT IN (
+               SELECT DISTINCT num FROM (
+                   SELECT NUM1 AS num FROM LTT_ROUND_RESULT
+                    WHERE ROUND_NO IN (SELECT rn FROM (SELECT ROUND_NO AS rn FROM LTT_ROUND_RESULT ORDER BY ROUND_NO DESC LIMIT #{roundCnt}) t)
+                   UNION ALL SELECT NUM2 FROM LTT_ROUND_RESULT
+                    WHERE ROUND_NO IN (SELECT rn FROM (SELECT ROUND_NO AS rn FROM LTT_ROUND_RESULT ORDER BY ROUND_NO DESC LIMIT #{roundCnt}) t)
+                   UNION ALL SELECT NUM3 FROM LTT_ROUND_RESULT
+                    WHERE ROUND_NO IN (SELECT rn FROM (SELECT ROUND_NO AS rn FROM LTT_ROUND_RESULT ORDER BY ROUND_NO DESC LIMIT #{roundCnt}) t)
+                   UNION ALL SELECT NUM4 FROM LTT_ROUND_RESULT
+                    WHERE ROUND_NO IN (SELECT rn FROM (SELECT ROUND_NO AS rn FROM LTT_ROUND_RESULT ORDER BY ROUND_NO DESC LIMIT #{roundCnt}) t)
+                   UNION ALL SELECT NUM5 FROM LTT_ROUND_RESULT
+                    WHERE ROUND_NO IN (SELECT rn FROM (SELECT ROUND_NO AS rn FROM LTT_ROUND_RESULT ORDER BY ROUND_NO DESC LIMIT #{roundCnt}) t)
+                   UNION ALL SELECT NUM6 FROM LTT_ROUND_RESULT
+                    WHERE ROUND_NO IN (SELECT rn FROM (SELECT ROUND_NO AS rn FROM LTT_ROUND_RESULT ORDER BY ROUND_NO DESC LIMIT #{roundCnt}) t)
+                   <if test="includeBonus">
+                   UNION ALL SELECT BONUS_NUM FROM LTT_ROUND_RESULT
+                    WHERE ROUND_NO IN (SELECT rn FROM (SELECT ROUND_NO AS rn FROM LTT_ROUND_RESULT ORDER BY ROUND_NO DESC LIMIT #{roundCnt}) t)
+                   </if>
+               ) appeared
+         )
+         ORDER BY consecutiveAbsent DESC, n.n ASC
     </select>
 
 </mapper>

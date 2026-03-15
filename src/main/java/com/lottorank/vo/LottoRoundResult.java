@@ -32,6 +32,7 @@ public class LottoRoundResult {
 
     /* ── 날짜 포매팅 (yyyy.MM.dd) ── */
     public String getFormattedDate() {
+        if (drawDate == null) return null;
         return drawDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }
 

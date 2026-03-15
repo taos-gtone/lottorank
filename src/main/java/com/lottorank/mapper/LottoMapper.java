@@ -10,6 +10,10 @@ import java.util.List;
 public interface LottoMapper {
     LottoRoundResult selectLatestResult();
 
+    List<LottoRoundResult> selectChartData(@Param("rounds") int rounds);
+
+    List<LottoRoundResult> selectAllChartData();
+
     List<LottoRoundResult> selectResultList(
             @Param("offset")   int offset,
             @Param("pageSize") int pageSize,

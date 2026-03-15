@@ -54,6 +54,49 @@
   margin: 0 auto;
 }
 
+/* ── 탭 버튼 ── */
+.pred-no-tabs {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+}
+
+.pred-no-tab-btn {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--txt2);
+  cursor: pointer;
+  transition: all 0.18s;
+  border-bottom: 3px solid transparent;
+  font-family: inherit;
+  letter-spacing: -0.2px;
+}
+
+.pred-no-tab-btn:hover {
+  color: var(--blue);
+  background: #F5F7FC;
+}
+
+.pred-no-tab-btn.active {
+  color: var(--blue);
+  border-bottom-color: var(--blue);
+  background: #fff;
+}
+
+.pred-no-tab-btn + .pred-no-tab-btn {
+  border-left: 1px solid var(--line);
+}
+
+.pred-no-tab-content { display: none; }
+.pred-no-tab-content.active { display: block; }
+
 /* ── 상단 정보 바 ── */
 .pred-no-infobar {
   display: flex;
@@ -61,7 +104,10 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 14px;
+  padding: 12px 16px;
+  background: #F8F9FC;
+  border: 1px solid var(--line);
+  border-top: none;
 }
 
 .pred-no-round-badge {
@@ -126,7 +172,8 @@
 .pred-no-panel {
   background: #fff;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
   overflow: hidden;
 }
 
@@ -151,6 +198,11 @@
   border-left: 1px solid var(--line);
   text-align: center;
   letter-spacing: 0.2px;
+}
+
+/* sort-link 없는 th (최근 5주 탭 헤더 등)는 직접 padding 적용 */
+.pred-no-table th:not(:has(.sort-link)) {
+  padding: 11px 14px;
 }
 
 .pred-no-table th:first-child { border-left: none; }
@@ -330,8 +382,9 @@
 
 /* ── 반응형 ── */
 @media (max-width: 768px) {
-  .pred-no-wrap { padding: 24px 12px 60px; }
-  .page-title   { font-size: 1.3rem; }
+  .pred-no-wrap     { padding: 24px 12px 60px; }
+  .page-title       { font-size: 1.3rem; }
+  .pred-no-tab-btn  { font-size: 0.82rem; padding: 12px 12px; }
 }
 
 @media (max-width: 480px) {

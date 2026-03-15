@@ -59,6 +59,27 @@
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
+    <!-- 차트용: 최근 N회차 번호 조회 (오름차순 — x축 왼쪽=과거, 오른쪽=최신) -->
+    <select id="selectChartData" resultType="LottoRoundResult">
+        SELECT ROUND_NO AS roundNo,
+               NUM1 AS num1, NUM2 AS num2, NUM3 AS num3,
+               NUM4 AS num4, NUM5 AS num5, NUM6 AS num6,
+               BONUS_NUM AS bonusNum
+        FROM LTT_ROUND_RESULT
+        ORDER BY ROUND_NO DESC
+        LIMIT #{rounds}
+    </select>
+
+    <!-- 차트용: 전체 회차 번호 조회 (내림차순 — reverse 후 사용) -->
+    <select id="selectAllChartData" resultType="LottoRoundResult">
+        SELECT ROUND_NO AS roundNo,
+               NUM1 AS num1, NUM2 AS num2, NUM3 AS num3,
+               NUM4 AS num4, NUM5 AS num5, NUM6 AS num6,
+               BONUS_NUM AS bonusNum
+        FROM LTT_ROUND_RESULT
+        ORDER BY ROUND_NO DESC
+    </select>
+
     <!-- 전체 건수 조회 -->
     <select id="selectResultCount" resultType="int">
         SELECT COUNT(*)

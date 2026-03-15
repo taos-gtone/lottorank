@@ -29,11 +29,17 @@ public interface RankingMapper {
     /** 다음 예측 회차 제출 인원 수 */
     int countPredForNextRound();
 
-    /** 다음 예측 회차 제출 목록 (정렬·페이징) */
+    /** 다음 예측 회차 제출 목록 (전체기간 랭킹순, 정렬·페이징) */
     List<PredRankingVO> selectPredForNextRound(@Param("offset")  int offset,
                                                @Param("size")    int size,
                                                @Param("sortCol") String sortCol,
                                                @Param("sortDir") String sortDir);
+
+    /** 다음 예측 회차 제출 목록 (최근 5주 랭킹순, 정렬·페이징) */
+    List<PredRankingVO> selectPredForNextRound5Round(@Param("offset")  int    offset,
+                                                     @Param("size")    int    size,
+                                                     @Param("sortCol") String sortCol,
+                                                     @Param("sortDir") String sortDir);
 
     /** 다음 예측 회차 번호 조회 */
     int selectNextPredRoundNo();

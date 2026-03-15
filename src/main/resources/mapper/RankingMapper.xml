@@ -135,7 +135,7 @@
         WHERE round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
     </select>
 
-    <!-- 다음 예측 회차 제출 목록 (최신 랭킹순, 신규는 후순위) -->
+    <!-- 다음 예측 회차 제출 목록 (전체기간 랭킹순, 신규는 후순위) -->
     <select id="selectPredForNextRound" resultType="PredRankingVO">
         SELECT
             r.ranking                                       AS ranking,
@@ -146,6 +146,24 @@
         FROM MEM_PRED_NUM p
         JOIN MEM_JOIN_INFO m ON p.member_no = m.member_no
         LEFT JOIN MEM_RANK_ALL r
+               ON r.member_no = p.member_no
+              AND r.round_no = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)
+        WHERE p.round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
+        ORDER BY ${sortCol} ${sortDir}
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 다음 예측 회차 제출 목록 (최근 5주 랭킹순, 신규는 후순위) -->
+    <select id="selectPredForNextRound5Round" resultType="PredRankingVO">
+        SELECT
+            r.ranking                                       AS ranking,
+            p.member_no                                     AS memberNo,
+            m.nickname,
+            p.pred_num                                      AS predNum,
+            p.submit_at                                     AS submitAt
+        FROM MEM_PRED_NUM p
+        JOIN MEM_JOIN_INFO m ON p.member_no = m.member_no
+        LEFT JOIN MEM_RANK_5ROUND r
                ON r.member_no = p.member_no
               AND r.round_no = (SELECT MAX(round_no) FROM LTT_ROUND_RESULT)
         WHERE p.round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)

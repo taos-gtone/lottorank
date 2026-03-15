@@ -88,6 +88,9 @@
   padding: 20px 24px;
   margin-bottom: 20px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.32), inset 0 1px 0 rgba(228,170,0,0.15);
+  position: sticky;
+  top: 58px;
+  z-index: 50;
 }
 
 .best-sets-header {
@@ -173,10 +176,40 @@
   flex-direction: column;
   gap: 9px;
   min-height: 54px;
-  max-height: 180px; /* 세트 3개 = 54px×3 + gap 9px×2 */
+  max-height: 180px; /* 세트 3개 = 60px×3 */
   overflow-y: auto;
   padding-right: 2px;
   scroll-behavior: smooth;
+  transition: max-height 0.3s ease;
+}
+
+/* ── 세트 펼치기/접기 바 ── */
+.sets-expand-bar {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  min-height: 0;
+}
+.btn-sets-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: rgba(255,210,80,0.5);
+  background: transparent;
+  border: 1px solid rgba(228,170,0,0.18);
+  border-radius: 4px;
+  padding: 4px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.1px;
+}
+.btn-sets-toggle:hover {
+  color: #FFD54F;
+  border-color: rgba(228,170,0,0.45);
+  background: rgba(228,170,0,0.08);
 }
 
 .best-sets-list::-webkit-scrollbar { width: 4px; }
@@ -517,7 +550,7 @@
 @media (max-width: 768px) {
   .best-wrap { padding: 20px 0 48px; }
   .best-container { padding: 0 12px; }
-  .best-sets-panel { padding: 16px 14px; }
+  .best-sets-panel { padding: 16px 14px; top: 98px; }
   .set-ball { width: 28px; height: 28px; font-size: 0.7rem; }
   .set-balls { gap: 4px; }
   .best-sets-footer { flex-direction: column; gap: 10px; }
@@ -532,4 +565,176 @@
   .best-set-row { gap: 6px; padding: 8px 8px; }
   .set-label { min-width: 36px; font-size: 0.75rem; }
   .num-grid { grid-template-columns: repeat(9, 1fr); gap: 4px; }
+}
+
+/* ── 로또차트 ── */
+.lotto-chart-wrap {
+  margin-top: 8px;
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(228,170,0,0.22);
+  border-radius: 10px;
+  padding: 20px 20px 16px;
+}
+
+.lotto-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(228,170,0,0.14);
+}
+
+.lotto-chart-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #FFD54F;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  letter-spacing: 0.2px;
+}
+
+.lotto-chart-icon {
+  font-size: 1rem;
+}
+
+.lotto-chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-range-label {
+  font-size: 0.78rem;
+  color: rgba(255,210,80,0.55);
+  font-weight: 600;
+}
+
+.chart-range-select {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(228,170,0,0.32);
+  border-radius: 5px;
+  color: #FFD54F;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+.chart-range-select:focus,
+.chart-range-select:hover {
+  border-color: rgba(228,170,0,0.6);
+  background: rgba(255,255,255,0.1);
+}
+.chart-range-select option {
+  background: #2a1500;
+  color: #FFD54F;
+}
+
+.chart-drag-hint {
+  font-size: 0.72rem;
+  color: rgba(255,210,80,0.28);
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  margin-left: 2px;
+}
+
+/* 차트 커서: JS(el.style.cursor)로 grab/grabbing 직접 제어 */
+
+.lotto-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-bottom: 14px;
+}
+
+.chart-toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+.chart-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 26px;
+  border: 1px solid rgba(228,170,0,0.18);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+  transition: all 0.18s;
+  opacity: 0.28;
+  padding: 0;
+}
+
+.chart-toggle-btn.active {
+  opacity: 1;
+  border-color: rgba(228,170,0,0.48);
+  background: rgba(228,170,0,0.1);
+}
+
+.chart-toggle-btn:hover { opacity: 0.7; }
+.chart-toggle-btn.active:hover {
+  opacity: 1;
+  background: rgba(228,170,0,0.2);
+  border-color: rgba(228,170,0,0.7);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: rgba(255,210,80,0.65);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-bonus .legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.legend-line {
+  display: inline-block;
+  width: 20px;
+  height: 0;
+  border-top: 2px dotted;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.lotto-chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 340px;
+}
+
+.lotto-chart-notice {
+  font-size: 0.72rem;
+  color: rgba(255,210,80,0.3);
+  margin-top: 10px;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .lotto-chart-canvas-wrap { height: 260px; }
+  .lotto-chart-wrap { padding: 14px 12px 12px; }
+  .lotto-chart-header { flex-direction: column; align-items: flex-start; }
 }

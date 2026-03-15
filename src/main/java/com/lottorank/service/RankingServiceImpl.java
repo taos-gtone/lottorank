@@ -52,6 +52,12 @@ public class RankingServiceImpl implements RankingService {
     }
 
     @Override
+    public List<PredRankingVO> getPredForNextRound5Round(int page, int size, String sortCol, String sortDir) {
+        int offset = (page - 1) * size;
+        return rankingMapper.selectPredForNextRound5Round(offset, size, sortCol, sortDir);
+    }
+
+    @Override
     public int getNextPredRoundNo() {
         return rankingMapper.selectNextPredRoundNo();
     }

@@ -1,8 +1,10 @@
 package com.lottorank.mapper;
 
 import com.lottorank.vo.GoldPredListVO;
+import com.lottorank.vo.IntgPredNumVO;
 import com.lottorank.vo.MemPredNumVO;
 import com.lottorank.vo.PredHistVO;
+import com.lottorank.vo.WinNumStatVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,6 +35,28 @@ public interface PredictMapper {
                                             @Param("offset") int offset,
                                             @Param("sortOrder") String sortOrder);
 
+    /** 골드 - 회차별 예측번호 목록 (최근 5주 랭킹순, 페이징, 정렬) */
+    List<GoldPredListVO> selectGoldPredList5Round(@Param("roundNo")   int    roundNo,
+                                                  @Param("pageSize")  int    pageSize,
+                                                  @Param("offset")    int    offset,
+                                                  @Param("sortOrder") String sortOrder);
+
     /** 골드 - 회차별 예측번호 건수 */
     int selectGoldPredCount(@Param("roundNo") int roundNo);
+
+    /** 골드 예측통합 - 다음 회차(max+1) 예측 제출 회원수 */
+    int selectNextRoundPredMemberCount();
+
+    /** 골드 예측통합 - 조건별 번호 집계 (번호, 인원수, 순위목록) */
+    List<IntgPredNumVO> selectIntgPredNumList(@Param("rankDir")  String rankDir,
+                                              @Param("rankVal")  double rankVal,
+                                              @Param("rankUnit") String rankUnit);
+
+    /** 당첨번호 탭 - 최근 N회차 번호별 출현 통계 (출현한 번호, 출현횟수, 출현회차 목록) */
+    List<WinNumStatVO> selectWinNumMostList(@Param("roundCnt")     int     roundCnt,
+                                            @Param("includeBonus") boolean includeBonus);
+
+    /** 당첨번호 탭 - 최근 N회차 미출현 번호 + 연속 미출현 횟수 */
+    List<WinNumStatVO> selectWinNumLeastList(@Param("roundCnt")     int     roundCnt,
+                                             @Param("includeBonus") boolean includeBonus);
 }

@@ -25,12 +25,20 @@ public class RankingController {
     private static final int PAGE_BUTTON_COUNT = 5;
     private static final int[] ALLOWED_SIZES   = {10, 20, 30, 50};
 
-    /** 허용된 정렬 컬럼 — 예측번호 조회 (SQL 인젝션 방지 화이트리스트) */
+    /** 허용된 정렬 컬럼 — 예측번호 조회 전체기간 탭 (SQL 인젝션 방지 화이트리스트) */
     private static final Map<String, String> SORT_COL_MAP = new HashMap<>();
     static {
         SORT_COL_MAP.put("rank",     "COALESCE(r.ranking, 999999)");
         SORT_COL_MAP.put("predNum",  "p.pred_num");
         SORT_COL_MAP.put("submitAt", "p.submit_at");
+    }
+
+    /** 허용된 정렬 컬럼 — 예측번호 조회 최근5주 탭 (SQL 인젝션 방지 화이트리스트) */
+    private static final Map<String, String> SORT_COL_MAP_5ROUND = new HashMap<>();
+    static {
+        SORT_COL_MAP_5ROUND.put("rank5",    "COALESCE(r.ranking, 999999)");
+        SORT_COL_MAP_5ROUND.put("predNum",  "p.pred_num");
+        SORT_COL_MAP_5ROUND.put("submitAt", "p.submit_at");
     }
 
     /** 허용된 정렬 컬럼 — 전체기간 랭킹 (SQL 인젝션 방지 화이트리스트) */
@@ -120,13 +128,14 @@ public class RankingController {
         return "ranking/list";
     }
 
-    /** 회원 예측번호 조회 (다음 회차 기준, 정렬·페이징) — 로그인 필요 */
+    /** 회원 예측번호 조회 (다음 회차 기준, 탭·정렬·페이징) — 로그인 필요 */
     @GetMapping("/no")
     public String predNo(
             @RequestParam(defaultValue = "1")       int    page,
             @RequestParam(defaultValue = "20")      int    size,
             @RequestParam(defaultValue = "rank")    String sort,
             @RequestParam(defaultValue = "asc")     String dir,
+            @RequestParam(defaultValue = "all")     String tab,
             HttpServletRequest request,
             Model model) {
 
@@ -139,9 +148,19 @@ public class RankingController {
         for (int s : ALLOWED_SIZES) { if (s == size) { validSize = true; break; } }
         if (!validSize) size = DEFAULT_PAGE_SIZE;
 
-        // 정렬 컬럼·방향 화이트리스트 검증
-        String sortCol = SORT_COL_MAP.getOrDefault(sort, SORT_COL_MAP.get("rank"));
+        if (!"all".equals(tab) && !"5round".equals(tab)) tab = "all";
+
         String sortDir = "desc".equalsIgnoreCase(dir) ? "DESC" : "ASC";
+
+        // 탭별 정렬 컬럼 화이트리스트 검증
+        String sortCol;
+        if ("5round".equals(tab)) {
+            if (!SORT_COL_MAP_5ROUND.containsKey(sort)) sort = "rank5";
+            sortCol = SORT_COL_MAP_5ROUND.get(sort);
+        } else {
+            if (!SORT_COL_MAP.containsKey(sort)) sort = "rank";
+            sortCol = SORT_COL_MAP.get(sort);
+        }
 
         int nextRoundNo  = rankingService.getNextPredRoundNo();
         int totalCount   = rankingService.countPredForNextRound();
@@ -157,9 +176,17 @@ public class RankingController {
             startPage = Math.max(1, endPage - PAGE_BUTTON_COUNT + 1);
         }
 
-        List<PredRankingVO> predList = rankingService.getPredForNextRound(page, size, sortCol, sortDir);
+        List<PredRankingVO> predList   = null;
+        List<PredRankingVO> pred5List  = null;
+        if ("all".equals(tab)) {
+            predList  = rankingService.getPredForNextRound(page, size, sortCol, sortDir);
+        } else {
+            pred5List = rankingService.getPredForNextRound5Round(page, size, sortCol, sortDir);
+        }
 
-        model.addAttribute("predList",    predList);
+        model.addAttribute("tab",        tab);
+        model.addAttribute("predList",   predList);
+        model.addAttribute("pred5List",  pred5List);
         model.addAttribute("nextRoundNo", nextRoundNo);
         model.addAttribute("totalCount",  totalCount);
         model.addAttribute("currentPage", page);
