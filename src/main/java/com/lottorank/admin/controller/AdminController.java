@@ -588,14 +588,19 @@ public class AdminController {
 
     @GetMapping("/customer/member/ranking")
     public String memRanking(
-            @RequestParam(defaultValue = "1")       int    page,
-            @RequestParam(required = false)         String roundNoStr,
-            @RequestParam(defaultValue = "all")     String tab,
+            @RequestParam(defaultValue = "1")        int    page,
+            @RequestParam(required = false)          String roundNoStr,
+            @RequestParam(defaultValue = "all")      String tab,
+            @RequestParam(defaultValue = "ranking")  String sortCol,
+            @RequestParam(defaultValue = "asc")      String sortDir,
             HttpServletRequest request, Model model) {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("adminUser") == null)
             return "redirect:/lottorank/admin/login";
+
+        if (!"ranking".equals(sortCol) && !"cross".equals(sortCol)) sortCol = "ranking";
+        if (!"asc".equals(sortDir) && !"desc".equals(sortDir))      sortDir = "asc";
 
         int maxRoundNo = adminMapper.selectMaxRoundNo();
         if (maxRoundNo < 1) maxRoundNo = 1;
@@ -626,14 +631,16 @@ public class AdminController {
         List<MemRankAllVO>    allList    = null;
         List<MemRank5RoundVO> round5List = null;
         if (is5Round) {
-            round5List = adminMapper.selectAdminRecent5RankingList(roundNo, offset, MEM_RANK_PS);
+            round5List = adminMapper.selectAdminRecent5RankingList(roundNo, offset, MEM_RANK_PS, sortCol, sortDir);
         } else {
-            allList = adminMapper.selectAdminAllRankingList(roundNo, offset, MEM_RANK_PS);
+            allList = adminMapper.selectAdminAllRankingList(roundNo, offset, MEM_RANK_PS, sortCol, sortDir);
         }
 
         model.addAttribute("allList",      allList);
         model.addAttribute("round5List",   round5List);
         model.addAttribute("tab",          tab);
+        model.addAttribute("sortCol",      sortCol);
+        model.addAttribute("sortDir",      sortDir);
         model.addAttribute("roundNo",      roundNo);
         model.addAttribute("maxRoundNo",   maxRoundNo);
         model.addAttribute("totalCount",   totalCount);

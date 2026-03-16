@@ -286,6 +286,23 @@
 
     .nick-link { color: var(--primary); text-decoration: none; font-weight: 600; }
     .nick-link:hover { text-decoration: underline; }
+
+    /* 정렬 가능 헤더 */
+    .th-sort {
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .th-sort:hover { color: var(--primary); }
+    .th-sort.active { color: var(--primary); }
+    .sort-icon { font-size: 0.72rem; opacity: 0.55; }
+    .th-sort.active .sort-icon { opacity: 1; }
   </style>
 </head>
 <body>
@@ -297,6 +314,8 @@
   List<MemRank5RoundVO> round5List = (List<MemRank5RoundVO>) request.getAttribute("round5List");
 
   String  tab        = (String)  request.getAttribute("tab");
+  String  sortCol    = (String)  request.getAttribute("sortCol");
+  String  sortDir    = (String)  request.getAttribute("sortDir");
   int     roundNo    = (Integer) request.getAttribute("roundNo");
   int     maxRoundNo = (Integer) request.getAttribute("maxRoundNo");
   int     totalCount = (Integer) request.getAttribute("totalCount");
@@ -305,11 +324,19 @@
   int     startPage  = (Integer) request.getAttribute("startPage");
   int     endPage    = (Integer) request.getAttribute("endPage");
 
-  if (tab == null) tab = "all";
+  if (tab     == null) tab     = "all";
+  if (sortCol == null) sortCol = "ranking";
+  if (sortDir == null) sortDir = "asc";
   boolean isAll    = "all".equals(tab);
   boolean is5Round = "5round".equals(tab);
 
-  String pgBase = "roundNoStr=" + roundNo + "&tab=" + tab;
+  // 정렬 헬퍼: 클릭 시 해당 컬럼 asc/desc 토글, 나머지 컬럼은 asc로 초기화
+  String sortRankingDir = "ranking".equals(sortCol) ? sortDir : "asc";
+  String sortCrossDir   = "cross".equals(sortCol)   ? sortDir : "asc";
+  String nextRankingDir = ("ranking".equals(sortCol) && "asc".equals(sortDir)) ? "desc" : "asc";
+  String nextCrossDir   = ("cross".equals(sortCol)   && "asc".equals(sortDir)) ? "desc" : "asc";
+
+  String pgBase = "roundNoStr=" + roundNo + "&tab=" + tab + "&sortCol=" + sortCol + "&sortDir=" + sortDir;
 %>
 <%@ include file="/WEB-INF/views/admin/layout/admin-banner.jsp" %>
 
@@ -326,17 +353,19 @@
     <!-- 회차 네비게이션 -->
     <form class="round-bar" method="get" action="/lottorank/admin/customer/member/ranking" id="roundForm">
       <input type="hidden" name="tab" value="<%= tab %>">
+      <input type="hidden" name="sortCol" value="<%= sortCol %>">
+      <input type="hidden" name="sortDir" value="<%= sortDir %>">
       <div class="round-nav">
-        <a href="/lottorank/admin/customer/member/ranking?roundNoStr=<%= roundNo - 1 %>&tab=<%= tab %>"
+        <a href="/lottorank/admin/customer/member/ranking?roundNoStr=<%= roundNo - 1 %>&tab=<%= tab %>&sortCol=<%= sortCol %>&sortDir=<%= sortDir %>"
            class="round-nav-btn <%= roundNo <= 1 ? "disabled" : "" %>" title="이전 회차">‹</a>
         <span class="search-round-label">제</span>
         <input type="text" name="roundNoStr" id="roundNoInput" class="round-input" value="<%= roundNo %>">
         <span class="search-round-label">회</span>
-        <a href="/lottorank/admin/customer/member/ranking?roundNoStr=<%= roundNo + 1 %>&tab=<%= tab %>"
+        <a href="/lottorank/admin/customer/member/ranking?roundNoStr=<%= roundNo + 1 %>&tab=<%= tab %>&sortCol=<%= sortCol %>&sortDir=<%= sortDir %>"
            class="round-nav-btn <%= roundNo >= maxRoundNo ? "disabled" : "" %>" title="다음 회차">›</a>
       </div>
       <button type="submit" class="round-submit-btn">이동</button>
-      <a href="/lottorank/admin/customer/member/ranking?tab=<%= tab %>" class="round-reset">최신 회차</a>
+      <a href="/lottorank/admin/customer/member/ranking?tab=<%= tab %>&sortCol=<%= sortCol %>&sortDir=<%= sortDir %>" class="round-reset">최신 회차</a>
     </form>
   </div>
 
@@ -347,6 +376,14 @@
     <a href="/lottorank/admin/customer/member/ranking?roundNoStr=<%= roundNo %>&tab=5round"
        class="rank-tab-btn <%= is5Round ? "active" : "" %>">최근 5주 랭킹</a>
   </div>
+  <%
+    // 정렬 URL 생성 헬퍼
+    String sortUrlBase = "/lottorank/admin/customer/member/ranking?roundNoStr=" + roundNo + "&tab=" + tab;
+    String rankingThUrl = sortUrlBase + "&sortCol=ranking&sortDir=" + nextRankingDir;
+    String crossThUrl   = sortUrlBase + "&sortCol=cross&sortDir="   + nextCrossDir;
+    String rankingIcon  = "ranking".equals(sortCol) ? ("asc".equals(sortDir) ? "▲" : "▼") : "⇅";
+    String crossIcon    = "cross".equals(sortCol)   ? ("asc".equals(sortDir) ? "▲" : "▼") : "⇅";
+  %>
 
   <!-- 테이블 -->
   <div class="tbl-wrap">
@@ -354,9 +391,17 @@
     <table class="adm-table">
       <thead>
         <tr>
-          <th style="width:70px; text-align:center;">순위</th>
+          <th style="width:70px; text-align:center;">
+            <a href="<%= rankingThUrl %>" class="th-sort <%= "ranking".equals(sortCol) ? "active" : "" %>">
+              순위 <span class="sort-icon"><%= rankingIcon %></span>
+            </a>
+          </th>
           <th style="width:70px; text-align:center;">변동</th>
-          <th style="width:80px; text-align:center;">최근5주 순위</th>
+          <th style="width:80px; text-align:center;">
+            <a href="<%= crossThUrl %>" class="th-sort <%= "cross".equals(sortCol) ? "active" : "" %>">
+              최근5주 순위 <span class="sort-icon"><%= crossIcon %></span>
+            </a>
+          </th>
           <th>닉네임</th>
           <th style="width:80px;">예측번호</th>
           <th style="width:80px;">적중여부</th>
@@ -417,9 +462,17 @@
     <table class="adm-table">
       <thead>
         <tr>
-          <th style="width:70px; text-align:center;">순위</th>
+          <th style="width:70px; text-align:center;">
+            <a href="<%= rankingThUrl %>" class="th-sort <%= "ranking".equals(sortCol) ? "active" : "" %>">
+              순위 <span class="sort-icon"><%= rankingIcon %></span>
+            </a>
+          </th>
           <th style="width:70px; text-align:center;">변동</th>
-          <th style="width:80px; text-align:center;">전체기간 순위</th>
+          <th style="width:80px; text-align:center;">
+            <a href="<%= crossThUrl %>" class="th-sort <%= "cross".equals(sortCol) ? "active" : "" %>">
+              전체기간 순위 <span class="sort-icon"><%= crossIcon %></span>
+            </a>
+          </th>
           <th>닉네임</th>
           <th style="width:80px;">예측번호</th>
           <th style="width:80px;">적중여부</th>

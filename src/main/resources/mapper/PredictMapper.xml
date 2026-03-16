@@ -258,6 +258,62 @@
     </select>
 
     <!--
+        당첨번호 탭 - 최근 N회차 출현률/미출현률 기준 번호 조회
+        appearType: 'appear'(출현률 >= rate%) | 'absent'(미출현률 >= rate%)
+        정렬: 출현 모드 → 출현횟수 DESC, 미출현 모드 → 출현횟수 ASC
+    -->
+    <select id="selectWinNumByRate" resultType="WinNumStatVO">
+        SELECT n.n AS lottoNum,
+               COALESCE(cnt.appear_cnt, 0) AS appearCnt,
+               ROUND(COALESCE(cnt.appear_cnt, 0) * 100.0 / #{roundCnt}, 1) AS appearRate
+          FROM (
+               SELECT 1 AS n UNION ALL SELECT 2  UNION ALL SELECT 3  UNION ALL SELECT 4  UNION ALL SELECT 5
+               UNION ALL SELECT 6  UNION ALL SELECT 7  UNION ALL SELECT 8  UNION ALL SELECT 9  UNION ALL SELECT 10
+               UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL SELECT 15
+               UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL SELECT 20
+               UNION ALL SELECT 21 UNION ALL SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24 UNION ALL SELECT 25
+               UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL SELECT 29 UNION ALL SELECT 30
+               UNION ALL SELECT 31 UNION ALL SELECT 32 UNION ALL SELECT 33 UNION ALL SELECT 34 UNION ALL SELECT 35
+               UNION ALL SELECT 36 UNION ALL SELECT 37 UNION ALL SELECT 38 UNION ALL SELECT 39 UNION ALL SELECT 40
+               UNION ALL SELECT 41 UNION ALL SELECT 42 UNION ALL SELECT 43 UNION ALL SELECT 44 UNION ALL SELECT 45
+          ) n
+          LEFT JOIN (
+               SELECT num, COUNT(*) AS appear_cnt
+                 FROM (
+                      SELECT ROUND_NO AS rn, NUM1 AS num FROM LTT_ROUND_RESULT
+                      UNION ALL SELECT ROUND_NO, NUM2 FROM LTT_ROUND_RESULT
+                      UNION ALL SELECT ROUND_NO, NUM3 FROM LTT_ROUND_RESULT
+                      UNION ALL SELECT ROUND_NO, NUM4 FROM LTT_ROUND_RESULT
+                      UNION ALL SELECT ROUND_NO, NUM5 FROM LTT_ROUND_RESULT
+                      UNION ALL SELECT ROUND_NO, NUM6 FROM LTT_ROUND_RESULT
+                      <if test="includeBonus">
+                      UNION ALL SELECT ROUND_NO, BONUS_NUM FROM LTT_ROUND_RESULT
+                      </if>
+                 ) all_nums
+                WHERE rn IN (SELECT rn2 FROM (SELECT ROUND_NO AS rn2 FROM LTT_ROUND_RESULT ORDER BY ROUND_NO DESC LIMIT #{roundCnt}) t)
+                GROUP BY num
+          ) cnt ON cnt.num = n.n
+         WHERE
+         <choose>
+             <when test="appearType == 'appear'">
+                 ROUND(COALESCE(cnt.appear_cnt, 0) * 100.0 / #{roundCnt}, 1) &gt;= #{rate}
+             </when>
+             <otherwise>
+                 ROUND((#{roundCnt} - COALESCE(cnt.appear_cnt, 0)) * 100.0 / #{roundCnt}, 1) &gt;= #{rate}
+             </otherwise>
+         </choose>
+         ORDER BY
+         <choose>
+             <when test="appearType == 'appear'">
+                 appearCnt DESC, lottoNum ASC
+             </when>
+             <otherwise>
+                 appearCnt ASC, lottoNum ASC
+             </otherwise>
+         </choose>
+    </select>
+
+    <!--
         골드 예측통합 - 최근 N회차 연속 적중/미적중 회원이 선택한 번호 집계
         hitYn : 'Y'(적중) | 'N'(미적중)
         해당 조건을 만족하는 회원이 다음 회차에 예측한 번호와 인원수 집계
@@ -293,6 +349,61 @@
          ORDER BY memberCnt DESC, p.pred_num ASC
     </select>
 
+
+    <!--
+        골드 예측통합 - 최근 N회차 적중률/미적중률 조건 회원이 선택한 번호 집계
+        hitType : 'hit'(적중률 기준) | 'miss'(미적중률 기준)
+        rate    : 기준 비율 (>= rate%)
+        maxNoSub: 허용 미제출 횟수
+        정렬: 회원수 내림차순 → 번호 오름차순
+        ※ GROUP_CONCAT 잘림 방지: 개별 rate 나열 대신 "rate값:인원수" 쌍으로 집계
+    -->
+    <select id="selectIntgPredNumByRate" resultType="IntgPredNumVO">
+        SELECT
+            rd.pred_num AS predNum,
+            SUM(rd.member_cnt) AS memberCnt,
+            GROUP_CONCAT(
+                CONCAT(rd.rate_val, ':', rd.member_cnt)
+                ORDER BY rd.rate_val DESC
+                SEPARATOR ','
+            ) AS hitRates
+          FROM (
+               SELECT p.pred_num,
+                      CAST(ROUND(
+                          <choose>
+                              <when test="hitType == 'hit'">sub.hitRate</when>
+                              <otherwise>100 - sub.hitRate</otherwise>
+                          </choose>
+                      ) AS UNSIGNED) AS rate_val,
+                      COUNT(*) AS member_cnt
+                 FROM MEM_PRED_NUM p
+                 JOIN (
+                      SELECT member_no,
+                             SUM(CASE WHEN hit_yn = 'Y' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS hitRate,
+                             COUNT(*) AS totalCnt
+                        FROM MEM_PRED_NUM
+                       WHERE round_no IN (
+                             SELECT rn FROM (
+                                 SELECT round_no AS rn FROM LTT_ROUND_RESULT ORDER BY round_no DESC LIMIT #{roundCnt}
+                             ) t
+                       )
+                       GROUP BY member_no
+                      HAVING totalCnt &gt;= (#{roundCnt} - #{maxNoSub})
+                      <choose>
+                          <when test="hitType == 'hit'">
+                              AND SUM(CASE WHEN hit_yn = 'Y' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) &gt;= #{rate}
+                          </when>
+                          <otherwise>
+                              AND (COUNT(*) - SUM(CASE WHEN hit_yn = 'Y' THEN 1 ELSE 0 END)) * 100.0 / COUNT(*) &gt;= #{rate}
+                          </otherwise>
+                      </choose>
+                 ) sub ON sub.member_no = p.member_no
+                WHERE p.round_no = (SELECT MAX(round_no) + 1 FROM LTT_ROUND_RESULT)
+                GROUP BY p.pred_num, rate_val
+          ) rd
+         GROUP BY rd.pred_num
+         ORDER BY memberCnt DESC, rd.pred_num ASC
+    </select>
 
     <!--
         골드 예측통합 - 최근 N회차 연속 적중/미적중 회원 목록 (회원별 상세)

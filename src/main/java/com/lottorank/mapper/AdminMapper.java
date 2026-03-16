@@ -147,18 +147,22 @@ public interface AdminMapper {
 
     /** 회원 전체기간 랭킹 목록 (특정 회차 기준) */
     List<MemRankAllVO> selectAdminAllRankingList(
-            @Param("roundNo") int roundNo,
-            @Param("offset")  int offset,
-            @Param("size")    int size);
+            @Param("roundNo")  int    roundNo,
+            @Param("offset")   int    offset,
+            @Param("size")     int    size,
+            @Param("sortCol")  String sortCol,
+            @Param("sortDir")  String sortDir);
 
     /** 회원 전체기간 랭킹 건수 */
     int selectAdminAllRankingCount(@Param("roundNo") int roundNo);
 
     /** 회원 최근5주 랭킹 목록 (특정 회차 기준) */
     List<MemRank5RoundVO> selectAdminRecent5RankingList(
-            @Param("roundNo") int roundNo,
-            @Param("offset")  int offset,
-            @Param("size")    int size);
+            @Param("roundNo")  int    roundNo,
+            @Param("offset")   int    offset,
+            @Param("size")     int    size,
+            @Param("sortCol")  String sortCol,
+            @Param("sortDir")  String sortDir);
 
     /** 회원 최근5주 랭킹 건수 */
     int selectAdminRecent5RankingCount(@Param("roundNo") int roundNo);

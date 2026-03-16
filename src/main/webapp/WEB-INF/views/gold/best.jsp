@@ -654,9 +654,28 @@
             <option value="hit">적중</option>
             <option value="miss">미적중</option>
           </select>
-          <span class="intg-query-text">한 회원이 선택한 번호 &nbsp;( 미제출</span>
+          <span class="intg-query-text">한 회원이 선택한 번호 &nbsp;(미제출</span>
           <input type="number" class="intg-num-input" id="consecNoSubmit" value="0" min="0" max="99" step="1" style="width:56px;" onchange="validateNoSubmit(this)">
-          <span class="intg-query-text">회 )</span>
+          <span class="intg-query-text">회)</span>
+          <button class="btn-intg-query" onclick="queryIntgByMode(event)">조회</button>
+        </div>
+
+        <div class="intg-query-box intg-query-box--inactive" id="intgBox3" onclick="selectIntgMode(3)">
+          <label class="intg-radio-label">
+            <input type="radio" name="intgMode" value="3" id="intgRadio3" onchange="selectIntgMode(3)">
+          </label>
+          <span class="intg-query-text">최근</span>
+          <input type="number" class="intg-num-input" id="rateRoundCnt" value="5" min="1" max="100" step="1">
+          <span class="intg-query-text">회차</span>
+          <select class="intg-select" id="rateHitType">
+            <option value="hit">적중률</option>
+            <option value="miss">미적중률</option>
+          </select>
+          <span class="intg-query-text">이</span>
+          <input type="number" class="intg-num-input" id="rateVal" value="100" min="0" max="100" step="1" style="width:64px;">
+          <span class="intg-query-text">% 이상인 회원이 선택한 번호 &nbsp;(미제출</span>
+          <input type="number" class="intg-num-input" id="rateNoSubmit" value="0" min="0" max="99" step="1" style="width:56px;" onchange="validateRateNoSubmit(this)">
+          <span class="intg-query-text">회)</span>
           <button class="btn-intg-query" onclick="queryIntgByMode(event)">조회</button>
         </div>
 
@@ -674,7 +693,10 @@
         <p class="intg-member-text">현재 진행 회차 : <strong><%=_nextRoundNo%> 회차</strong></p>
 
         <!-- 조회 조건 -->
-        <div class="intg-query-box">
+        <div class="intg-query-box" id="winBox1" onclick="selectWinMode(1)">
+          <label class="intg-radio-label">
+            <input type="radio" name="winMode" value="1" id="winRadio1" checked onchange="selectWinMode(1)">
+          </label>
           <span class="intg-query-text">최근</span>
           <input type="number" class="intg-num-input" id="winRoundCnt" value="10" min="1" max="<%=_nextRoundNo%>" step="1">
           <span class="intg-query-text">회차 동안</span>
@@ -690,7 +712,30 @@
               <option value="include">포함</option>
             </select><span class="intg-query-text">)</span>
           </div>
-          <button class="btn-intg-query" onclick="queryWinNum()">조회</button>
+          <button class="btn-intg-query" onclick="queryWinByMode(event)">조회</button>
+        </div>
+
+        <div class="intg-query-box intg-query-box--inactive" id="winBox2" onclick="selectWinMode(2)">
+          <label class="intg-radio-label">
+            <input type="radio" name="winMode" value="2" id="winRadio2" onchange="selectWinMode(2)">
+          </label>
+          <span class="intg-query-text">최근</span>
+          <input type="number" class="intg-num-input" id="winRateRoundCnt" value="10" min="1" max="<%=_nextRoundNo%>" step="1">
+          <span class="intg-query-text">회차 동안</span>
+          <input type="number" class="intg-num-input" id="winRateVal" value="100" min="0" max="100" step="1" style="width:64px;">
+          <span class="intg-query-text">%</span>
+          <select class="intg-select" id="winRateAppearType">
+            <option value="appear">출현</option>
+            <option value="absent" selected>미출현</option>
+          </select>
+          <span class="intg-query-text">한 번호 &nbsp;( 보너스번호</span>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <select class="intg-select" id="winRateBonusType">
+              <option value="exclude">제외</option>
+              <option value="include">포함</option>
+            </select><span class="intg-query-text">)</span>
+          </div>
+          <button class="btn-intg-query" onclick="queryWinByMode(event)">조회</button>
         </div>
 
         <!-- 조회 결과 -->
@@ -1343,18 +1388,22 @@
 
   /* 현재 선택된 조건 모드 (1: 랭킹, 2: 연속 적중/미적중) */
   var intgMode = 1;
+  var winMode  = 1;
 
   function selectIntgMode(mode) {
     intgMode = mode;
     document.getElementById('intgRadio' + mode).checked = true;
     document.getElementById('intgBox1').classList.toggle('intg-query-box--inactive', mode !== 1);
     document.getElementById('intgBox2').classList.toggle('intg-query-box--inactive', mode !== 2);
+    document.getElementById('intgBox3').classList.toggle('intg-query-box--inactive', mode !== 3);
   }
 
   function queryIntgByMode(e) {
     e.stopPropagation();
     if (intgMode === 2) {
       queryIntgConsec();
+    } else if (intgMode === 3) {
+      queryIntgRate();
     } else {
       queryIntgPred();
     }
@@ -1476,6 +1525,116 @@
     area.innerHTML = html;
   }
 
+  var _prevRateNoSubmit = 0;
+  function validateRateNoSubmit(el) {
+    var roundCnt = parseInt(document.getElementById('rateRoundCnt').value, 10) || 0;
+    var val = parseInt(el.value, 10);
+    if (!isNaN(val) && roundCnt > 0 && val > Math.floor(roundCnt / 2)) {
+      alert('미제출 횟수는 최근 ' + roundCnt + '회차의 50% (' + Math.floor(roundCnt / 2) + '회)를 초과할 수 없습니다.');
+      el.value = _prevRateNoSubmit;
+    } else {
+      _prevRateNoSubmit = isNaN(val) ? 0 : val;
+    }
+  }
+
+  function queryIntgRate() {
+    var roundCnt = parseInt(document.getElementById('rateRoundCnt').value, 10);
+    var hitType  = document.getElementById('rateHitType').value;
+    var rate     = parseFloat(document.getElementById('rateVal').value);
+    var noSubmit = parseInt(document.getElementById('rateNoSubmit').value, 10) || 0;
+
+    if (isNaN(roundCnt) || roundCnt < 1) {
+      alert('올바른 회차 수를 입력해 주세요.');
+      return;
+    }
+    if (isNaN(rate) || rate < 0 || rate > 100) {
+      alert('적중률은 0~100 사이로 입력해 주세요.');
+      return;
+    }
+
+    var area = document.getElementById('intgResultArea');
+    area.style.display = 'block';
+    area.innerHTML = '<div class="pred-loading">조회 중...</div>';
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '${pageContext.request.contextPath}/gold/best/intg-rate-query'
+      + '?roundCnt=' + roundCnt + '&hitType=' + hitType + '&rate=' + rate + '&noSubmit=' + noSubmit, true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status !== 200) {
+        area.innerHTML = '<div class="pred-loading">데이터를 불러오지 못했습니다.</div>';
+        return;
+      }
+      var data = JSON.parse(xhr.responseText);
+      if (!data.success) {
+        area.innerHTML = '<div class="pred-loading">오류가 발생했습니다.</div>';
+        return;
+      }
+      renderIntgRateResult(data.list, data.hitType);
+    };
+    xhr.send();
+  }
+
+  function renderIntgRateResult(list, hitType) {
+    var rateLabel = (hitType === 'miss') ? '미적중률' : '적중률';
+    var area = document.getElementById('intgResultArea');
+    var html = '<div class="intg-result-tbl-wrap"><table class="intg-result-tbl">';
+    html += '<thead><tr>'
+          + '<th style="width:36px;">No</th>'
+          + '<th style="width:140px;">예측번호</th>'
+          + '<th style="width:80px;">회원수</th>'
+          + '<th>' + rateLabel + '</th>'
+          + '</tr></thead><tbody>';
+
+    if (!list || list.length === 0) {
+      html += '<tr><td class="empty" colspan="4">해당 조건의 데이터가 없습니다.</td></tr>';
+    } else {
+      list.forEach(function(item, idx) {
+        var bc = item.predNum <= 10 ? 'ball-y' : item.predNum <= 20 ? 'ball-b' :
+                 item.predNum <= 30 ? 'ball-r' : item.predNum <= 40 ? 'ball-gr' : 'ball-g';
+        var ballHtml = '<span class="g-pred-ball ' + bc + '" title="' + item.predNum + '번 · 클릭하면 세트에 추가/삭제" onclick="selectNumber(' + item.predNum + ')">' + item.predNum + '</span>';
+
+        var rateHtml = '<span style="color:rgba(255,210,80,0.25);">—</span>';
+        if (item.hitRates) {
+          /* hitRates 형식: "100:233,90:31" (rate:인원수 쌍 — GROUP_CONCAT 잘림 방지) */
+          var parts = item.hitRates.split(',');
+          var rateMap = {};
+          var rateOrder = [];
+          parts.forEach(function(p) {
+            var kv = p.trim().split(':');
+            var key = kv[0];
+            var cnt = parseInt(kv[1] || '1', 10);
+            if (!rateMap[key]) { rateMap[key] = 0; rateOrder.push(key); }
+            rateMap[key] += cnt;
+          });
+          var MAX_LINES = 5;
+          var segments = [];
+          var remainCnt = 0;
+          rateOrder.forEach(function(key, i) {
+            if (i < MAX_LINES) {
+              segments.push('<span class="intg-rank-line">' + key + '% ' + rateMap[key] + '명</span>');
+            } else {
+              remainCnt += rateMap[key];
+            }
+          });
+          if (remainCnt > 0) {
+            segments.push('<span class="intg-rank-line intg-rank-remain">그 외 ' + remainCnt + '명</span>');
+          }
+          rateHtml = '<span class="intg-rank-inline">' + segments.join('<span class="intg-rank-sep">, </span>') + '</span>';
+        }
+
+        html += '<tr>'
+              + '<td class="intg-no">' + (idx + 1) + '</td>'
+              + '<td>' + ballHtml + '</td>'
+              + '<td><span class="intg-member-cnt">' + item.memberCnt.toLocaleString() + '</span></td>'
+              + '<td>' + rateHtml + '</td>'
+              + '</tr>';
+      });
+    }
+    html += '</tbody></table></div>';
+    area.innerHTML = html;
+  }
+
   /* 예측통합 정렬 상태 */
   var _intgList    = null;
   var _intgRankDir = 'top';
@@ -1584,6 +1743,22 @@
   /* ══════════════════════════════════════
      당첨번호 탭
   ══════════════════════════════════════ */
+  function selectWinMode(mode) {
+    winMode = mode;
+    document.getElementById('winRadio' + mode).checked = true;
+    document.getElementById('winBox1').classList.toggle('intg-query-box--inactive', mode !== 1);
+    document.getElementById('winBox2').classList.toggle('intg-query-box--inactive', mode !== 2);
+  }
+
+  function queryWinByMode(e) {
+    e.stopPropagation();
+    if (winMode === 2) {
+      queryWinRate();
+    } else {
+      queryWinNum();
+    }
+  }
+
   function queryWinNum() {
     var roundCnt   = parseInt(document.getElementById('winRoundCnt').value, 10);
     var appearType = document.getElementById('winAppearType').value;
@@ -1619,6 +1794,78 @@
       }
     };
     xhr.send();
+  }
+
+  function queryWinRate() {
+    var roundCnt   = parseInt(document.getElementById('winRateRoundCnt').value, 10);
+    var rate       = parseFloat(document.getElementById('winRateVal').value);
+    var appearType = document.getElementById('winRateAppearType').value;
+    var bonusType  = document.getElementById('winRateBonusType').value;
+
+    if (isNaN(roundCnt) || roundCnt < 1) {
+      alert('올바른 회차 수를 입력해 주세요.');
+      return;
+    }
+    if (isNaN(rate) || rate < 0 || rate > 100) {
+      alert('출현률은 0~100 사이 값을 입력해 주세요.');
+      return;
+    }
+
+    var area = document.getElementById('winResultArea');
+    area.style.display = 'block';
+    area.innerHTML = '<div class="pred-loading">조회 중...</div>';
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '${pageContext.request.contextPath}/gold/best/win-rate-query'
+      + '?roundCnt=' + roundCnt + '&rate=' + rate + '&appearType=' + appearType + '&bonusType=' + bonusType, true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status !== 200) {
+        area.innerHTML = '<div class="pred-loading">데이터를 불러오지 못했습니다.</div>';
+        return;
+      }
+      var data = JSON.parse(xhr.responseText);
+      if (!data.success) {
+        area.innerHTML = '<div class="pred-loading">오류가 발생했습니다.</div>';
+        return;
+      }
+      renderWinRateResult(data.list, data.roundCnt, data.rate, data.appearType);
+    };
+    xhr.send();
+  }
+
+  function renderWinRateResult(list, roundCnt, rate, appearType) {
+    var area = document.getElementById('winResultArea');
+    if (!list || list.length === 0) {
+      var typeLabel = appearType === 'appear' ? '출현률' : '미출현률';
+      area.innerHTML = '<div style="text-align:center;padding:40px 0;color:rgba(255,210,80,0.4);font-size:0.9rem;">최근 ' + roundCnt + '회차 동안 ' + typeLabel + ' ' + rate + '% 이상인 번호가 없습니다.</div>';
+      return;
+    }
+    var typeLabel = appearType === 'appear' ? '출현률' : '미출현률';
+    var html = '<div class="intg-result-tbl-wrap"><table class="intg-result-tbl">';
+    html += '<thead><tr>'
+          + '<th style="width:36px;">No</th>'
+          + '<th style="width:140px;">로또번호</th>'
+          + '<th style="width:150px;">출현횟수</th>'
+          + '<th style="width:120px;">' + typeLabel + '</th>'
+          + '</tr></thead><tbody>';
+    list.forEach(function(item, idx) {
+      var bc = item.lottoNum <= 10 ? 'ball-y' : item.lottoNum <= 20 ? 'ball-b' :
+               item.lottoNum <= 30 ? 'ball-r' : item.lottoNum <= 40 ? 'ball-gr' : 'ball-g';
+      var ballHtml = '<span class="g-pred-ball ' + bc + '" title="' + item.lottoNum + '번 · 클릭하면 세트에 추가" '
+                   + 'onclick="selectNumber(' + item.lottoNum + ')">' + item.lottoNum + '</span>';
+      var displayRate = appearType === 'appear'
+          ? (item.appearRate != null ? item.appearRate.toFixed(1) : '0.0')
+          : (item.appearRate != null ? (100 - item.appearRate).toFixed(1) : '100.0');
+      html += '<tr>';
+      html += '<td class="intg-no">' + (idx + 1) + '</td>';
+      html += '<td>' + ballHtml + '</td>';
+      html += '<td><span class="intg-member-cnt">' + (item.appearCnt || 0) + '</span></td>';
+      html += '<td><span class="intg-member-cnt">' + displayRate + '%</span></td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    area.innerHTML = html;
   }
 
   function renderWinMostResult(list, roundCnt) {

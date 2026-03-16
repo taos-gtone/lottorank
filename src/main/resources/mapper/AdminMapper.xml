@@ -613,7 +613,21 @@
                  ON r5.member_no = r.member_no
                 AND r5.round_no  = #{roundNo}
          WHERE r.round_no = #{roundNo}
-         ORDER BY r.ranking ASC
+         ORDER BY
+         <choose>
+             <when test="sortCol == 'cross'">
+                 <choose>
+                     <when test="sortDir == 'desc'">(r5.ranking IS NULL) ASC, r5.ranking DESC, r.ranking ASC</when>
+                     <otherwise>(r5.ranking IS NULL) ASC, r5.ranking ASC, r.ranking ASC</otherwise>
+                 </choose>
+             </when>
+             <otherwise>
+                 <choose>
+                     <when test="sortDir == 'desc'">r.ranking DESC</when>
+                     <otherwise>r.ranking ASC</otherwise>
+                 </choose>
+             </otherwise>
+         </choose>
          LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -650,7 +664,21 @@
                  ON ra.member_no = r.member_no
                 AND ra.round_no  = #{roundNo}
          WHERE r.round_no = #{roundNo}
-         ORDER BY r.ranking ASC
+         ORDER BY
+         <choose>
+             <when test="sortCol == 'cross'">
+                 <choose>
+                     <when test="sortDir == 'desc'">(ra.ranking IS NULL) ASC, ra.ranking DESC, r.ranking ASC</when>
+                     <otherwise>(ra.ranking IS NULL) ASC, ra.ranking ASC, r.ranking ASC</otherwise>
+                 </choose>
+             </when>
+             <otherwise>
+                 <choose>
+                     <when test="sortDir == 'desc'">r.ranking DESC</when>
+                     <otherwise>r.ranking ASC</otherwise>
+                 </choose>
+             </otherwise>
+         </choose>
          LIMIT #{size} OFFSET #{offset}
     </select>
 

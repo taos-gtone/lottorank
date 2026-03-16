@@ -9,6 +9,7 @@ public class WinNumStatVO {
     private Integer appearCnt;          // 출현 횟수 (most 모드)
     private String  roundList;          // 출현 회차 목록 comma-sep, desc (most 모드)
     private Integer consecutiveAbsent;  // 연속 미출현 횟수 (least 모드)
+    private Double  appearRate;         // 출현률 0.0~100.0 (rate 모드)
 
     public int     getLottoNum()                    { return lottoNum; }
     public void    setLottoNum(int v)               { this.lottoNum = v; }
@@ -21,4 +22,7 @@ public class WinNumStatVO {
 
     public Integer getConsecutiveAbsent()           { return consecutiveAbsent; }
     public void    setConsecutiveAbsent(Integer v)  { this.consecutiveAbsent = v; }
+
+    public Double  getAppearRate()                  { return appearRate; }
+    public void    setAppearRate(Double v)          { this.appearRate = v; }
 }

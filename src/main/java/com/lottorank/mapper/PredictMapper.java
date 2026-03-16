@@ -61,10 +61,22 @@ public interface PredictMapper {
     List<WinNumStatVO> selectWinNumLeastList(@Param("roundCnt")     int     roundCnt,
                                              @Param("includeBonus") boolean includeBonus);
 
+    /** 당첨번호 탭 - 최근 N회차 출현률/미출현률 기준 번호 조회 */
+    List<WinNumStatVO> selectWinNumByRate(@Param("roundCnt")     int     roundCnt,
+                                          @Param("includeBonus") boolean includeBonus,
+                                          @Param("appearType")   String  appearType,
+                                          @Param("rate")         double  rate);
+
     /** 골드 예측통합 - 최근 N회차 연속 적중/미적중 회원이 선택한 번호 집계 */
     List<IntgPredNumVO> selectIntgPredNumByConsec(@Param("roundCnt")   int    roundCnt,
                                                   @Param("hitYn")      String hitYn,
                                                   @Param("maxNoSub")   int    maxNoSub);
+
+    /** 골드 예측통합 - 최근 N회차 적중률/미적중률 조건 회원이 선택한 번호 집계 */
+    List<IntgPredNumVO> selectIntgPredNumByRate(@Param("roundCnt")  int    roundCnt,
+                                                @Param("hitType")   String hitType,
+                                                @Param("rate")      double rate,
+                                                @Param("maxNoSub")  int    maxNoSub);
 
     /** 골드 예측통합 - 최근 N회차 연속 적중/미적중 회원 목록 (회원별 상세) */
     List<IntgConsecMemberVO> selectIntgConsecMemberList(@Param("roundCnt")  int    roundCnt,

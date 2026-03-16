@@ -9,6 +9,7 @@ public class IntgPredNumVO {
     private int    predNum;
     private int    memberCnt;
     private String rankings; // comma-separated, e.g. "1,3,5,NEW"
+    private String hitRates; // comma-separated rates (integers), e.g. "100,80,60" (rate query용)
 
     /* ── 볼 색상 헬퍼 ── */
     public String getBallClass() {
@@ -27,4 +28,7 @@ public class IntgPredNumVO {
 
     public String getRankings()          { return rankings; }
     public void   setRankings(String v)  { this.rankings = v; }
+
+    public String getHitRates()          { return hitRates; }
+    public void   setHitRates(String v)  { this.hitRates = v; }
 }

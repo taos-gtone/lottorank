@@ -353,6 +353,79 @@ public class GoldController {
     }
 
     /**
+     * 예측통합 탭 - 적중률/미적중률 조건 회원 번호 집계 (AJAX JSON)
+     * GET /gold/best/intg-rate-query?roundCnt=5&hitType=hit&rate=100&noSubmit=0
+     */
+    @GetMapping("/best/intg-rate-query")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> intgRateQuery(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "5")   int    roundCnt,
+            @RequestParam(defaultValue = "hit") String hitType,
+            @RequestParam(defaultValue = "100") double rate,
+            @RequestParam(defaultValue = "0")   int    noSubmit) {
+        if (getLoginUser(request) == null) {
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+        }
+        if (roundCnt < 1)   roundCnt = 1;
+        if (roundCnt > 100) roundCnt = 100;
+        if (noSubmit < 0)   noSubmit = 0;
+        if (rate < 0)       rate = 0;
+        if (rate > 100)     rate = 100;
+        if (!"hit".equals(hitType) && !"miss".equals(hitType)) hitType = "hit";
+
+        List<IntgPredNumVO> list = predictMapper.selectIntgPredNumByRate(roundCnt, hitType, rate, noSubmit);
+        Map<String, Object> result = new HashMap<>();
+        result.put("success",  true);
+        result.put("hitType",  hitType);
+        result.put("roundCnt", roundCnt);
+        result.put("rate",     rate);
+        result.put("list",     list);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 당첨번호 탭 - 출현률/미출현률 조건 번호 조회 (AJAX JSON)
+     * GET /gold/best/win-rate-query?roundCnt=10&appearType=appear&bonusType=exclude&rate=50
+     */
+    @GetMapping("/best/win-rate-query")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> winRateQuery(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "10")      int    roundCnt,
+            @RequestParam(defaultValue = "absent")  String appearType,
+            @RequestParam(defaultValue = "exclude") String bonusType,
+            @RequestParam(defaultValue = "50")      double rate) {
+        if (getLoginUser(request) == null) {
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+        }
+
+        if (roundCnt < 1)   roundCnt = 1;
+        if (roundCnt > 1200) roundCnt = 1200;
+        if (rate < 0)       rate = 0;
+        if (rate > 100)     rate = 100;
+        if (!"appear".equals(appearType) && !"absent".equals(appearType)) appearType = "appear";
+        if (!"exclude".equals(bonusType) && !"include".equals(bonusType)) bonusType = "exclude";
+
+        boolean includeBonus = "include".equals(bonusType);
+        List<WinNumStatVO> list = predictMapper.selectWinNumByRate(roundCnt, includeBonus, appearType, rate);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("success",    true);
+        result.put("list",       list);
+        result.put("appearType", appearType);
+        result.put("roundCnt",   roundCnt);
+        result.put("rate",       rate);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
      * 예측번호 탭 - 회차별 예측번호 목록 (AJAX JSON)
      * GET /gold/best/pred-list?roundNo=1170&page=1
      */
