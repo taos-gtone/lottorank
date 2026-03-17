@@ -19,8 +19,14 @@
 .page-breadcrumb a { color: rgba(255,255,255,0.75); transition: color 0.2s; }
 .page-breadcrumb a:hover { color: #fff; }
 .breadcrumb-sep { margin: 0 5px; }
+
+.page-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
   flex-wrap: wrap;
 }
+
 .page-title {
   font-size: 1.6rem;
   font-weight: 900;
@@ -260,11 +266,13 @@
 @media (max-width: 768px) {
   .find-wrap  { padding: 24px 12px 60px; }
   .page-title  { font-size: 1.3rem; }
+  .page-title-wrap { gap: 8px; }
 }
 @media (max-width: 480px) {
   .find-wrap  { padding: 16px 10px 52px; }
   .page-title  { font-size: 1.15rem; }
   .page-desc   { font-size: 0.78rem; }
+  .page-title-wrap { flex-direction: column; align-items: flex-start; gap: 4px; }
   .find-card-body { padding: 24px 20px; }
   .btn-find-submit { padding: 14px; font-size: 0.95rem; }
 }

@@ -92,12 +92,6 @@
               <span class="sm-link-desc">이번 회차 예측번호 1개 제출</span>
             </a>
           </li>
-          <li>
-            <a href="${pageContext.request.contextPath}/predict/analysis">
-              <span class="sm-link-icon">▸</span>분석실
-              <span class="sm-link-desc">번호별 출현 통계 및 패턴 분석</span>
-            </a>
-          </li>
         </ul>
       </div>
 
@@ -200,18 +194,26 @@
         </ul>
       </div>
 
-      <!-- ── 7. 골드 멤버십 (풀 폭) ── -->
+      <!-- ── 7. 골드 멤버십 ── -->
       <div class="sm-card sm-card-gold">
         <div class="sm-card-header">
           <span class="sm-icon">🏆</span>
           <span class="sm-title">골드 멤버십</span>
-          <span class="sm-badge-new">준비중</span>
         </div>
-        <p class="sm-gold-desc">
-          매주 TOP 랭커 예측번호·상세 적중률 분석·프리미엄 통계를 제공하는<br>
-          로또랭크 골드 멤버십이 곧 출시됩니다!
-        </p>
-        <a href="#" class="sm-gold-btn">🏆 사전 알림 신청</a>
+        <ul class="sm-links">
+          <li>
+            <a href="${pageContext.request.contextPath}/gold/best">
+              <span class="sm-link-icon">▸</span>골드번호 조합
+              <span class="sm-link-desc">TOP 랭커 예측번호 기반 골드번호 산출</span>
+            </a>
+          </li>
+          <li>
+            <a href="${pageContext.request.contextPath}/gold/saved">
+              <span class="sm-link-icon">▸</span>저장번호 조회
+              <span class="sm-link-desc">내가 저장한 번호 세트 관리 및 조회</span>
+            </a>
+          </li>
+        </ul>
       </div>
 
     </div><!-- /sitemap-grid -->

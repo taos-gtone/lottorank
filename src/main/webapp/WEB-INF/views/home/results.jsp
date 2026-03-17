@@ -40,7 +40,7 @@
             <% } %>
           </div>
           <div class="prize-row">
-            1등 당첨금 ·
+            1등 총 당첨금 ·
             <span class="prize-amount">
               <%= (latestResult != null) ? latestResult.getFormattedPrize() : "-" %>
             </span>
@@ -68,26 +68,26 @@
           <table class="prize-table">
             <thead>
               <tr>
-                <th>등위</th>
-                <th>당첨자수</th>
-                <th>1인 당첨금</th>
+                <th>순위</th>
+                <th>당첨게임 수</th>
+                <th>1게임당 당첨금</th>
               </tr>
             </thead>
             <tbody>
               <% if (latestResult != null) { %>
               <tr>
                 <td class="red">1등</td>
-                <td class="red"><%= String.format("%,d", latestResult.getPrize1stCount()) %>명</td>
+                <td class="red"><%= String.format("%,d", latestResult.getPrize1stCount()) %></td>
                 <td class="red"><%= latestResult.getFormattedPrize1stPer() %></td>
               </tr>
               <tr>
                 <td>2등</td>
-                <td><%= String.format("%,d", latestResult.getPrize2ndCount()) %>명</td>
+                <td><%= String.format("%,d", latestResult.getPrize2ndCount()) %></td>
                 <td><%= latestResult.getFormattedPrize2ndPer() %></td>
               </tr>
               <tr>
                 <td>3등</td>
-                <td><%= String.format("%,d", latestResult.getPrize3rdCount()) %>명</td>
+                <td><%= String.format("%,d", latestResult.getPrize3rdCount()) %></td>
                 <td><%= latestResult.getFormattedPrize3rdPer() %></td>
               </tr>
               <% } else { %>

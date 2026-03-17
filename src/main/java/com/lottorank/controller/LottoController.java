@@ -26,9 +26,10 @@ public class LottoController {
 
     private static final Map<String, String> SORT_COL_MAP = new HashMap<>();
     static {
-        SORT_COL_MAP.put("round",   "ROUND_NO");
-        SORT_COL_MAP.put("prize",   "FST_PRZ_SUM_AMT");
-        SORT_COL_MAP.put("winners", "FST_PRZ_WINNER_CNT");
+        SORT_COL_MAP.put("round",    "ROUND_NO");
+        SORT_COL_MAP.put("prize",    "FST_PRZ_SUM_AMT");
+        SORT_COL_MAP.put("perprize", "FST_PRZ_PER_AMT");
+        SORT_COL_MAP.put("winners",  "FST_PRZ_WINNER_CNT");
     }
 
     @Autowired

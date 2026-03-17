@@ -386,6 +386,13 @@
   white-space: nowrap;
 }
 
+.prize-1st-per {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--red);
+  white-space: nowrap;
+}
+
 .winner-count {
   font-size: 0.92rem;
   color: var(--txt2);
@@ -557,6 +564,7 @@
 
   .round-date,
   .prize-1st,
+  .prize-1st-per,
   .winner-count { font-size: 1.1rem; }
 
   .round-num { font-size: 1.15rem; }

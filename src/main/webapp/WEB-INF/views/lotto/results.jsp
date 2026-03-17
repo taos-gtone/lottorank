@@ -137,9 +137,10 @@
                               + (searchRoundObj != null ? "round=" + searchRoundObj + "&" : "")
                               + "size=" + pageSize + "&page=1";
               // 각 컬럼의 다음 방향 계산
-              String roundDir   = "round".equals(currentSort)   ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
-              String prizeDir   = "prize".equals(currentSort)   ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
-              String winnersDir = "winners".equals(currentSort) ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
+              String roundDir    = "round".equals(currentSort)    ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
+              String prizeDir    = "prize".equals(currentSort)    ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
+              String perprizeDir = "perprize".equals(currentSort) ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
+              String winnersDir  = "winners".equals(currentSort)  ? ("desc".equals(currentDir) ? "asc" : "desc") : "desc";
             %>
             <tr>
               <th><a href="<%= contextPath %>/lotto/results?<%= baseSort %>&sort=round&dir=<%= roundDir %>" class="sort-th<%= "round".equals(currentSort) ? " active" : "" %>">
@@ -148,10 +149,13 @@
               <th>추첨일</th>
               <th>당첨번호</th>
               <th><a href="<%= contextPath %>/lotto/results?<%= baseSort %>&sort=prize&dir=<%= prizeDir %>" class="sort-th<%= "prize".equals(currentSort) ? " active" : "" %>">
-                1등 당첨금 <span class="sort-icon"><%= "prize".equals(currentSort) ? ("desc".equals(currentDir) ? "▼" : "▲") : "⇅" %></span>
+                1등 총 당첨금 <span class="sort-icon"><%= "prize".equals(currentSort) ? ("desc".equals(currentDir) ? "▼" : "▲") : "⇅" %></span>
+              </a></th>
+              <th><a href="<%= contextPath %>/lotto/results?<%= baseSort %>&sort=perprize&dir=<%= perprizeDir %>" class="sort-th<%= "perprize".equals(currentSort) ? " active" : "" %>">
+                1게임당 당첨금 <span class="sort-icon"><%= "perprize".equals(currentSort) ? ("desc".equals(currentDir) ? "▼" : "▲") : "⇅" %></span>
               </a></th>
               <th><a href="<%= contextPath %>/lotto/results?<%= baseSort %>&sort=winners&dir=<%= winnersDir %>" class="sort-th<%= "winners".equals(currentSort) ? " active" : "" %>">
-                1등 당첨자 <span class="sort-icon"><%= "winners".equals(currentSort) ? ("desc".equals(currentDir) ? "▼" : "▲") : "⇅" %></span>
+                당첨게임 수 <span class="sort-icon"><%= "winners".equals(currentSort) ? ("desc".equals(currentDir) ? "▼" : "▲") : "⇅" %></span>
               </a></th>
             </tr>
           </thead>
@@ -176,12 +180,13 @@
                     </div>
                   </td>
                   <td class="prize-1st"><%= r.getFormattedPrize() %></td>
-                  <td class="winner-count"><%= r.getPrize1stCount() %>명</td>
+                  <td class="prize-1st-per"><%= r.getFormattedPrize1stPer() %></td>
+                  <td class="winner-count"><%= r.getPrize1stCount() %></td>
                 </tr>
               <% } %>
             <% } else { %>
                 <tr>
-                  <td colspan="5" style="text-align:center; padding:40px; color:#888;">
+                  <td colspan="6" style="text-align:center; padding:40px; color:#888;">
                     조회된 결과가 없습니다.
                   </td>
                 </tr>

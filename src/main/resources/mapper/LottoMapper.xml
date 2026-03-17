@@ -56,7 +56,8 @@
             NUM5              AS num5,
             NUM6              AS num6,
             BONUS_NUM         AS bonusNum,
-            FST_PRZ_SUM_AMT   AS prize1stAmount,
+            FST_PRZ_SUM_AMT    AS prize1stAmount,
+            FST_PRZ_PER_AMT    AS prize1stPerAmt,
             FST_PRZ_WINNER_CNT AS prize1stCount
         FROM LTT_ROUND_RESULT
         <include refid="whereCondition"/>

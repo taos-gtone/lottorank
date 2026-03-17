@@ -106,7 +106,14 @@ public class LottoRoundResult {
     private String formatAmt(long amt) {
         return String.format(Locale.US, "%,d원", amt);
     }
-    public String getFormattedPrize1stPer()  { return formatAmt(prize1stPerAmt); }
+    public String getFormattedPrize1stPer() {
+        long rounded = Math.round(prize1stPerAmt / 1000.0) * 1000L;
+        long eok = rounded / 100_000_000L;
+        long man = (rounded % 100_000_000L) / 10_000L;
+        if (eok > 0 && man > 0) return String.format(Locale.US, "%d억 %,d만원", eok, man);
+        if (eok > 0)             return String.format("%d억원", eok);
+        return String.format(Locale.US, "%,d만원", man);
+    }
     public String getFormattedPrize2ndPer()  { return formatAmt(prize2ndPerAmt); }
     public String getFormattedPrize3rdPer()  { return formatAmt(prize3rdPerAmt); }
 }
