@@ -178,6 +178,15 @@
              #{memo, jdbcType=VARCHAR}, 'N')
     </insert>
 
+    <!-- 회원 저장번호 메모 수정 -->
+    <update id="updateSavedNumMemo">
+        UPDATE MEM_SAVED_NUM
+        SET memo = #{memo, jdbcType=VARCHAR}
+        WHERE member_no = #{memberNo}
+          AND round_no  = #{roundNo}
+          AND num_set_no = #{numSetNo}
+    </update>
+
     <!-- 회원 저장번호 조회 (해당 회차, 세트 순) -->
     <select id="selectSavedNums" resultType="MemSavedNumVO">
         SELECT round_no, member_no, num_set_no,

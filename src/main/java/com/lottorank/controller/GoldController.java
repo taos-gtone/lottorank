@@ -232,6 +232,50 @@ public class GoldController {
     }
 
     /**
+     * 저장번호 - 특정 세트 메모 수정 (AJAX JSON)
+     * PATCH /gold/saved/memo
+     * body: { roundNo, numSetNo, memo }
+     */
+    @PatchMapping("/saved/memo")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateSavedMemo(
+            HttpServletRequest request,
+            @RequestBody Map<String, Object> body) {
+        Map<String, Object> err = new HashMap<>();
+        if (getLoginUser(request) == null) {
+            err.put("success", false);
+            err.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+        }
+        HttpSession session = request.getSession(false);
+        long memberNo = (Long) session.getAttribute("loginMemberNo");
+
+        int roundNo, numSetNo;
+        String memo;
+        try {
+            roundNo  = ((Number) body.get("roundNo")).intValue();
+            numSetNo = ((Number) body.get("numSetNo")).intValue();
+            memo     = body.get("memo") != null ? body.get("memo").toString() : "";
+        } catch (Exception e) {
+            err.put("success", false);
+            err.put("message", "잘못된 요청입니다.");
+            return ResponseEntity.badRequest().body(err);
+        }
+        if (memo.length() > 200) memo = memo.substring(0, 200);
+
+        try {
+            memberMapper.updateSavedNumMemo(memberNo, roundNo, numSetNo, memo);
+        } catch (Exception e) {
+            err.put("success", false);
+            err.put("message", "메모 저장 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
      * 저장번호 - 해당 회차 전체 삭제 (AJAX JSON)
      * DELETE /gold/saved/nums?roundNo=xxx
      */

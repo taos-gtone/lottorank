@@ -139,8 +139,16 @@
 /* ── 테이블 툴바 ── */
 .saved-tbl-toolbar {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 8px;
+  gap: 12px;
+}
+.saved-memo-hint {
+  font-size: 0.86rem;
+  color: rgba(255,210,80,0.75);
+  font-weight: 600;
+  flex: 1;
 }
 
 /* ── 테이블 래퍼 (pred-tbl-wrap과 동일) ── */
@@ -235,6 +243,81 @@
 .saved-memo.has-memo {
   color: rgba(255,218,100,0.8);
   font-style: normal;
+}
+
+/* ── 메모 인라인 수정 ── */
+.memo-cell {
+  cursor: pointer;
+  position: relative;
+}
+.memo-cell:not(.editing):hover {
+  background: rgba(228,170,0,0.1) !important;
+}
+.memo-edit-icon {
+  font-size: 0.7rem;
+  opacity: 0;
+  margin-left: 6px;
+  transition: opacity 0.15s;
+  vertical-align: middle;
+}
+.memo-cell:not(.editing):hover .memo-edit-icon {
+  opacity: 0.6;
+}
+.memo-placeholder {
+  color: rgba(255,210,80,0.2);
+  font-style: italic;
+  font-size: 0.83rem;
+}
+
+/* 편집 상태 */
+.memo-cell.editing {
+  cursor: default;
+  padding: 8px 12px !important;
+}
+.memo-edit-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+.memo-input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(228,170,0,0.4);
+  border-radius: 5px;
+  color: rgba(255,235,160,0.95);
+  font-size: 0.87rem;
+  padding: 6px 10px;
+  outline: none;
+  box-sizing: border-box;
+}
+.memo-input:focus {
+  border-color: rgba(228,170,0,0.75);
+  box-shadow: 0 0 0 2px rgba(228,170,0,0.12);
+}
+.btn-memo-save {
+  flex-shrink: 0;
+  padding: 5px 14px;
+  border-radius: 5px;
+  background: rgba(228,170,0,0.18);
+  border: 1px solid rgba(228,170,0,0.45);
+  color: #FFD54F;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-memo-save:hover:not(:disabled) {
+  background: rgba(228,170,0,0.32);
+  border-color: rgba(228,170,0,0.7);
+}
+.btn-memo-save:disabled { opacity: 0.4; cursor: default; }
+.memo-error {
+  font-size: 0.75rem;
+  color: rgba(255,100,100,0.85);
+  margin-top: 3px;
 }
 
 /* ── 전체 삭제 버튼 ── */

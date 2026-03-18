@@ -85,4 +85,10 @@ public interface MemberMapper {
 
     /** 회원 저장번호 - 특정 회차의 저장 세트 목록 조회 */
     List<MemSavedNumVO> selectSavedNums(@Param("memberNo") long memberNo, @Param("roundNo") int roundNo);
+
+    /** 회원 저장번호 - 특정 세트의 메모 수정 */
+    void updateSavedNumMemo(@Param("memberNo") long memberNo,
+                            @Param("roundNo")  int    roundNo,
+                            @Param("numSetNo") int    numSetNo,
+                            @Param("memo")     String memo);
 }

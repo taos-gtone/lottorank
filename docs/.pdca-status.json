@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-18T08:34:56.923Z",
+  "lastUpdated": "2026-03-18T15:04:24.135Z",
   "activeFeatures": [
     "mapper",
     "service",
@@ -26,9 +26,9 @@
       },
       "timestamps": {
         "started": "2026-02-19T15:10:07.894Z",
-        "lastUpdated": "2026-03-16T08:10:11.389Z"
+        "lastUpdated": "2026-03-18T14:50:49.405Z"
       },
-      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/mapper/PredictMapper.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\mapper\\MemberMapper.java"
     },
     "service": {
       "phase": "do",
@@ -52,9 +52,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-19T15:10:26.070Z",
-        "lastUpdated": "2026-03-18T08:34:56.922Z"
+        "lastUpdated": "2026-03-18T15:04:24.135Z"
       },
-      "lastFile": "c:/projects/lottorank/src/main/java/com/lottorank/controller/HomeController.java"
+      "lastFile": "c:\\projects\\lottorank\\src\\main\\java\\com\\lottorank\\controller\\GoldController.java"
     },
     "lottorank": {
       "phase": "do",
@@ -157,7 +157,7 @@
   "session": {
     "startedAt": "2026-02-19T14:55:10.648Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-18T08:34:56.923Z"
+    "lastActivity": "2026-03-18T15:04:24.135Z"
   },
   "history": [
     {
@@ -3504,6 +3504,24 @@
     },
     {
       "timestamp": "2026-03-18T08:34:56.922Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-18T14:50:49.405Z",
+      "feature": "mapper",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-18T14:51:19.807Z",
+      "feature": "controller",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-18T15:04:24.135Z",
       "feature": "controller",
       "phase": "do",
       "action": "updated"
