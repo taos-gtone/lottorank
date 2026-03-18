@@ -1,10 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.lottorank.vo.MemberVO" %>
-<%@ page import="com.lottorank.vo.MemRankAllVO" %>
-<%@ page import="com.lottorank.vo.MemRank5RoundVO" %>
-<%@ page import="com.lottorank.vo.PredHistVO" %>
-<%@ page import="com.lottorank.vo.MemPredNumVO" %>
-<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -26,25 +21,6 @@
 <%
   MemberVO m = (MemberVO) request.getAttribute("memberInfo");
   boolean isSocial = m != null && !"I".equals(m.getRegLoginTypCd());
-  List<MemRankAllVO>   myAllList = (List<MemRankAllVO>)   request.getAttribute("myAllRankingList");
-  List<MemRank5RoundVO> my5List  = (List<MemRank5RoundVO>) request.getAttribute("myRecent5RankingList");
-  List<PredHistVO>    myPredList = (List<PredHistVO>)      request.getAttribute("myPredHistory");
-  MemPredNumVO nextRoundPred = (MemPredNumVO) request.getAttribute("nextRoundPred");
-  int nextRoundNo = request.getAttribute("nextRoundNo") != null ? (Integer) request.getAttribute("nextRoundNo") : 0;
-  MemRankAllVO    myAllLatest = (myAllList != null && !myAllList.isEmpty()) ? myAllList.get(0) : null;
-  MemRank5RoundVO my5Latest   = (my5List  != null && !my5List.isEmpty())   ? my5List.get(0)  : null;
-
-  // 예측 통계 계산
-  int totalPred = 0, totalHit = 0;
-  if (myPredList != null) {
-    for (PredHistVO ph : myPredList) {
-      if (ph.isPredicted()) {
-        totalPred++;
-        if ("Y".equals(ph.getHitYn())) totalHit++;
-      }
-    }
-  }
-  double predHitRate = totalPred > 0 ? totalHit * 100.0 / totalPred : 0.0;
 
   // 표시용 값 준비
   String userId    = m != null && m.getUserId()    != null ? m.getUserId()    : "";
@@ -251,242 +227,36 @@
     </div><!-- /tab-info -->
 
     <!-- ════════════════════════════════════
-         탭 3: 내 예측번호 조회
+         탭 3: 내 예측번호 조회 (lazy load)
     ════════════════════════════════════ -->
     <div id="tab-predict" class="mypage-tab-content" role="tabpanel">
-
-      <!-- ── 예측 통계 요약 카드 ── -->
-      <div class="my-pred-summary">
-        <div class="my-pred-stat-col">
-          <div class="my-pred-stat-num"><%=totalPred%></div>
-          <div class="my-pred-stat-label">총 제출</div>
-        </div>
-        <div class="my-pred-divider"></div>
-        <div class="my-pred-stat-col">
-          <div class="my-pred-stat-num"><%=totalHit%></div>
-          <div class="my-pred-stat-label">적중</div>
-        </div>
-        <div class="my-pred-divider"></div>
-        <div class="my-pred-stat-col">
-          <div class="my-pred-stat-num"><%=String.format("%.1f%%", predHitRate)%></div>
-          <div class="my-pred-stat-label">적중률</div>
-        </div>
+      <div class="tab-loading" id="loading-predict">
+        <div class="tab-spinner"></div>
+        <div class="tab-loading-text">데이터를 불러오는 중...</div>
       </div>
-
-      <!-- ── 회차별 예측 이력 테이블 ── -->
-      <div class="rank-hist-panel">
-        <div class="rank-hist-label">회차별 예측 이력 <span>(전 회차 · 미제출 포함)</span></div>
-        <div class="rank-hist-wrap">
-          <table class="rank-hist-table pred-hist-table">
-            <thead>
-              <tr>
-                <th>회차</th>
-                <th>추첨일</th>
-                <th>당첨번호</th>
-                <th>내 번호</th>
-                <th>결과</th>
-                <th>제출일시</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyPred">
-              <!-- 이번 회차(미추첨) 고정 행 – data-fixed 속성으로 페이지네이션 제외 -->
-              <% if (nextRoundNo > 0) { %>
-              <tr class="pred-row-current" data-fixed="true">
-                <td class="pred-round"><%=nextRoundNo%>회</td>
-                <td class="pred-date"></td>
-                <td class="pred-winning-nums"></td>
-                <td class="pred-my-num">
-                  <% if (nextRoundPred != null) {
-                     int pn = nextRoundPred.getPredNum();
-                     String pnBall = pn<=10?"ball-y":pn<=20?"ball-b":pn<=30?"ball-r":pn<=40?"ball-g":"ball-gr"; %>
-                  <span class="pred-ball pred-ball-lg <%=pnBall%>"><%=pn%></span>
-                  <% } else { %>
-                  <span class="pred-none-dash">—</span>
-                  <% } %>
-                </td>
-                <td></td>
-                <td class="pred-submit-at">
-                  <% if (nextRoundPred != null && nextRoundPred.getSubmitAt() != null) { %>
-                  <%=new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(nextRoundPred.getSubmitAt())%>
-                  <% } else { %>
-                  <span class="pred-none-dash">—</span>
-                  <% } %>
-                </td>
-              </tr>
-              <% } %>
-              <% if (myPredList == null || myPredList.isEmpty()) { %>
-              <tr>
-                <td colspan="6" class="pred-empty-row">아직 예측 이력이 없습니다.</td>
-              </tr>
-              <% } else { %>
-              <% for (PredHistVO ph : myPredList) { %>
-              <tr class="<%=ph.isPredicted() ? "" : "pred-row-none"%>">
-                <td class="pred-round"><%=ph.getRoundNo()%>회</td>
-                <td class="pred-date"><%=ph.getRoundDateDisp()%></td>
-                <td class="pred-winning-nums">
-                  <div class="pred-nums-wrap">
-                    <span class="pred-ball <%=ph.getBallClass(ph.getNum1())%>"><%=ph.getNum1()%></span>
-                    <span class="pred-ball <%=ph.getBallClass(ph.getNum2())%>"><%=ph.getNum2()%></span>
-                    <span class="pred-ball <%=ph.getBallClass(ph.getNum3())%>"><%=ph.getNum3()%></span>
-                    <span class="pred-ball <%=ph.getBallClass(ph.getNum4())%>"><%=ph.getNum4()%></span>
-                    <span class="pred-ball <%=ph.getBallClass(ph.getNum5())%>"><%=ph.getNum5()%></span>
-                    <span class="pred-ball <%=ph.getBallClass(ph.getNum6())%>"><%=ph.getNum6()%></span>
-                    <span class="pred-plus-sign">+</span>
-                    <span class="pred-ball <%=ph.getBallClass(ph.getBonusNum())%> pred-ball-bonus"><%=ph.getBonusNum()%></span>
-                  </div>
-                </td>
-                <td class="pred-my-num">
-                  <% if (ph.isPredicted()) { %>
-                  <span class="pred-ball pred-ball-lg <%=ph.getPredBallClass()%>"><%=ph.getPredNum()%></span>
-                  <% } else { %>
-                  <span class="pred-none-dash">—</span>
-                  <% } %>
-                </td>
-                <td><span class="pred-hit-badge <%=ph.getHitCss()%>"><%=ph.getHitLabel()%></span></td>
-                <td class="pred-submit-at">
-                  <% if (ph.getSubmitAt() != null) { %>
-                  <%=new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(ph.getSubmitAt())%>
-                  <% } else { %>
-                  <span class="pred-none-dash">—</span>
-                  <% } %>
-                </td>
-              </tr>
-              <% } %>
-              <% } %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="rank-hist-pagination" id="paginPred"></div>
-
+      <div id="inner-predict" style="display:none"></div>
     </div><!-- /tab-predict -->
 
     <!-- ════════════════════════════════════
-         탭 1: 내 전체 랭킹
+         탭 1: 내 전체 랭킹 (lazy load)
     ════════════════════════════════════ -->
     <div id="tab-rank-all" class="mypage-tab-content active" role="tabpanel">
-      <% if (myAllLatest == null) { %>
-      <div class="my-rank-empty">
-        <div class="my-rank-empty-icon">🏅</div>
-        <div class="my-rank-empty-title">아직 전체 랭킹이 없습니다</div>
-        <div class="my-rank-empty-desc">번호 예측에 참여하면 자동으로 랭킹이 생성됩니다.</div>
+      <div class="tab-loading" id="loading-rank-all">
+        <div class="tab-spinner"></div>
+        <div class="tab-loading-text">데이터를 불러오는 중...</div>
       </div>
-      <% } else { %>
-
-      <!-- 최신 회차 요약 카드 -->
-      <div class="my-rank-summary">
-        <div class="my-rank-badge<%=myAllLatest.getRanking() <= 3 ? " rank-" + myAllLatest.getRanking() : ""%>">
-          <%=myAllLatest.getRankingStr()%>
-        </div>
-        <div class="my-rank-info">
-          <div class="my-rank-label">전체 랭킹 최신 (<%=myAllLatest.getRoundNo()%>회 기준)</div>
-          <div class="my-rank-number"><%=myAllLatest.getRankingStr()%>위</div>
-          <span class="my-rank-change <%=myAllLatest.getRankChangeCss()%>"><%=myAllLatest.getRankChangeLabel()%></span>
-        </div>
-        <div class="my-rank-hit">
-          <div class="my-rank-hit-label">적중률</div>
-          <div class="my-rank-hit-value"><%=myAllLatest.getHitRateStr()%></div>
-        </div>
-      </div>
-
-      <!-- 회차별 이력 테이블 -->
-      <div class="rank-hist-panel">
-        <div class="rank-hist-label">회차별 랭킹 이력 <span>(전체기간)</span></div>
-        <div class="rank-hist-wrap">
-          <table class="rank-hist-table">
-            <thead>
-              <tr>
-                <th>회차</th>
-                <th>순위</th>
-                <th>변동</th>
-                <th>적중률</th>
-                <th>선택수</th>
-                <th>정답수</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyRankAll">
-              <% for (MemRankAllVO r : myAllList) { %>
-              <tr>
-                <td><%=r.getRoundNo()%>회</td>
-                <td class="<%=r.getRanking()==1?"cell-r1":r.getRanking()==2?"cell-r2":r.getRanking()==3?"cell-r3":""%>"><%=r.getRankingStr()%>위</td>
-                <td class="<%=r.getRankChangeCss()%>"><%=r.getRankChangeLabel()%></td>
-                <td><span class="accuracy-tag"><%=r.getHitRateStr()%></span></td>
-                <td><%=r.getSelNumCnt()%></td>
-                <td><%=r.getWinCnt()%></td>
-              </tr>
-              <% } %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="rank-hist-pagination" id="paginRankAll"></div>
-
-      <% } %>
+      <div id="inner-rank-all" style="display:none"></div>
     </div><!-- /tab-rank-all -->
 
     <!-- ════════════════════════════════════
-         탭 2: 내 최근5주 랭킹
+         탭 2: 내 최근5주 랭킹 (lazy load)
     ════════════════════════════════════ -->
     <div id="tab-rank-5" class="mypage-tab-content" role="tabpanel">
-      <% if (my5Latest == null) { %>
-      <div class="my-rank-empty">
-        <div class="my-rank-empty-icon">📅</div>
-        <div class="my-rank-empty-title">아직 최근 5주 랭킹이 없습니다</div>
-        <div class="my-rank-empty-desc">최근 5회차 내에 번호 예측에 참여하면 자동으로 랭킹이 생성됩니다.</div>
+      <div class="tab-loading" id="loading-rank-5">
+        <div class="tab-spinner"></div>
+        <div class="tab-loading-text">데이터를 불러오는 중...</div>
       </div>
-      <% } else { %>
-
-      <!-- 최신 회차 요약 카드 -->
-      <div class="my-rank-summary">
-        <div class="my-rank-badge<%=my5Latest.getRanking() <= 3 ? " rank-" + my5Latest.getRanking() : ""%>">
-          <%=my5Latest.getRankingStr()%>
-        </div>
-        <div class="my-rank-info">
-          <div class="my-rank-label">최근 5주 랭킹 최신 (<%=my5Latest.getRoundNo()%>회 기준)</div>
-          <div class="my-rank-number"><%=my5Latest.getRankingStr()%>위</div>
-          <span class="my-rank-change <%=my5Latest.getRankChangeCss()%>"><%=my5Latest.getRankChangeLabel()%></span>
-        </div>
-        <div class="my-rank-hit">
-          <div class="my-rank-hit-label">적중률</div>
-          <div class="my-rank-hit-value"><%=my5Latest.getHitRateStr()%></div>
-        </div>
-      </div>
-
-      <!-- 회차별 이력 테이블 -->
-      <div class="rank-hist-panel">
-        <div class="rank-hist-label">회차별 랭킹 이력 <span>(최근 5주 기준)</span></div>
-        <div class="rank-hist-wrap">
-          <table class="rank-hist-table">
-            <thead>
-              <tr>
-                <th>회차</th>
-                <th>순위</th>
-                <th>변동</th>
-                <th>적중률</th>
-                <th>선택수</th>
-                <th>정답수</th>
-                <th>오답수</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyRank5">
-              <% for (MemRank5RoundVO r : my5List) { %>
-              <tr>
-                <td><%=r.getRoundNo()%>회</td>
-                <td class="<%=r.getRanking()==1?"cell-r1":r.getRanking()==2?"cell-r2":r.getRanking()==3?"cell-r3":""%>"><%=r.getRankingStr()%>위</td>
-                <td class="<%=r.getRankChangeCss()%>"><%=r.getRankChangeLabel()%></td>
-                <td><span class="accuracy-tag"><%=r.getHitRateStr()%></span></td>
-                <td><%=r.getLastSelCnt()%></td>
-                <td><%=r.getWinCnt()%></td>
-                <td><%=r.getLostCnt()%></td>
-              </tr>
-              <% } %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="rank-hist-pagination" id="paginRank5"></div>
-
-      <% } %>
+      <div id="inner-rank-5" style="display:none"></div>
     </div><!-- /tab-rank-5 -->
 
   </div><!-- /mypage-container -->
@@ -505,6 +275,10 @@
     if (e.target === mobileMenu) mobileMenu.classList.remove('open');
   });
 
+  /* ── 탭 lazy load 상태 ── */
+  var tabLoaded = { 'rank-all': false, 'rank-5': false, 'predict': false };
+  var CTX = '${pageContext.request.contextPath}';
+
   /* ── URL 해시로 탭 자동 전환 ── */
   (function() {
     var hash = window.location.hash.replace('#', '');
@@ -514,11 +288,10 @@
     if (idx === undefined) return;
     var btn = document.querySelectorAll('.mypage-tab-btn')[idx];
     if (btn) btn.click();
-    // 해시 제거 (뒤로가기 등 오작동 방지)
     history.replaceState(null, '', window.location.pathname + window.location.search);
   })();
 
-  /* ── 탭 전환 ── */
+  /* ── 탭 전환 + lazy load ── */
   function switchTab(tabId, btn) {
     document.querySelectorAll('.mypage-tab-btn').forEach(b => {
       b.classList.remove('active');
@@ -528,6 +301,227 @@
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
     document.getElementById('tab-' + tabId).classList.add('active');
+
+    if (tabId !== 'info' && !tabLoaded[tabId]) {
+      loadTabData(tabId);
+    }
+  }
+
+  /* ── 탭 데이터 AJAX 로드 ── */
+  function loadTabData(tabId) {
+    var urlMap = {
+      'rank-all': CTX + '/member/mypage/tab/rank-all',
+      'rank-5':   CTX + '/member/mypage/tab/rank-5',
+      'predict':  CTX + '/member/mypage/tab/predict'
+    };
+    fetch(urlMap[tabId])
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        tabLoaded[tabId] = true;
+        document.getElementById('loading-' + tabId).style.display = 'none';
+        var inner = document.getElementById('inner-' + tabId);
+        inner.style.display = '';
+        if (tabId === 'rank-all') renderRankAll(data, inner);
+        else if (tabId === 'rank-5') renderRank5(data, inner);
+        else if (tabId === 'predict') renderPredict(data, inner);
+      })
+      .catch(function() {
+        document.getElementById('loading-' + tabId).innerHTML =
+          '<p class="tab-error">데이터를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.</p>';
+      });
+  }
+
+  /* ── 탭 1: 내 전체 랭킹 렌더 ── */
+  function renderRankAll(data, el) {
+    var list = data.list || [];
+    if (!list.length) {
+      el.innerHTML = '<div class="my-rank-empty">' +
+        '<div class="my-rank-empty-icon">🏅</div>' +
+        '<div class="my-rank-empty-title">아직 전체 랭킹이 없습니다</div>' +
+        '<div class="my-rank-empty-desc">번호 예측에 참여하면 자동으로 랭킹이 생성됩니다.</div>' +
+        '</div>';
+      return;
+    }
+    var latest = list[0];
+    var rankBadgeCls = 'my-rank-badge' + (latest.ranking <= 3 ? ' rank-' + latest.ranking : '');
+    var rows = list.map(function(r) {
+      var cellCls = r.ranking === 1 ? 'cell-r1' : r.ranking === 2 ? 'cell-r2' : r.ranking === 3 ? 'cell-r3' : '';
+      return '<tr>' +
+        '<td>' + r.roundNo + '회</td>' +
+        '<td class="' + cellCls + '">' + r.rankingStr + '위</td>' +
+        '<td class="' + r.rankChangeCss + '">' + r.rankChangeLabel + '</td>' +
+        '<td><span class="accuracy-tag">' + r.hitRateStr + '</span></td>' +
+        '<td>' + r.selNumCnt + '</td>' +
+        '<td>' + r.winCnt + '</td>' +
+        '</tr>';
+    }).join('');
+
+    el.innerHTML =
+      '<div class="my-rank-summary">' +
+        '<div class="' + rankBadgeCls + '">' + latest.rankingStr + '</div>' +
+        '<div class="my-rank-info">' +
+          '<div class="my-rank-label">전체 랭킹 최신 (' + latest.roundNo + '회 기준)</div>' +
+          '<div class="my-rank-number">' + latest.rankingStr + '위</div>' +
+          '<span class="my-rank-change ' + latest.rankChangeCss + '">' + latest.rankChangeLabel + '</span>' +
+        '</div>' +
+        '<div class="my-rank-hit">' +
+          '<div class="my-rank-hit-label">적중률</div>' +
+          '<div class="my-rank-hit-value">' + latest.hitRateStr + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rank-hist-panel">' +
+        '<div class="rank-hist-label">회차별 랭킹 이력 <span>(전체기간)</span></div>' +
+        '<div class="rank-hist-wrap">' +
+          '<table class="rank-hist-table"><thead><tr>' +
+            '<th>회차</th><th>순위</th><th>변동</th><th>적중률</th><th>선택수</th><th>정답수</th>' +
+          '</tr></thead>' +
+          '<tbody id="tbodyRankAll">' + rows + '</tbody>' +
+        '</table></div>' +
+      '</div>' +
+      '<div class="rank-hist-pagination" id="paginRankAll"></div>';
+
+    initTablePagination('tbodyRankAll', 'paginRankAll', 10);
+  }
+
+  /* ── 탭 2: 내 최근5주 랭킹 렌더 ── */
+  function renderRank5(data, el) {
+    var list = data.list || [];
+    if (!list.length) {
+      el.innerHTML = '<div class="my-rank-empty">' +
+        '<div class="my-rank-empty-icon">📅</div>' +
+        '<div class="my-rank-empty-title">아직 최근 5주 랭킹이 없습니다</div>' +
+        '<div class="my-rank-empty-desc">최근 5회차 내에 번호 예측에 참여하면 자동으로 랭킹이 생성됩니다.</div>' +
+        '</div>';
+      return;
+    }
+    var latest = list[0];
+    var rankBadgeCls = 'my-rank-badge' + (latest.ranking <= 3 ? ' rank-' + latest.ranking : '');
+    var rows = list.map(function(r) {
+      var cellCls = r.ranking === 1 ? 'cell-r1' : r.ranking === 2 ? 'cell-r2' : r.ranking === 3 ? 'cell-r3' : '';
+      return '<tr>' +
+        '<td>' + r.roundNo + '회</td>' +
+        '<td class="' + cellCls + '">' + r.rankingStr + '위</td>' +
+        '<td class="' + r.rankChangeCss + '">' + r.rankChangeLabel + '</td>' +
+        '<td><span class="accuracy-tag">' + r.hitRateStr + '</span></td>' +
+        '<td>' + r.lastSelCnt + '</td>' +
+        '<td>' + r.winCnt + '</td>' +
+        '<td>' + r.lostCnt + '</td>' +
+        '</tr>';
+    }).join('');
+
+    el.innerHTML =
+      '<div class="my-rank-summary">' +
+        '<div class="' + rankBadgeCls + '">' + latest.rankingStr + '</div>' +
+        '<div class="my-rank-info">' +
+          '<div class="my-rank-label">최근 5주 랭킹 최신 (' + latest.roundNo + '회 기준)</div>' +
+          '<div class="my-rank-number">' + latest.rankingStr + '위</div>' +
+          '<span class="my-rank-change ' + latest.rankChangeCss + '">' + latest.rankChangeLabel + '</span>' +
+        '</div>' +
+        '<div class="my-rank-hit">' +
+          '<div class="my-rank-hit-label">적중률</div>' +
+          '<div class="my-rank-hit-value">' + latest.hitRateStr + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rank-hist-panel">' +
+        '<div class="rank-hist-label">회차별 랭킹 이력 <span>(최근 5주 기준)</span></div>' +
+        '<div class="rank-hist-wrap">' +
+          '<table class="rank-hist-table"><thead><tr>' +
+            '<th>회차</th><th>순위</th><th>변동</th><th>적중률</th><th>선택수</th><th>정답수</th><th>오답수</th>' +
+          '</tr></thead>' +
+          '<tbody id="tbodyRank5">' + rows + '</tbody>' +
+        '</table></div>' +
+      '</div>' +
+      '<div class="rank-hist-pagination" id="paginRank5"></div>';
+
+    initTablePagination('tbodyRank5', 'paginRank5', 10);
+  }
+
+  /* ── 탭 3: 내 예측번호 렌더 ── */
+  function renderPredict(data, el) {
+    var list  = data.list  || [];
+    var np    = data.nextPred;
+    var nrNo  = data.nextRoundNo || 0;
+
+    // 고정 행 (이번 회차)
+    var fixedRow = '';
+    if (nrNo > 0) {
+      var myNumCell = np
+        ? '<span class="pred-ball pred-ball-lg ' + np.predBallClass + '">' + np.predNum + '</span>'
+        : '<span class="pred-none-dash">—</span>';
+      var submitCell = (np && np.submitAt)
+        ? np.submitAt
+        : '<span class="pred-none-dash">—</span>';
+      fixedRow = '<tr class="pred-row-current" data-fixed="true">' +
+        '<td class="pred-round">' + nrNo + '회</td>' +
+        '<td class="pred-date"></td>' +
+        '<td class="pred-winning-nums"></td>' +
+        '<td class="pred-my-num">' + myNumCell + '</td>' +
+        '<td></td>' +
+        '<td class="pred-submit-at">' + submitCell + '</td>' +
+        '</tr>';
+    }
+
+    // 이력 행
+    var histRows = '';
+    if (!list.length) {
+      histRows = '<tr><td colspan="6" class="pred-empty-row">아직 예측 이력이 없습니다.</td></tr>';
+    } else {
+      histRows = list.map(function(ph) {
+        var numsHtml =
+          '<span class="pred-ball ' + ph.bc1 + '">' + ph.num1 + '</span>' +
+          '<span class="pred-ball ' + ph.bc2 + '">' + ph.num2 + '</span>' +
+          '<span class="pred-ball ' + ph.bc3 + '">' + ph.num3 + '</span>' +
+          '<span class="pred-ball ' + ph.bc4 + '">' + ph.num4 + '</span>' +
+          '<span class="pred-ball ' + ph.bc5 + '">' + ph.num5 + '</span>' +
+          '<span class="pred-ball ' + ph.bc6 + '">' + ph.num6 + '</span>' +
+          '<span class="pred-plus-sign">+</span>' +
+          '<span class="pred-ball ' + ph.bcBonus + ' pred-ball-bonus">' + ph.bonusNum + '</span>';
+        var myNum = ph.predicted
+          ? '<span class="pred-ball pred-ball-lg ' + ph.predBallClass + '">' + ph.predNum + '</span>'
+          : '<span class="pred-none-dash">—</span>';
+        var submitAt = ph.submitAt
+          ? ph.submitAt
+          : '<span class="pred-none-dash">—</span>';
+        return '<tr class="' + (ph.predicted ? '' : 'pred-row-none') + '">' +
+          '<td class="pred-round">' + ph.roundNo + '회</td>' +
+          '<td class="pred-date">' + ph.roundDateDisp + '</td>' +
+          '<td class="pred-winning-nums"><div class="pred-nums-wrap">' + numsHtml + '</div></td>' +
+          '<td class="pred-my-num">' + myNum + '</td>' +
+          '<td><span class="pred-hit-badge ' + ph.hitCss + '">' + ph.hitLabel + '</span></td>' +
+          '<td class="pred-submit-at">' + submitAt + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    el.innerHTML =
+      '<div class="my-pred-summary">' +
+        '<div class="my-pred-stat-col">' +
+          '<div class="my-pred-stat-num">' + data.totalPred + '</div>' +
+          '<div class="my-pred-stat-label">총 제출</div>' +
+        '</div>' +
+        '<div class="my-pred-divider"></div>' +
+        '<div class="my-pred-stat-col">' +
+          '<div class="my-pred-stat-num">' + data.totalHit + '</div>' +
+          '<div class="my-pred-stat-label">적중</div>' +
+        '</div>' +
+        '<div class="my-pred-divider"></div>' +
+        '<div class="my-pred-stat-col">' +
+          '<div class="my-pred-stat-num">' + data.predHitRate + '</div>' +
+          '<div class="my-pred-stat-label">적중률</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rank-hist-panel">' +
+        '<div class="rank-hist-label">회차별 예측 이력 <span>(전 회차 · 미제출 포함)</span></div>' +
+        '<div class="rank-hist-wrap">' +
+          '<table class="rank-hist-table pred-hist-table"><thead><tr>' +
+            '<th>회차</th><th>추첨일</th><th>당첨번호</th><th>내 번호</th><th>결과</th><th>제출일시</th>' +
+          '</tr></thead>' +
+          '<tbody id="tbodyPred">' + fixedRow + histRows + '</tbody>' +
+        '</table></div>' +
+      '</div>' +
+      '<div class="rank-hist-pagination" id="paginPred"></div>';
+
+    initTablePagination('tbodyPred', 'paginPred', 15);
   }
 
   /* ── 비밀번호 표시/숨기기 ── */
@@ -729,9 +723,8 @@
     show(1);
   }
 
-  initTablePagination('tbodyRankAll', 'paginRankAll', 10);
-  initTablePagination('tbodyRank5',   'paginRank5',   10);
-  initTablePagination('tbodyPred',    'paginPred',    15);
+  /* ── 페이지 로드 시 기본 탭(내 전체 랭킹) 자동 로드 ── */
+  loadTabData('rank-all');
 </script>
 
 </body>

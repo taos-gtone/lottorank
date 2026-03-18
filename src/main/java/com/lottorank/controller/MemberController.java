@@ -8,6 +8,10 @@ import com.lottorank.service.NaverOAuthService;
 import com.lottorank.service.PredictService;
 import com.lottorank.service.RankingService;
 import com.lottorank.vo.MemberVO;
+import com.lottorank.vo.MemRankAllVO;
+import com.lottorank.vo.MemRank5RoundVO;
+import com.lottorank.vo.PredHistVO;
+import com.lottorank.vo.MemPredNumVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -114,14 +120,151 @@ public class MemberController {
             return "redirect:/member/login?redirect=/member/mypage";
         }
         Long memberNo = (Long) session.getAttribute("loginMemberNo");
-        int nextRoundNo = rankingService.getNextPredRoundNo();
         model.addAttribute("memberInfo", memberService.getMemberDetail(memberNo));
-        model.addAttribute("myAllRankingList", rankingService.getMyAllRankingHistory(memberNo));
-        model.addAttribute("myRecent5RankingList", rankingService.getMyRecent5RankingHistory(memberNo));
-        model.addAttribute("myPredHistory", predictService.getMyPredHistory(memberNo));
-        model.addAttribute("nextRoundNo", nextRoundNo);
-        model.addAttribute("nextRoundPred", predictService.getPrediction(nextRoundNo, memberNo));
         return "member/mypage";
+    }
+
+    /* ── 탭 데이터 AJAX 엔드포인트 ─────────────────────────────────── */
+
+    @GetMapping("/mypage/tab/rank-all")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> mypageTabRankAll(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            result.put("success", false);
+            return ResponseEntity.ok(result);
+        }
+        Long memberNo = (Long) session.getAttribute("loginMemberNo");
+        List<MemRankAllVO> list = rankingService.getMyAllRankingHistory(memberNo);
+        List<Map<String, Object>> rows = new ArrayList<>();
+        if (list != null) {
+            for (MemRankAllVO r : list) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("roundNo",        r.getRoundNo());
+                row.put("ranking",        r.getRanking());
+                row.put("rankingStr",     r.getRankingStr());
+                row.put("rankChangeCss",  r.getRankChangeCss());
+                row.put("rankChangeLabel",r.getRankChangeLabel());
+                row.put("hitRateStr",     r.getHitRateStr());
+                row.put("selNumCnt",      r.getSelNumCnt());
+                row.put("winCnt",         r.getWinCnt());
+                rows.add(row);
+            }
+        }
+        result.put("success", true);
+        result.put("list", rows);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/mypage/tab/rank-5")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> mypageTabRank5(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            result.put("success", false);
+            return ResponseEntity.ok(result);
+        }
+        Long memberNo = (Long) session.getAttribute("loginMemberNo");
+        List<MemRank5RoundVO> list = rankingService.getMyRecent5RankingHistory(memberNo);
+        List<Map<String, Object>> rows = new ArrayList<>();
+        if (list != null) {
+            for (MemRank5RoundVO r : list) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("roundNo",        r.getRoundNo());
+                row.put("ranking",        r.getRanking());
+                row.put("rankingStr",     r.getRankingStr());
+                row.put("rankChangeCss",  r.getRankChangeCss());
+                row.put("rankChangeLabel",r.getRankChangeLabel());
+                row.put("hitRateStr",     r.getHitRateStr());
+                row.put("lastSelCnt",     r.getLastSelCnt());
+                row.put("winCnt",         r.getWinCnt());
+                row.put("lostCnt",        r.getLostCnt());
+                rows.add(row);
+            }
+        }
+        result.put("success", true);
+        result.put("list", rows);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/mypage/tab/predict")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> mypageTabPredict(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginUser") == null) {
+            result.put("success", false);
+            return ResponseEntity.ok(result);
+        }
+        Long memberNo = (Long) session.getAttribute("loginMemberNo");
+        int nextRoundNo = rankingService.getNextPredRoundNo();
+        List<PredHistVO> predList = predictService.getMyPredHistory(memberNo);
+        MemPredNumVO nextRoundPred = predictService.getPrediction(nextRoundNo, memberNo);
+
+        int totalPred = 0, totalHit = 0;
+        if (predList != null) {
+            for (PredHistVO ph : predList) {
+                if (ph.isPredicted()) {
+                    totalPred++;
+                    if ("Y".equals(ph.getHitYn())) totalHit++;
+                }
+            }
+        }
+        double predHitRate = totalPred > 0 ? totalHit * 100.0 / totalPred : 0.0;
+
+        result.put("nextRoundNo", nextRoundNo);
+        result.put("totalPred",   totalPred);
+        result.put("totalHit",    totalHit);
+        result.put("predHitRate", String.format("%.1f%%", predHitRate));
+
+        if (nextRoundPred != null) {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+            Map<String, Object> np = new HashMap<>();
+            np.put("predNum",      nextRoundPred.getPredNum());
+            np.put("predBallClass",ballClass(nextRoundPred.getPredNum()));
+            np.put("submitAt",     nextRoundPred.getSubmitAt() != null ? sdf.format(nextRoundPred.getSubmitAt()) : null);
+            result.put("nextPred", np);
+        } else {
+            result.put("nextPred", null);
+        }
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        if (predList != null) {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+            for (PredHistVO ph : predList) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("roundNo",      ph.getRoundNo());
+                row.put("roundDateDisp",ph.getRoundDateDisp());
+                row.put("num1", ph.getNum1()); row.put("bc1", ph.getBallClass(ph.getNum1()));
+                row.put("num2", ph.getNum2()); row.put("bc2", ph.getBallClass(ph.getNum2()));
+                row.put("num3", ph.getNum3()); row.put("bc3", ph.getBallClass(ph.getNum3()));
+                row.put("num4", ph.getNum4()); row.put("bc4", ph.getBallClass(ph.getNum4()));
+                row.put("num5", ph.getNum5()); row.put("bc5", ph.getBallClass(ph.getNum5()));
+                row.put("num6", ph.getNum6()); row.put("bc6", ph.getBallClass(ph.getNum6()));
+                row.put("bonusNum",     ph.getBonusNum());
+                row.put("bcBonus",      ph.getBallClass(ph.getBonusNum()));
+                row.put("predicted",    ph.isPredicted());
+                row.put("predNum",      ph.getPredNum());
+                row.put("predBallClass",ph.getPredBallClass());
+                row.put("hitLabel",     ph.getHitLabel());
+                row.put("hitCss",       ph.getHitCss());
+                row.put("submitAt",     ph.getSubmitAt() != null ? sdf.format(ph.getSubmitAt()) : null);
+                rows.add(row);
+            }
+        }
+        result.put("list", rows);
+        result.put("success", true);
+        return ResponseEntity.ok(result);
+    }
+
+    private String ballClass(int n) {
+        if (n <= 10) return "ball-y";
+        if (n <= 20) return "ball-b";
+        if (n <= 30) return "ball-r";
+        if (n <= 40) return "ball-g";
+        return "ball-gr";
     }
 
     @PostMapping("/mypage/updatePw")

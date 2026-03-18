@@ -585,6 +585,65 @@
       color: rgba(255,140,140,0.95);
     }
 
+    /* ── 골드회원 유저 패널 테마 ── */
+    .member-panel-gold {
+      background: linear-gradient(135deg, #1B2E5A 0%, #2C1F4A 100%);
+      border-bottom: 1px solid rgba(232,160,0,0.28);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 배경 장식 원 (골드번호 조합 카드와 동일한 패턴) */
+    .member-panel-gold::before {
+      content: '';
+      position: absolute;
+      top: -28px; right: -28px;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(232,160,0,0.10);
+      pointer-events: none;
+    }
+
+    /* 아바타 — 밝은 골드 */
+    .member-panel-gold .up-avatar {
+      background: linear-gradient(135deg, #FFE040, #FF9800);
+      color: #3D2B00;
+      border-color: rgba(255,193,7,0.5);
+      box-shadow: 0 0 14px rgba(232,160,0,0.45);
+    }
+
+    /* 등급 태그 — 골드 */
+    .up-tag-gold {
+      background: linear-gradient(135deg, var(--gold), #F57F17);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    /* 미니 통계 배경 */
+    .member-panel-gold .up-mini-stats {
+      background: rgba(232,160,0,0.14);
+    }
+
+    .member-panel-gold .up-mini-stat {
+      background: rgba(0,0,0,0.18);
+    }
+
+    /* 통계 숫자 — 골드 */
+    .member-panel-gold .up-mini-num {
+      color: #FFD54F;
+    }
+
+    /* 메뉴 아이템 호버 */
+    .member-panel-gold .up-menu-item:hover {
+      background: rgba(232,160,0,0.14);
+      color: #FFE57F;
+    }
+
+    /* 로그아웃 버튼 */
+    .member-panel-gold .up-logout-btn {
+      border-color: rgba(232,160,0,0.22);
+    }
+
     /* 골드 회원 배너 */
     .gold-panel {
       padding: 14px 20px;

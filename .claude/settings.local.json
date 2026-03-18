@@ -58,7 +58,9 @@
       "Bash(npm install:*)",
       "Bash(node /c/projects/lottorank/verify_echarts.js)",
       "Bash(node -e \"var e=require\\(''C:/Users/230228/node_modules/echarts''\\); console.log\\(e.version\\);\")",
-      "Bash(find c:/projects/lottorank/src/main/java -type f -name *Interceptor*)"
+      "Bash(find c:/projects/lottorank/src/main/java -type f -name *Interceptor*)",
+      "Bash(find c:/projects/lottorank/src -iname *Member* -o -iname *member*)",
+      "Bash(grep -E \"\\\\.\\(java\\)$\")"
     ]
   }
 }

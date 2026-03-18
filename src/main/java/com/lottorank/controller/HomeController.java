@@ -56,6 +56,7 @@ public class HomeController {
             if (memberNo != null) {
                 model.addAttribute("myHeroRanking", rankingService.getMyLatestAllRanking(memberNo));
                 model.addAttribute("myGradeNm", memberMapper.findGradeNmByMemberNo(memberNo));
+                model.addAttribute("isGoldMember", memberMapper.isGoldMember(memberNo));
             }
         }
         return "index";

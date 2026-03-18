@@ -85,15 +85,20 @@
             String _heroHitRate = (_heroRank != null) ? _heroRank.getHitRateStr()       : "0%";
           %>
           <% if (_isLoggedIn) { %>
+          <%
+            boolean _isGold = Boolean.TRUE.equals(request.getAttribute("isGoldMember"));
+          %>
           <!-- 로그인 후: 유저 패널 -->
-          <div class="login-panel member-panel">
+          <div class="login-panel member-panel<%=_isGold ? " member-panel-gold" : ""%>">
             <!-- 프로필 -->
             <div class="up-header">
               <div class="up-avatar"><%=_avatarLetter%></div>
               <div class="up-info">
                 <div class="up-name-row">
                   <span class="up-name"><%=_loginNickname%>님</span>
-                  <span class="up-tag up-tag-rank">${empty myGradeNm ? '일반회원' : myGradeNm}</span>
+                  <span class="up-tag <%=_isGold ? "up-tag-gold" : "up-tag-rank"%>">
+                    <%=_isGold ? "🏆 " : ""%>${empty myGradeNm ? '일반회원' : myGradeNm}
+                  </span>
                 </div>
               </div>
             </div>
