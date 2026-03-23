@@ -1,7 +1,15 @@
 {
+<<<<<<< HEAD
   "sessionCount": 6,
+=======
+  "sessionCount": 3,
+>>>>>>> branch 'master' of https://github.com/taos-gtone/lottorank.git
   "lastSession": {
+<<<<<<< HEAD
     "startedAt": "2026-03-19T02:17:38.938Z",
+=======
+    "startedAt": "2026-03-21T01:45:29.329Z",
+>>>>>>> branch 'master' of https://github.com/taos-gtone/lottorank.git
     "platform": "claude",
     "level": "Dynamic"
   }
