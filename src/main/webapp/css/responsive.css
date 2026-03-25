@@ -18,6 +18,19 @@
       .page-banner,
       .predict-page-banner,
       .board-banner { height: 60px; }
+
+      /* 배너 높이 고정으로 줄바꿈 시 잘리는 요소 숨김 */
+      .page-banner .page-breadcrumb,
+      .predict-page-banner .page-breadcrumb,
+      .board-banner .page-breadcrumb { display: none; }
+
+      .page-banner .page-desc,
+      .predict-page-banner .page-desc,
+      .board-banner .page-desc { display: none; }
+
+      .page-banner .page-round-badge,
+      .predict-page-banner .page-round-badge,
+      .board-banner .page-round-badge { display: none; }
     }
 
     @media (max-width: 1100px) {

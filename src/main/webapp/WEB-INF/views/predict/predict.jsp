@@ -51,7 +51,7 @@
     <div class="page-breadcrumb">
       <a href="<%= contextPath %>/">홈</a>
       <span class="breadcrumb-sep">›</span>
-      <span>예측/분석실</span>
+      <span>번호 예측</span>
       <span class="breadcrumb-sep">›</span>
       <span>번호 예측하기</span>
     </div>

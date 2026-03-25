@@ -120,10 +120,9 @@
             </div>
           </div>
           <div class="nav-item has-dropdown" data-path="/predict">
-            <a href="/predict">예측/분석실</a>
+            <a href="/predict">&nbsp;번호 예측&nbsp;</a>
             <div class="nav-dropdown">
               <a href="/predict" class="nav-dropdown-item">번호 예측하기</a>
-              <a href="/predict/analysis" class="nav-dropdown-item">분석실</a>
             </div>
           </div>
           <div class="nav-item has-dropdown" data-path="/board">
@@ -217,9 +216,8 @@
         <a href="/ranking" class="mobile-nav-parent">회원번호/랭킹 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
         <a href="/ranking/no" class="mobile-nav-sub">회원번호 조회</a>
         <a href="/ranking/list" class="mobile-nav-sub">회원 랭킹</a>
-        <a href="/predict" class="mobile-nav-parent">예측/분석실 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
+        <a href="/predict" class="mobile-nav-parent">번호 예측<span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
         <a href="/predict" class="mobile-nav-sub">번호 예측하기</a>
-        <a href="/predict/analysis" class="mobile-nav-sub">분석실</a>
         <a href="/board/list" class="mobile-nav-parent">랭크 커뮤니티 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>
         <a href="/board/list" class="mobile-nav-sub">자유게시판</a>
         <a href="/notice/list" class="mobile-nav-parent">고객센터 <span style="font-size:0.7rem;opacity:0.6;">▾</span></a>

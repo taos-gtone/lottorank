@@ -83,7 +83,7 @@
       <div class="sm-card">
         <div class="sm-card-header">
           <span class="sm-icon">🔮</span>
-          <span class="sm-title">예측 / 분석실</span>
+          <span class="sm-title">번호 예측</span>
         </div>
         <ul class="sm-links">
           <li>

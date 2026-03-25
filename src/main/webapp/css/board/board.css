@@ -1032,10 +1032,11 @@
 }
 
 @media (max-width: 600px) {
-  .board-banner .page-breadcrumb { font-size: 0.7rem; }
-  .board-title-wrap { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .board-banner .page-breadcrumb { display: none; }
+  .board-title-wrap { flex-wrap: nowrap; align-items: center; gap: 8px; }
   .board-banner h1 { font-size: 1.15rem; }
-  .board-banner p { font-size: 0.78rem; }
+  .board-count-badge { display: none; }
+  .board-banner p { display: none; }
   .board-content { padding: 12px 0 28px; }
   .write-card-header, .board-card-header, .comment-header { padding: 12px 16px; }
 
